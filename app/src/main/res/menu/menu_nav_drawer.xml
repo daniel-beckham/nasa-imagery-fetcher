@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/group_categories"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_iotd"
+            android:checked="true"
+            android:icon="@drawable/ic_drawer_earth"
+            android:title="@string/nav_iotd" />
+        <item
+            android:id="@+id/nav_apod"
+            android:icon="@drawable/ic_drawer_moon"
+            android:title="@string/nav_apod" />
+    </group>
+
+    <group
+        android:id="@+id/group_settings"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_drawer_settings"
+            android:title="@string/nav_settings" />
+    </group>
+
+</menu>

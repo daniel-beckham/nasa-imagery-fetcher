@@ -1,0 +1,41 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+
+    defaultConfig {
+        applicationId "com.dsbeckham.nasaimageryfetcher"
+        buildConfigField("String", "APOD_NASA_API_KEY", "\"" + APOD_NASA_API_KEY + "\"")
+        buildConfigField("String", "APOD_MORPH_IO_API_KEY", "\"" + APOD_MORPH_IO_API_KEY + "\"")
+        minSdkVersion 16
+        targetSdkVersion 23
+        vectorDrawables.useSupportLibrary = true
+        versionCode 1
+        versionName "1.0"
+    }
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.android.support:design:23.3.0'
+    compile 'com.android.support:recyclerview-v7:23.3.0'
+    compile 'com.android.support:support-vector-drawable:23.3.0'
+    compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.squareup.retrofit2:retrofit:2.0.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.0'
+    compile('com.squareup.retrofit2:converter-simplexml:2.0.0') {
+        exclude module: 'stax'
+        exclude module: 'stax-api'
+        exclude module: 'xpp3'
+    }
+    compile('com.mikepenz:fastadapter:1.4.0@aar') {
+        transitive = true
+    }
+    compile('com.mikepenz:fastadapter-extensions:1.4.0@aar')
+}
