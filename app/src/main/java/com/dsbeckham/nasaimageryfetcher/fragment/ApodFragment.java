@@ -1,7 +1,6 @@
 package com.dsbeckham.nasaimageryfetcher.fragment;
 
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -12,9 +11,9 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.dsbeckham.nasaimageryfetcher.R;
-import com.dsbeckham.nasaimageryfetcher.activity.ViewPagerActivity;
 import com.dsbeckham.nasaimageryfetcher.adapter.ApodAdapter;
 import com.dsbeckham.nasaimageryfetcher.model.ApodMorphIoModel;
 import com.dsbeckham.nasaimageryfetcher.model.ApodNasaModel;
@@ -67,11 +66,11 @@ public class ApodFragment extends Fragment {
             @Override
             public boolean onClick(View view, IAdapter<ApodAdapter> iAdapter, ApodAdapter apodAdapter, int position) {
                 // This will be the entry point for the ViewPager.
-                Intent intent = new Intent(getActivity(), ViewPagerActivity.class);
-                startActivity(intent);
+                // Intent intent = new Intent(getActivity(), ViewPagerActivity.class);
+                // startActivity(intent);
 
                 // This is just a little test message.
-                // Toast.makeText(view.getContext(), String.format("You clicked %s!", ((ApodMorphIoModel) apodAdapter.apodModel).getTitle()), Toast.LENGTH_SHORT).show();
+                Toast.makeText(view.getContext(), String.format("You clicked %s!", ((ApodMorphIoModel) apodAdapter.apodModel).getTitle()), Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
