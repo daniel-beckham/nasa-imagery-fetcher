@@ -51,7 +51,7 @@ public class ApodAdapter<T> extends AbstractItem<ApodAdapter<T>, ApodAdapter.Vie
                         });
                 break;
             case QueryUtils.APOD_MODEL_NASA:
-                viewHolder.date.setText(DateTimeUtils.formatDate(viewHolder.date.getContext(), ((ApodMorphIoModel) apodModel).getDate(), "yyyy-MM-dd"));
+                viewHolder.date.setText(DateTimeUtils.formatDate(viewHolder.date.getContext(), ((ApodNasaModel) apodModel).getDate(), "yyyy-MM-dd"));
                 viewHolder.title.setText(((ApodNasaModel) apodModel).getTitle());
                 Picasso.with(viewHolder.image.getContext())
                         .load(((ApodNasaModel) apodModel).getUrl())
