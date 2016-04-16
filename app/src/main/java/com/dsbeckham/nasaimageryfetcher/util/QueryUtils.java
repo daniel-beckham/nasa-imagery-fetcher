@@ -113,6 +113,7 @@ public class QueryUtils {
             apodFragment.apodMorphIoModels.clear();
             apodFragment.apodNasaModels.clear();
             apodFragment.calendar = Calendar.getInstance();
+            apodFragment.endlessRecyclerOnScrollListener.resetPageCount();
             apodFragment.fastItemAdapter.clear();
             apodFragment.footerAdapter.clear();
         }

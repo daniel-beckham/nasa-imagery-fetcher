@@ -2,7 +2,6 @@ package com.dsbeckham.nasaimageryfetcher.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,6 +32,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class ApodFragment extends Fragment {
+    public EndlessRecyclerOnScrollListener endlessRecyclerOnScrollListener;
     public FastItemAdapter<ApodAdapter> fastItemAdapter = new FastItemAdapter<>();
     public FooterAdapter<ProgressItem> footerAdapter = new FooterAdapter<>();
 
@@ -79,19 +79,17 @@ public class ApodFragment extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(footerAdapter.wrap(fastItemAdapter));
-        recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
+
+        endlessRecyclerOnScrollListener = new EndlessRecyclerOnScrollListener() {
             @Override
-            public void onLoadMore(final int currentPage) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        footerAdapter.clear();
-                        footerAdapter.add(new ProgressItem());
-                        QueryUtils.beginApodQuery(getActivity());
-                    }
-                }, 10);
+            public void onLoadMore(int currentPage) {
+                footerAdapter.clear();
+                footerAdapter.add(new ProgressItem());
+                QueryUtils.beginApodQuery(getActivity());
             }
-        });
+        };
+
+        recyclerView.addOnScrollListener(endlessRecyclerOnScrollListener);
 
         swipeContainer.setColorSchemeResources(
                 R.color.colorAccent,
