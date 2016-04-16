@@ -38,7 +38,7 @@ public class IotdFragment extends Fragment {
     @Bind(R.id.fragment_iotd_recycler_view)
     public RecyclerView recyclerView;
     @Bind(R.id.fragment_iotd_swipe_refresh)
-    public SwipeRefreshLayout swipeContainer;
+    public SwipeRefreshLayout swipeRefreshLayout;
 
     public List<IotdRssModel.Channel.Item> iotdRssModels = new ArrayList<>();
 
@@ -57,6 +57,7 @@ public class IotdFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         fastItemAdapter.withSavedInstanceState(savedInstanceState);
+
         fastItemAdapter.withOnClickListener(new FastAdapter.OnClickListener<IotdAdapter>() {
             @Override
             public boolean onClick(View view, IAdapter<IotdAdapter> iAdapter, IotdAdapter iotdAdapter, int position) {
@@ -75,7 +76,7 @@ public class IotdFragment extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(footerAdapter.wrap(fastItemAdapter));
 
-        swipeContainer.setColorSchemeResources(
+        swipeRefreshLayout.setColorSchemeResources(
                 R.color.colorAccent,
                 R.color.colorAccent,
                 R.color.colorAccent);
@@ -84,10 +85,10 @@ public class IotdFragment extends Fragment {
         // action bar.
         TypedValue typedValue = new TypedValue();
         getActivity().getTheme().resolveAttribute(android.support.v7.appcompat.R.attr.actionBarSize, typedValue, true);
-        swipeContainer.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(typedValue.resourceId)
+        swipeRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(typedValue.resourceId)
                 + (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
 
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 QueryUtils.clearIotdData(getActivity());
@@ -111,7 +112,7 @@ public class IotdFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        swipeContainer.setRefreshing(false);
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override

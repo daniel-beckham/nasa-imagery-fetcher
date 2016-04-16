@@ -41,7 +41,7 @@ public class ApodFragment extends Fragment {
     @Bind(R.id.fragment_apod_recycler_view)
     public RecyclerView recyclerView;
     @Bind(R.id.fragment_apod_swipe_refresh)
-    public SwipeRefreshLayout swipeContainer;
+    public SwipeRefreshLayout swipeRefreshLayout;
 
     public List<ApodMorphIoModel> apodMorphIoModels = new ArrayList<>();
     public List<ApodNasaModel> apodNasaModels = new ArrayList<>();
@@ -62,6 +62,7 @@ public class ApodFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         fastItemAdapter.withSavedInstanceState(savedInstanceState);
+
         fastItemAdapter.withOnClickListener(new FastAdapter.OnClickListener<ApodAdapter>() {
             @Override
             public boolean onClick(View view, IAdapter<ApodAdapter> iAdapter, ApodAdapter apodAdapter, int position) {
@@ -91,7 +92,7 @@ public class ApodFragment extends Fragment {
 
         recyclerView.addOnScrollListener(endlessRecyclerOnScrollListener);
 
-        swipeContainer.setColorSchemeResources(
+        swipeRefreshLayout.setColorSchemeResources(
                 R.color.colorAccent,
                 R.color.colorAccent,
                 R.color.colorAccent);
@@ -100,10 +101,10 @@ public class ApodFragment extends Fragment {
         // action bar.
         TypedValue typedValue = new TypedValue();
         getActivity().getTheme().resolveAttribute(android.support.v7.appcompat.R.attr.actionBarSize, typedValue, true);
-        swipeContainer.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(typedValue.resourceId)
+        swipeRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(typedValue.resourceId)
                 + (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
 
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 QueryUtils.clearApodData(getActivity());
@@ -127,7 +128,7 @@ public class ApodFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        swipeContainer.setRefreshing(false);
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override

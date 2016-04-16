@@ -148,7 +148,7 @@ public class QueryUtils {
                     }
 
                     apodFragment.loadingData = false;
-                    apodFragment.swipeContainer.setRefreshing(false);
+                    apodFragment.swipeRefreshLayout.setRefreshing(false);
                 }
             }
 
@@ -157,7 +157,7 @@ public class QueryUtils {
                 apodFragment.footerAdapter.clear();
                 apodFragment.loadingData = false;
                 apodFragment.progressBar.setVisibility(View.GONE);
-                apodFragment.swipeContainer.setRefreshing(false);
+                apodFragment.swipeRefreshLayout.setRefreshing(false);
             }
         });
     }
@@ -192,7 +192,7 @@ public class QueryUtils {
                         queryApodNasaApi(activity);
                     } else {
                         apodFragment.loadingData = false;
-                        apodFragment.swipeContainer.setRefreshing(false);
+                        apodFragment.swipeRefreshLayout.setRefreshing(false);
                     }
 
                 }
@@ -203,7 +203,7 @@ public class QueryUtils {
                 apodFragment.footerAdapter.clear();
                 apodFragment.loadingData = false;
                 apodFragment.progressBar.setVisibility(View.GONE);
-                apodFragment.swipeContainer.setRefreshing(false);
+                apodFragment.swipeRefreshLayout.setRefreshing(false);
             }
         });
     }
@@ -267,7 +267,7 @@ public class QueryUtils {
                     }
 
                     iotdFragment.loadingData = false;
-                    iotdFragment.swipeContainer.setRefreshing(false);
+                    iotdFragment.swipeRefreshLayout.setRefreshing(false);
                 }
             }
 
@@ -276,7 +276,7 @@ public class QueryUtils {
                 iotdFragment.footerAdapter.clear();
                 iotdFragment.loadingData = false;
                 iotdFragment.progressBar.setVisibility(View.GONE);
-                iotdFragment.swipeContainer.setRefreshing(false);
+                iotdFragment.swipeRefreshLayout.setRefreshing(false);
             }
         });
     }
