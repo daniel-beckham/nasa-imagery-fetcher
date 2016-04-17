@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <FrameLayout
         android:id="@+id/fragment_iotd_progress_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -21,11 +21,11 @@
     </FrameLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/fragment_iotd_swipe_refresh"
+        android:id="@+id/fragment_iotd_swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/fragment_iotd_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

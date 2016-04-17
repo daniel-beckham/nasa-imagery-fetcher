@@ -6,7 +6,7 @@
     android:layout_height="240dp">
 
     <ProgressBar
-        android:id="@+id/item_image_progress_bar"
+        android:id="@+id/item_recyclerview_progress_bar"
         style="@style/Widget.AppCompat.ProgressBar"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -14,7 +14,7 @@
         android:adjustViewBounds="true" />
 
     <ImageView
-        android:id="@+id/item_image_fetched"
+        android:id="@+id/item_recyclerview_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
@@ -32,7 +32,7 @@
         android:paddingTop="@dimen/activity_vertical_margin">
 
         <TextView
-            android:id="@+id/item_image_title"
+            android:id="@+id/item_recyclerview_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -46,10 +46,10 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/item_image_date"
+            android:id="@+id/item_recyclerview_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/item_image_title"
+            android:layout_below="@+id/item_recyclerview_title"
             android:ellipsize="end"
             android:lines="1"
             android:shadowColor="#aa000000"

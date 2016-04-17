@@ -40,7 +40,7 @@ public class ApodFragment extends Fragment {
     public View progressBar;
     @Bind(R.id.fragment_apod_recycler_view)
     public RecyclerView recyclerView;
-    @Bind(R.id.fragment_apod_swipe_refresh)
+    @Bind(R.id.fragment_apod_swipe_refresh_layout)
     public SwipeRefreshLayout swipeRefreshLayout;
 
     public List<ApodMorphIoModel> apodMorphIoModels = new ArrayList<>();

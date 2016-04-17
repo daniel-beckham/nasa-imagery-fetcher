@@ -37,7 +37,7 @@ public class IotdFragment extends Fragment {
     public View progressBar;
     @Bind(R.id.fragment_iotd_recycler_view)
     public RecyclerView recyclerView;
-    @Bind(R.id.fragment_iotd_swipe_refresh)
+    @Bind(R.id.fragment_iotd_swipe_refresh_layout)
     public SwipeRefreshLayout swipeRefreshLayout;
 
     public List<IotdRssModel.Channel.Item> iotdRssModels = new ArrayList<>();
