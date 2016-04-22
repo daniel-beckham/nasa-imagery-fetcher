@@ -29,9 +29,9 @@ public class ApodAdapter<T> extends AbstractItem<ApodAdapter<T>, ApodAdapter.Vie
     @Override
     public void bindView(final ViewHolder viewHolder) {
         super.bindView(viewHolder);
+
         switch (apodModelType) {
             case QueryUtils.APOD_MODEL_MORPH_IO:
-                viewHolder.progressBar.setVisibility(View.VISIBLE);
                 viewHolder.date.setText(DateTimeUtils.formatDate(viewHolder.date.getContext(), ((ApodMorphIoModel) apodModel).getDate(), "yyyy-MM-dd"));
                 viewHolder.title.setText(((ApodMorphIoModel) apodModel).getTitle());
                 Picasso.with(viewHolder.image.getContext())
@@ -74,7 +74,7 @@ public class ApodAdapter<T> extends AbstractItem<ApodAdapter<T>, ApodAdapter.Vie
 
     @Override
     public int getType() {
-        return R.id.item_image;
+        return R.id.item_recyclerview;
     }
 
     @Override

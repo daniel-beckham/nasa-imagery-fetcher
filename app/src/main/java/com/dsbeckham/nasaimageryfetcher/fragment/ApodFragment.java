@@ -1,6 +1,7 @@
 package com.dsbeckham.nasaimageryfetcher.fragment;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -10,9 +11,9 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.dsbeckham.nasaimageryfetcher.R;
+import com.dsbeckham.nasaimageryfetcher.activity.ViewPagerActivity;
 import com.dsbeckham.nasaimageryfetcher.adapter.ApodAdapter;
 import com.dsbeckham.nasaimageryfetcher.model.ApodMorphIoModel;
 import com.dsbeckham.nasaimageryfetcher.model.ApodNasaModel;
@@ -23,6 +24,8 @@ import com.mikepenz.fastadapter.adapters.FastItemAdapter;
 import com.mikepenz.fastadapter.adapters.FooterAdapter;
 import com.mikepenz.fastadapter_extensions.items.ProgressItem;
 import com.mikepenz.fastadapter_extensions.scroll.EndlessRecyclerOnScrollListener;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -62,16 +65,16 @@ public class ApodFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         fastItemAdapter.withSavedInstanceState(savedInstanceState);
-
         fastItemAdapter.withOnClickListener(new FastAdapter.OnClickListener<ApodAdapter>() {
             @Override
             public boolean onClick(View view, IAdapter<ApodAdapter> iAdapter, ApodAdapter apodAdapter, int position) {
-                // This will be the entry point for the ViewPager.
-                // Intent intent = new Intent(getActivity(), ViewPagerActivity.class);
-                // startActivity(intent);
-
-                // This is just a little test message.
-                Toast.makeText(view.getContext(), String.format("You clicked %s!", ((ApodMorphIoModel) apodAdapter.apodModel).getTitle()), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), ViewPagerActivity.class);
+                // Add a check here that determines which API should be used based
+                // on the user settings. (Also, add the relevant setting.)
+                intent.putExtra("apod_morph_io_models", Parcels.wrap(apodMorphIoModels));
+                // intent.putExtra("apod_nasa_models", Parcels.wrap(apodNasaModels));
+                intent.putExtra("apod_calendar", calendar);
+                startActivity(intent);
                 return false;
             }
         });
@@ -86,7 +89,7 @@ public class ApodFragment extends Fragment {
             public void onLoadMore(int currentPage) {
                 footerAdapter.clear();
                 footerAdapter.add(new ProgressItem());
-                QueryUtils.beginApodQuery(getActivity());
+                QueryUtils.beginApodQuery(getActivity(), QueryUtils.QUERY_MODE_RECYCLERVIEW);
             }
         };
 
@@ -108,12 +111,12 @@ public class ApodFragment extends Fragment {
             @Override
             public void onRefresh() {
                 QueryUtils.clearApodData(getActivity());
-                QueryUtils.beginApodQuery(getActivity());
+                QueryUtils.beginApodQuery(getActivity(), QueryUtils.QUERY_MODE_RECYCLERVIEW);
             }
         });
 
         if (savedInstanceState == null) {
-            QueryUtils.beginApodQuery(getActivity());
+            QueryUtils.beginApodQuery(getActivity(), QueryUtils.QUERY_MODE_RECYCLERVIEW);
         }
 
         return view;

@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.view.View;
 
 import com.dsbeckham.nasaimageryfetcher.BuildConfig;
+import com.dsbeckham.nasaimageryfetcher.activity.ViewPagerActivity;
 import com.dsbeckham.nasaimageryfetcher.adapter.ApodAdapter;
+import com.dsbeckham.nasaimageryfetcher.adapter.ImageFragmentStatePagerAdapter;
 import com.dsbeckham.nasaimageryfetcher.adapter.IotdAdapter;
 import com.dsbeckham.nasaimageryfetcher.fragment.ApodFragment;
 import com.dsbeckham.nasaimageryfetcher.fragment.IotdFragment;
@@ -37,6 +39,9 @@ public class QueryUtils {
 
     public static final int APOD_MODEL_MORPH_IO = 0;
     public static final int APOD_MODEL_NASA = 1;
+
+    public static final int QUERY_MODE_RECYCLERVIEW = 0;
+    public static final int QUERY_MODE_VIEWPAGER = 1;
 
     public interface ApodMorphIoService {
         @GET("dsbeckham/apod-scraper/data.json")
@@ -81,24 +86,39 @@ public class QueryUtils {
         iotdRssService = retrofit.create(IotdRssService.class);
     }
 
-    public static void beginApodQuery(Activity activity) {
-        ApodFragment apodFragment = (ApodFragment) activity.getFragmentManager().findFragmentByTag("apod");
+    public static void beginApodQuery(Activity activity, int mode) {
+        if (mode == QUERY_MODE_RECYCLERVIEW) {
+            ApodFragment apodFragment = (ApodFragment) activity.getFragmentManager().findFragmentByTag("apod");
 
-        if (apodFragment == null) {
-            return;
-        }
+            if (apodFragment == null) {
+                return;
+            }
 
-        if (!apodFragment.loadingData) {
-            if (apodFragment.apodMorphIoModels.isEmpty()) {
-                apodFragment.progressBar.setVisibility(View.VISIBLE);
+            if (!apodFragment.loadingData) {
+                if (apodFragment.apodMorphIoModels.isEmpty()) {
+                    apodFragment.progressBar.setVisibility(View.VISIBLE);
+                }
+
+                // Add a check here that determines which API should be used based
+                // on the user settings. (Also, add the relevant setting.)
+                queryApodMorphIoApi(activity, QUERY_MODE_RECYCLERVIEW);
+                // If the NASA API is being used, reset the query count first.
+                // apodFragment.nasaApiQueryCount = APOD_NASA_API_QUERIES;
+                // queryApodNasaApi(activity, QUERY_MODE_RECYCLERVIEW);
+            }
+        } else if (mode == QUERY_MODE_VIEWPAGER) {
+            final ImageFragmentStatePagerAdapter imageFragmentStatePagerAdapter = ((ViewPagerActivity) activity).imageFragmentStatePagerAdapter;
+
+            if (imageFragmentStatePagerAdapter == null) {
+                return;
             }
 
             // Add a check here that determines which API should be used based
             // on the user settings. (Also, add the relevant setting.)
-            queryApodMorphIoApi(activity);
+            queryApodMorphIoApi(activity, QUERY_MODE_VIEWPAGER);
             // If the NASA API is being used, reset the query count first.
             // apodFragment.nasaApiQueryCount = APOD_NASA_API_QUERIES;
-            // queryApodNasaApi(activity);
+            // queryApodNasaApi(activity, QUERY_MODE_VIEWPAGER);
         }
     }
 
@@ -119,93 +139,168 @@ public class QueryUtils {
         }
     }
 
-    public static void queryApodMorphIoApi(final Activity activity) {
-        final ApodFragment apodFragment = (ApodFragment) activity.getFragmentManager().findFragmentByTag("apod");
+    public static void queryApodMorphIoApi(final Activity activity, final int mode) {
+        if (mode == QUERY_MODE_RECYCLERVIEW) {
+            final ApodFragment apodFragment = (ApodFragment) activity.getFragmentManager().findFragmentByTag("apod");
 
-        if (apodFragment == null) {
-            return;
-        }
+            if (apodFragment == null) {
+                return;
+            }
 
-        apodFragment.loadingData = true;
+            apodFragment.loadingData = true;
 
-        String query =  String.format(Locale.US, "SELECT * FROM data WHERE date <= date('%d-%02d-%02d') ORDER BY date DESC LIMIT 30", apodFragment.calendar.get(Calendar.YEAR), (apodFragment.calendar.get(Calendar.MONTH) + 1), apodFragment.calendar.get(Calendar.DAY_OF_MONTH));
-        Call<List<ApodMorphIoModel>> call = apodMorphIoService.get(APOD_MORPH_IO_API_KEY, query);
-        call.enqueue(new Callback<List<ApodMorphIoModel>>() {
-            @Override
-            public void onResponse (Call<List<ApodMorphIoModel>> call, Response<List<ApodMorphIoModel>> response) {
-                if (response.isSuccessful()) {
-                    apodFragment.footerAdapter.clear();
-                    apodFragment.progressBar.setVisibility(View.GONE);
+            String query = String.format(Locale.US, "SELECT * FROM data WHERE date <= date('%d-%02d-%02d') ORDER BY date DESC LIMIT 30", apodFragment.calendar.get(Calendar.YEAR), (apodFragment.calendar.get(Calendar.MONTH) + 1), apodFragment.calendar.get(Calendar.DAY_OF_MONTH));
+            Call<List<ApodMorphIoModel>> call = apodMorphIoService.get(APOD_MORPH_IO_API_KEY, query);
+            call.enqueue(new Callback<List<ApodMorphIoModel>>() {
+                @Override
+                public void onResponse(Call<List<ApodMorphIoModel>> call, Response<List<ApodMorphIoModel>> response) {
+                    if (response.isSuccessful()) {
+                        apodFragment.footerAdapter.clear();
+                        apodFragment.progressBar.setVisibility(View.GONE);
 
-                    for (ApodMorphIoModel apodMorphIoModel : response.body()) {
+                        for (ApodMorphIoModel apodMorphIoModel : response.body()) {
+                            if (!apodFragment.apodMorphIoModels.contains(apodMorphIoModel) && !apodMorphIoModel.getPictureThumbnailUrl().isEmpty()) {
+                                apodFragment.apodMorphIoModels.add(apodMorphIoModel);
+                                apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(apodMorphIoModel, QueryUtils.APOD_MODEL_MORPH_IO));
+                            }
 
-                        if (!apodFragment.apodMorphIoModels.contains(apodMorphIoModel) && !apodMorphIoModel.getPictureThumbnailUrl().isEmpty()) {
-                            apodFragment.apodMorphIoModels.add(apodMorphIoModel);
-                            apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(apodMorphIoModel, QueryUtils.APOD_MODEL_MORPH_IO));
+                            apodFragment.calendar.add(Calendar.DAY_OF_YEAR, -1);
                         }
 
-                        apodFragment.calendar.add(Calendar.DAY_OF_YEAR, -1);
-                    }
-
-                    apodFragment.loadingData = false;
-                    apodFragment.swipeRefreshLayout.setRefreshing(false);
-                }
-            }
-
-            @Override
-            public void onFailure (Call<List<ApodMorphIoModel>> call, Throwable t) {
-                apodFragment.footerAdapter.clear();
-                apodFragment.loadingData = false;
-                apodFragment.progressBar.setVisibility(View.GONE);
-                apodFragment.swipeRefreshLayout.setRefreshing(false);
-            }
-        });
-    }
-
-    public static void queryApodNasaApi(final Activity activity) {
-        final ApodFragment apodFragment = (ApodFragment) activity.getFragmentManager().findFragmentByTag("apod");
-
-        if (apodFragment == null) {
-            return;
-        }
-
-        apodFragment.loadingData = true;
-
-        String date = String.format(Locale.US, "%d-%02d-%02d", apodFragment.calendar.get(Calendar.YEAR), (apodFragment.calendar.get(Calendar.MONTH) + 1), apodFragment.calendar.get(Calendar.DAY_OF_MONTH));
-        Call<ApodNasaModel> call = apodNasaService.get(APOD_NASA_API_KEY, date);
-        call.enqueue(new Callback<ApodNasaModel>() {
-            @Override
-            public void onResponse(Call<ApodNasaModel> call, Response<ApodNasaModel> response) {
-                if (response.isSuccessful()) {
-                    apodFragment.footerAdapter.clear();
-                    apodFragment.progressBar.setVisibility(View.GONE);
-
-                    if (!apodFragment.apodNasaModels.contains(response.body()) && response.body().getMediaType().equals("image")) {
-                        apodFragment.apodNasaModels.add(response.body());
-                        apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(response.body(), QueryUtils.APOD_MODEL_NASA));
-                    }
-
-                    apodFragment.calendar.add(Calendar.DAY_OF_YEAR, -1);
-                    apodFragment.nasaApiQueryCount--;
-
-                    if (apodFragment.nasaApiQueryCount > 0) {
-                        queryApodNasaApi(activity);
-                    } else {
                         apodFragment.loadingData = false;
                         apodFragment.swipeRefreshLayout.setRefreshing(false);
                     }
-
                 }
+
+                @Override
+                public void onFailure(Call<List<ApodMorphIoModel>> call, Throwable t) {
+                    apodFragment.footerAdapter.clear();
+                    apodFragment.loadingData = false;
+                    apodFragment.progressBar.setVisibility(View.GONE);
+                    apodFragment.swipeRefreshLayout.setRefreshing(false);
+                }
+            });
+        } else if (mode == QUERY_MODE_VIEWPAGER) {
+            final ImageFragmentStatePagerAdapter imageFragmentStatePagerAdapter = ((ViewPagerActivity) activity).imageFragmentStatePagerAdapter;
+
+            if (imageFragmentStatePagerAdapter == null) {
+                return;
             }
 
-            @Override
-            public void onFailure(Call<ApodNasaModel> call, Throwable t) {
-                apodFragment.footerAdapter.clear();
-                apodFragment.loadingData = false;
-                apodFragment.progressBar.setVisibility(View.GONE);
-                apodFragment.swipeRefreshLayout.setRefreshing(false);
+            imageFragmentStatePagerAdapter.loadingData = true;
+
+            String query = String.format(Locale.US, "SELECT * FROM data WHERE date <= date('%d-%02d-%02d') ORDER BY date DESC LIMIT 30", imageFragmentStatePagerAdapter.calendar.get(Calendar.YEAR), (imageFragmentStatePagerAdapter.calendar.get(Calendar.MONTH) + 1), imageFragmentStatePagerAdapter.calendar.get(Calendar.DAY_OF_MONTH));
+            Call<List<ApodMorphIoModel>> call = apodMorphIoService.get(APOD_MORPH_IO_API_KEY, query);
+            call.enqueue(new Callback<List<ApodMorphIoModel>>() {
+                @Override
+                public void onResponse(Call<List<ApodMorphIoModel>> call, Response<List<ApodMorphIoModel>> response) {
+                    if (response.isSuccessful()) {
+                        for (ApodMorphIoModel apodMorphIoModel : response.body()) {
+                            if (!imageFragmentStatePagerAdapter.apodMorphIoModels.contains(apodMorphIoModel) && !apodMorphIoModel.getPictureThumbnailUrl().isEmpty()) {
+                                imageFragmentStatePagerAdapter.apodMorphIoModels.add(apodMorphIoModel);
+                            }
+
+                            imageFragmentStatePagerAdapter.calendar.add(Calendar.DAY_OF_YEAR, -1);
+                        }
+
+                        imageFragmentStatePagerAdapter.loadingData = false;
+                        imageFragmentStatePagerAdapter.notifyDataSetChanged();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<ApodMorphIoModel>> call, Throwable t) {
+                    imageFragmentStatePagerAdapter.loadingData = false;
+                }
+            });
+        }
+    }
+
+    public static void queryApodNasaApi(final Activity activity, final int mode) {
+        if (mode == QUERY_MODE_RECYCLERVIEW) {
+            final ApodFragment apodFragment = (ApodFragment) activity.getFragmentManager().findFragmentByTag("apod");
+
+            if (apodFragment == null) {
+                return;
             }
-        });
+
+            apodFragment.loadingData = true;
+
+            String date = String.format(Locale.US, "%d-%02d-%02d", apodFragment.calendar.get(Calendar.YEAR), (apodFragment.calendar.get(Calendar.MONTH) + 1), apodFragment.calendar.get(Calendar.DAY_OF_MONTH));
+            Call<ApodNasaModel> call = apodNasaService.get(APOD_NASA_API_KEY, date);
+            call.enqueue(new Callback<ApodNasaModel>() {
+                @Override
+                public void onResponse(Call<ApodNasaModel> call, Response<ApodNasaModel> response) {
+                    if (response.isSuccessful()) {
+                        apodFragment.footerAdapter.clear();
+                        apodFragment.progressBar.setVisibility(View.GONE);
+
+                        if (!apodFragment.apodNasaModels.contains(response.body()) && response.body().getMediaType().equals("image")) {
+                            apodFragment.apodNasaModels.add(response.body());
+                            apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(response.body(), QueryUtils.APOD_MODEL_NASA));
+                        }
+
+                        apodFragment.calendar.add(Calendar.DAY_OF_YEAR, -1);
+                        apodFragment.nasaApiQueryCount--;
+
+                        if (apodFragment.nasaApiQueryCount > 0) {
+                            queryApodNasaApi(activity, mode);
+                        } else {
+                            apodFragment.loadingData = false;
+                            apodFragment.swipeRefreshLayout.setRefreshing(false);
+                        }
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ApodNasaModel> call, Throwable t) {
+                    apodFragment.footerAdapter.clear();
+                    apodFragment.loadingData = false;
+                    apodFragment.progressBar.setVisibility(View.GONE);
+                    apodFragment.swipeRefreshLayout.setRefreshing(false);
+                }
+            });
+        } else if (mode == QUERY_MODE_VIEWPAGER) {
+            final ImageFragmentStatePagerAdapter imageFragmentStatePagerAdapter = ((ViewPagerActivity) activity).imageFragmentStatePagerAdapter;
+
+            if (imageFragmentStatePagerAdapter == null) {
+                return;
+            }
+
+            imageFragmentStatePagerAdapter.loadingData = true;
+
+            String date = String.format(Locale.US, "%d-%02d-%02d", imageFragmentStatePagerAdapter.calendar.get(Calendar.YEAR), (imageFragmentStatePagerAdapter.calendar.get(Calendar.MONTH) + 1), imageFragmentStatePagerAdapter.calendar.get(Calendar.DAY_OF_MONTH));
+            Call<ApodNasaModel> call = apodNasaService.get(APOD_NASA_API_KEY, date);
+            call.enqueue(new Callback<ApodNasaModel>() {
+                @Override
+                public void onResponse(Call<ApodNasaModel> call, Response<ApodNasaModel> response) {
+                    if (response.isSuccessful()) {
+                        imageFragmentStatePagerAdapter.calendar.add(Calendar.DAY_OF_YEAR, -1);
+
+                        if (!imageFragmentStatePagerAdapter.apodNasaModels.contains(response.body()) && !response.body().getHdUrl().isEmpty()) {
+                            imageFragmentStatePagerAdapter.apodNasaModels.add(response.body());
+                        }
+
+                        imageFragmentStatePagerAdapter.calendar.add(Calendar.DAY_OF_YEAR, -1);
+                        imageFragmentStatePagerAdapter.nasaApiQueryCount--;
+
+                        if (imageFragmentStatePagerAdapter.nasaApiQueryCount > 0) {
+                            queryApodNasaApi(activity, mode);
+                        } else {
+                            imageFragmentStatePagerAdapter.loadingData = false;
+                        }
+
+                        imageFragmentStatePagerAdapter.notifyDataSetChanged();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ApodNasaModel> call, Throwable t) {
+                    imageFragmentStatePagerAdapter.loadingData = false;
+                }
+            });
+        }
     }
 
     public static void beginIotdFetch(Activity activity) {
@@ -233,7 +328,6 @@ public class QueryUtils {
 
         if (!iotdFragment.loadingData) {
             iotdFragment.iotdRssModels.clear();
-            iotdFragment.calendar = Calendar.getInstance();
             iotdFragment.fastItemAdapter.clear();
             iotdFragment.footerAdapter.clear();
         }
@@ -251,19 +345,16 @@ public class QueryUtils {
         Call<IotdRssModel> call = iotdRssService.get();
         call.enqueue(new Callback<IotdRssModel>() {
             @Override
-            public void onResponse (Call<IotdRssModel> call, Response<IotdRssModel> response) {
+            public void onResponse(Call<IotdRssModel> call, Response<IotdRssModel> response) {
                 if (response.isSuccessful()) {
                     iotdFragment.footerAdapter.clear();
                     iotdFragment.progressBar.setVisibility(View.GONE);
 
                     for (IotdRssModel.Channel.Item iotdRssModelItem : response.body().getChannel().getItems()) {
-
                         if (!iotdFragment.iotdRssModels.contains(iotdRssModelItem) && !iotdRssModelItem.getEnclosure().getUrl().isEmpty()) {
                             iotdFragment.iotdRssModels.add(iotdRssModelItem);
                             iotdFragment.fastItemAdapter.add(iotdFragment.fastItemAdapter.getAdapterItemCount(), new IotdAdapter(iotdRssModelItem));
                         }
-
-                        iotdFragment.calendar.add(Calendar.DAY_OF_YEAR, -1);
                     }
 
                     iotdFragment.loadingData = false;
@@ -272,7 +363,7 @@ public class QueryUtils {
             }
 
             @Override
-            public void onFailure (Call<IotdRssModel> call, Throwable t) {
+            public void onFailure(Call<IotdRssModel> call, Throwable t) {
                 iotdFragment.footerAdapter.clear();
                 iotdFragment.loadingData = false;
                 iotdFragment.progressBar.setVisibility(View.GONE);

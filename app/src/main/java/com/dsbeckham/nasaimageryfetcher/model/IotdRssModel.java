@@ -1,5 +1,6 @@
 package com.dsbeckham.nasaimageryfetcher.model;
 
+import org.parceler.Parcel;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
@@ -33,6 +34,7 @@ public class IotdRssModel
             this.items = items;
         }
 
+        @Parcel(Parcel.Serialization.BEAN)
         public static class Item {
             @Element(name = "title")
             private String title;
@@ -43,6 +45,7 @@ public class IotdRssModel
             @Element(name = "enclosure")
             private Enclosure enclosure;
 
+            @Parcel(Parcel.Serialization.BEAN)
             public static class Enclosure {
                 @Attribute(name = "url")
                 private String url;
@@ -111,7 +114,7 @@ public class IotdRssModel
 
             @Override
             public boolean equals(Object object) {
-                return this == object || (!(object == null || getClass() != object.getClass()) && pubDate.equals(((Item) object).pubDate));
+                return this == object || ((!(object == null || getClass() != object.getClass()) && pubDate.equals(((Item) object).pubDate)));
             }
         }
     }

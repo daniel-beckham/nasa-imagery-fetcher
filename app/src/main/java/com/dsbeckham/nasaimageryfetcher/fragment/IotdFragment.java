@@ -1,6 +1,7 @@
 package com.dsbeckham.nasaimageryfetcher.fragment;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -10,9 +11,9 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.dsbeckham.nasaimageryfetcher.R;
+import com.dsbeckham.nasaimageryfetcher.activity.ViewPagerActivity;
 import com.dsbeckham.nasaimageryfetcher.adapter.IotdAdapter;
 import com.dsbeckham.nasaimageryfetcher.model.IotdRssModel;
 import com.dsbeckham.nasaimageryfetcher.util.QueryUtils;
@@ -22,8 +23,9 @@ import com.mikepenz.fastadapter.adapters.FastItemAdapter;
 import com.mikepenz.fastadapter.adapters.FooterAdapter;
 import com.mikepenz.fastadapter_extensions.items.ProgressItem;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import butterknife.Bind;
@@ -42,7 +44,6 @@ public class IotdFragment extends Fragment {
 
     public List<IotdRssModel.Channel.Item> iotdRssModels = new ArrayList<>();
 
-    public Calendar calendar = Calendar.getInstance();
     public boolean loadingData = false;
 
     @Override
@@ -57,16 +58,12 @@ public class IotdFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         fastItemAdapter.withSavedInstanceState(savedInstanceState);
-
         fastItemAdapter.withOnClickListener(new FastAdapter.OnClickListener<IotdAdapter>() {
             @Override
             public boolean onClick(View view, IAdapter<IotdAdapter> iAdapter, IotdAdapter iotdAdapter, int position) {
-                // This will be the entry point for the ViewPager.
-                // Intent intent = new Intent(getActivity(), ViewPagerActivity.class);
-                // startActivity(intent);
-
-                // This is just a little test message.
-                Toast.makeText(view.getContext(), String.format("You clicked %s!", iotdAdapter.iotdRssModelItem.getTitle()), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), ViewPagerActivity.class);
+                intent.putExtra("iotd_rss_models", Parcels.wrap(iotdRssModels));
+                startActivity(intent);
                 return false;
             }
         });

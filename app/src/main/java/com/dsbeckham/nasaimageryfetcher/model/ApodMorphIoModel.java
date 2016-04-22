@@ -2,6 +2,10 @@ package com.dsbeckham.nasaimageryfetcher.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.parceler.Parcel;
+import org.parceler.Parcel.Serialization;
+
+@Parcel(Serialization.BEAN)
 public class ApodMorphIoModel {
     private String url;
     private String date;
@@ -81,6 +85,6 @@ public class ApodMorphIoModel {
 
     @Override
     public boolean equals(Object object) {
-        return this == object || (!(object == null || getClass() != object.getClass()) && date.equals(((ApodMorphIoModel) object).date));
+        return this == object || ((!(object == null || getClass() != object.getClass()) && date.equals(((ApodMorphIoModel) object).date)));
     }
 }

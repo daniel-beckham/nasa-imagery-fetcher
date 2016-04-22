@@ -30,7 +30,7 @@ public class IotdAdapter extends AbstractItem<IotdAdapter, IotdAdapter.ViewHolde
         viewHolder.date.setText(DateTimeUtils.formatDate(viewHolder.date.getContext(), iotdRssModelItem.getPubDate(), "EEE, dd MMM yyyy HH:mm zzz"));
         viewHolder.title.setText(iotdRssModelItem.getTitle());
         Picasso.with(viewHolder.image.getContext())
-                .load(iotdRssModelItem.getEnclosure().getUrl())
+                .load(iotdRssModelItem.getEnclosure().getUrl().replace("styles/full_width_feature/public/", ""))
                 .fit()
                 .centerCrop()
                 .into(viewHolder.image, new Callback() {
@@ -48,7 +48,7 @@ public class IotdAdapter extends AbstractItem<IotdAdapter, IotdAdapter.ViewHolde
 
     @Override
     public int getType() {
-        return R.id.item_image;
+        return R.id.item_recyclerview;
     }
 
     @Override

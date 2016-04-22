@@ -28,7 +28,6 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:fontFamily="sans-serif-medium"
-            android:lines="1"
             android:shadowColor="#aa000000"
             android:shadowDx="1"
             android:shadowDy="1"
