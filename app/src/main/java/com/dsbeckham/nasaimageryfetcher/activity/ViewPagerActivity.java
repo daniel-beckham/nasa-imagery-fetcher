@@ -23,12 +23,28 @@ public class ViewPagerActivity extends AppCompatActivity {
     public ViewPager viewPager;
 
     public ImageFragmentStatePagerAdapter imageFragmentStatePagerAdapter;
+    public int viewPagerCurrentItem;
+
+    static final String VIEW_PAGER_CURRENT_ITEM = "viewPagerCurrentItem";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewpager);
         ButterKnife.bind(this);
+
+        if (savedInstanceState == null) {
+            switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "iotd")) {
+                case "iotd":
+                    viewPagerCurrentItem = getIntent().getIntExtra(IotdFragment.EXTRA_IOTD_POSITION, 0);
+                    break;
+                case "apod":
+                    viewPagerCurrentItem = getIntent().getIntExtra(ApodFragment.EXTRA_APOD_POSITION, 0);
+                    break;
+            }
+        } else {
+            viewPagerCurrentItem = savedInstanceState.getInt(VIEW_PAGER_CURRENT_ITEM);
+        }
 
         imageFragmentStatePagerAdapter = new ImageFragmentStatePagerAdapter(this, getSupportFragmentManager());
         viewPager.setAdapter(imageFragmentStatePagerAdapter);
@@ -58,6 +74,12 @@ public class ViewPagerActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt(VIEW_PAGER_CURRENT_ITEM, viewPager.getCurrentItem());
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+        @Override
     public void finish() {
         Intent intent = new Intent();
 

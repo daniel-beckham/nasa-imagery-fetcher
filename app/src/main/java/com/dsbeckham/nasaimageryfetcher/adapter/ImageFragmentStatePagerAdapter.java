@@ -42,12 +42,6 @@ public class ImageFragmentStatePagerAdapter extends SmartFragmentStatePagerAdapt
         switch (type) {
             case "iotd":
                 iotdRssModels = Parcels.unwrap(activity.getIntent().getParcelableExtra(IotdFragment.EXTRA_IOTD_RSS_MODELS));
-                ((ViewPagerActivity) activity).viewPager.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((ViewPagerActivity) activity).viewPager.setCurrentItem(activity.getIntent().getIntExtra(IotdFragment.EXTRA_IOTD_POSITION, 0));
-                    }
-                });
                 break;
             case "apod":
                 // Add a check here that determines which API should be used based
@@ -55,14 +49,15 @@ public class ImageFragmentStatePagerAdapter extends SmartFragmentStatePagerAdapt
                 apodMorphIoModels = Parcels.unwrap(activity.getIntent().getParcelableExtra(ApodFragment.EXTRA_APOD_MORPH_IO_MODELS));
                 // apodNasaModels = Parcels.unwrap(activity.getIntent().getParcelableExtra(ApodFragment.EXTRA_APOD_NASA_MODELS));
                 calendar = (Calendar) activity.getIntent().getSerializableExtra(ApodFragment.EXTRA_APOD_CALENDAR);
-                ((ViewPagerActivity) activity).viewPager.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((ViewPagerActivity) activity).viewPager.setCurrentItem(activity.getIntent().getIntExtra(ApodFragment.EXTRA_APOD_POSITION, 0));
-                    }
-                });
                 break;
         }
+
+        ((ViewPagerActivity) activity).viewPager.post(new Runnable() {
+            @Override
+            public void run() {
+                ((ViewPagerActivity) activity).viewPager.setCurrentItem(((ViewPagerActivity) activity).viewPagerCurrentItem);
+            }
+        });
     }
 
     @Override
