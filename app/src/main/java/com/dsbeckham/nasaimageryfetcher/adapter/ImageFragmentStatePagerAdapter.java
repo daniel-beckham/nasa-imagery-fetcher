@@ -12,6 +12,7 @@ import com.dsbeckham.nasaimageryfetcher.fragment.IotdFragment;
 import com.dsbeckham.nasaimageryfetcher.model.ApodMorphIoModel;
 import com.dsbeckham.nasaimageryfetcher.model.ApodNasaModel;
 import com.dsbeckham.nasaimageryfetcher.model.IotdRssModel;
+import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
 import com.dsbeckham.nasaimageryfetcher.util.QueryUtils;
 
 import org.parceler.Parcels;
@@ -36,7 +37,7 @@ public class ImageFragmentStatePagerAdapter extends SmartFragmentStatePagerAdapt
         super(fragmentManager);
 
         this.activity = activity;
-        type = PreferenceManager.getDefaultSharedPreferences(activity).getString("current_fragment", "iotd");
+        type = PreferenceManager.getDefaultSharedPreferences(activity).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "iotd");
 
         switch (type) {
             case "iotd":

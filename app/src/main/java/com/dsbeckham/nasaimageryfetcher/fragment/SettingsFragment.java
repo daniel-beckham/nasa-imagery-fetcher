@@ -34,5 +34,4 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         PreferenceUtils.togglePreferencesBasedOnCurrentKeyValue(getActivity(), key);
     }
-
 }

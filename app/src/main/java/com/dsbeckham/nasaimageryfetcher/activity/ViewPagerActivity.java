@@ -9,6 +9,7 @@ import android.view.MenuItem;
 
 import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.adapter.ImageFragmentStatePagerAdapter;
+import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -58,7 +59,7 @@ public class ViewPagerActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        switch (PreferenceManager.getDefaultSharedPreferences(this).getString("current_fragment", "iotd")) {
+        switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "iotd")) {
             case "iotd":
                 setTitle(getString(R.string.nav_iotd));
                 break;

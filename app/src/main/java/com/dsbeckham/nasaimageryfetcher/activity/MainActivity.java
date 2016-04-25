@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .replace(R.id.content, new IotdFragment(), "iotd")
                     .commit();
 
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putString("current_fragment", "iotd").apply();
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "iotd").apply();
         }
     }
 
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 navigationView.setCheckedItem(R.id.nav_iotd);
                 setTitle(getString(R.string.nav_iotd));
-                PreferenceManager.getDefaultSharedPreferences(this).edit().putString("current_fragment", "iotd").apply();
+                PreferenceManager.getDefaultSharedPreferences(this).edit().putString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "iotd").apply();
                 break;
             case R.id.nav_apod:
                 if (getFragmentManager().findFragmentByTag("apod") != null) {
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 navigationView.setCheckedItem(R.id.nav_apod);
                 setTitle(getString(R.string.nav_apod));
-                PreferenceManager.getDefaultSharedPreferences(this).edit().putString("current_fragment", "apod").apply();
+                PreferenceManager.getDefaultSharedPreferences(this).edit().putString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "apod").apply();
                 break;
             case R.id.nav_settings:
                 Intent intent = new Intent(this, SettingsActivity.class);
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onResume() {
         super.onResume();
-        switch (PreferenceManager.getDefaultSharedPreferences(this).getString("current_fragment", "iotd")) {
+        switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "iotd")) {
             case "iotd":
                 setTitle(getString(R.string.nav_iotd));
                 break;

@@ -24,6 +24,8 @@ public class PreferenceUtils {
     public static final String PREF_CACHED_IMAGES_CYCLE_INTERVAL = "pref_cached_images_cycle_interval";
     public static final String PREF_SEND_NOTIFICATIONS = "pref_send_notifications";
 
+    public static final String PREF_CURRENT_FRAGMENT = "pref_current_fragment";
+
     public static final int PREF_FETCH_MODE_DAILY_IMAGES = 0;
     public static final int PREF_FETCH_MODE_RANDOM_IMAGES = 1;
 
