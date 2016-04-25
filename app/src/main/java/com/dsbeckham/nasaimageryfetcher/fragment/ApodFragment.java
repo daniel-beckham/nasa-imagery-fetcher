@@ -53,6 +53,11 @@ public class ApodFragment extends Fragment {
     public boolean loadingData = false;
     public int nasaApiQueryCount = QueryUtils.APOD_NASA_API_QUERIES;
 
+    public static String EXTRA_APOD_MORPH_IO_MODELS = "com.dsbeckham.nasaimageryfetcher.extra.APOD_MORPH_IO_MODELS";
+    public static String EXTRA_APOD_NASA_MODELS = "com.dsbeckham.nasaimageryfetcher.extra.APOD_NASA_MODELS";
+    public static String EXTRA_APOD_CALENDAR = "com.dsbeckham.nasaimageryfetcher.extra.APOD_CALENDAR";
+    public static String EXTRA_APOD_POSITION = "com.dsbeckham.nasaimageryfetcher.extra.APOD_POSITION";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,9 +76,10 @@ public class ApodFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), ViewPagerActivity.class);
                 // Add a check here that determines which API should be used based
                 // on the user settings. (Also, add the relevant setting.)
-                intent.putExtra("apod_morph_io_models", Parcels.wrap(apodMorphIoModels));
-                // intent.putExtra("apod_nasa_models", Parcels.wrap(apodNasaModels));
-                intent.putExtra("apod_calendar", calendar);
+                intent.putExtra(EXTRA_APOD_MORPH_IO_MODELS, Parcels.wrap(apodMorphIoModels));
+                // intent.putExtra(EXTRA_APOD_NASA_MODELS, Parcels.wrap(apodNasaModels));
+                intent.putExtra(EXTRA_APOD_CALENDAR, calendar);
+                intent.putExtra(EXTRA_APOD_POSITION, position);
                 startActivity(intent);
                 return false;
             }

@@ -46,6 +46,9 @@ public class IotdFragment extends Fragment {
 
     public boolean loadingData = false;
 
+    public static String EXTRA_IOTD_RSS_MODELS = "com.dsbeckham.nasaimageryfetcher.extra.IOTD_RSS_MODELS";
+    public static String EXTRA_IOTD_POSITION = "com.dsbeckham.nasaimageryfetcher.extra.IOTD_POSITION";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +65,8 @@ public class IotdFragment extends Fragment {
             @Override
             public boolean onClick(View view, IAdapter<IotdAdapter> iAdapter, IotdAdapter iotdAdapter, int position) {
                 Intent intent = new Intent(getActivity(), ViewPagerActivity.class);
-                intent.putExtra("iotd_rss_models", Parcels.wrap(iotdRssModels));
+                intent.putExtra(EXTRA_IOTD_RSS_MODELS, Parcels.wrap(iotdRssModels));
+                intent.putExtra(EXTRA_IOTD_POSITION, position);
                 startActivity(intent);
                 return false;
             }

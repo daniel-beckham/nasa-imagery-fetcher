@@ -5,7 +5,10 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import com.dsbeckham.nasaimageryfetcher.activity.ViewPagerActivity;
+import com.dsbeckham.nasaimageryfetcher.fragment.ApodFragment;
 import com.dsbeckham.nasaimageryfetcher.fragment.ImageFragment;
+import com.dsbeckham.nasaimageryfetcher.fragment.IotdFragment;
 import com.dsbeckham.nasaimageryfetcher.model.ApodMorphIoModel;
 import com.dsbeckham.nasaimageryfetcher.model.ApodNasaModel;
 import com.dsbeckham.nasaimageryfetcher.model.IotdRssModel;
@@ -29,7 +32,7 @@ public class ImageFragmentStatePagerAdapter extends SmartFragmentStatePagerAdapt
     public boolean loadingData = false;
     public int nasaApiQueryCount = QueryUtils.APOD_NASA_API_QUERIES;
 
-    public ImageFragmentStatePagerAdapter(Activity activity, FragmentManager fragmentManager) {
+    public ImageFragmentStatePagerAdapter(final Activity activity, FragmentManager fragmentManager) {
         super(fragmentManager);
 
         this.activity = activity;
@@ -37,14 +40,26 @@ public class ImageFragmentStatePagerAdapter extends SmartFragmentStatePagerAdapt
 
         switch (type) {
             case "iotd":
-                iotdRssModels = Parcels.unwrap(activity.getIntent().getParcelableExtra("iotd_rss_models"));
+                iotdRssModels = Parcels.unwrap(activity.getIntent().getParcelableExtra(IotdFragment.EXTRA_IOTD_RSS_MODELS));
+                ((ViewPagerActivity) activity).viewPager.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((ViewPagerActivity) activity).viewPager.setCurrentItem(activity.getIntent().getIntExtra(IotdFragment.EXTRA_IOTD_POSITION, 0));
+                    }
+                });
                 break;
             case "apod":
                 // Add a check here that determines which API should be used based
                 // on the user settings. (Also, add the relevant setting.)
-                apodMorphIoModels = Parcels.unwrap(activity.getIntent().getParcelableExtra("apod_morph_io_models"));
-                // apodNasaModels = Parcels.unwrap(activity.getIntent().getParcelableExtra("apod_nasa_models"));
-                calendar = (Calendar) activity.getIntent().getSerializableExtra("apod_calendar");
+                apodMorphIoModels = Parcels.unwrap(activity.getIntent().getParcelableExtra(ApodFragment.EXTRA_APOD_MORPH_IO_MODELS));
+                // apodNasaModels = Parcels.unwrap(activity.getIntent().getParcelableExtra(ApodFragment.EXTRA_APOD_NASA_MODELS));
+                calendar = (Calendar) activity.getIntent().getSerializableExtra(ApodFragment.EXTRA_APOD_CALENDAR);
+                ((ViewPagerActivity) activity).viewPager.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((ViewPagerActivity) activity).viewPager.setCurrentItem(activity.getIntent().getIntExtra(ApodFragment.EXTRA_APOD_POSITION, 0));
+                    }
+                });
                 break;
         }
     }
