@@ -34,6 +34,7 @@ import butterknife.ButterKnife;
 public class IotdFragment extends Fragment {
     public FastItemAdapter<IotdAdapter> fastItemAdapter = new FastItemAdapter<>();
     public FooterAdapter<ProgressItem> footerAdapter = new FooterAdapter<>();
+    public LinearLayoutManager linearLayoutManager;
 
     @Bind(R.id.fragment_iotd_progress_bar)
     public View progressBar;
@@ -67,12 +68,12 @@ public class IotdFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), ViewPagerActivity.class);
                 intent.putExtra(EXTRA_IOTD_RSS_MODELS, Parcels.wrap(iotdRssModels));
                 intent.putExtra(EXTRA_IOTD_POSITION, position);
-                startActivity(intent);
+                startActivityForResult(intent, 0);
                 return false;
             }
         });
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(footerAdapter.wrap(fastItemAdapter));
@@ -120,5 +121,10 @@ public class IotdFragment extends Fragment {
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState = fastItemAdapter.saveInstanceState(savedInstanceState);
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        QueryUtils.updateIotdData(getActivity(), data);
     }
 }

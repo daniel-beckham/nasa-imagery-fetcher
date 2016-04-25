@@ -1,5 +1,6 @@
 package com.dsbeckham.nasaimageryfetcher.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
@@ -9,7 +10,11 @@ import android.view.MenuItem;
 
 import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.adapter.ImageFragmentStatePagerAdapter;
+import com.dsbeckham.nasaimageryfetcher.fragment.ApodFragment;
+import com.dsbeckham.nasaimageryfetcher.fragment.IotdFragment;
 import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
+
+import org.parceler.Parcels;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -67,5 +72,27 @@ public class ViewPagerActivity extends AppCompatActivity {
                 setTitle(getString(R.string.nav_apod));
                 break;
         }
+    }
+
+    @Override
+    public void finish() {
+        Intent intent = new Intent();
+
+        switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "iotd")) {
+            case "iotd":
+                intent.putExtra(IotdFragment.EXTRA_IOTD_POSITION, viewPager.getCurrentItem());
+                break;
+            case "apod":
+                // Add a check here that determines which API should be used based
+                // on the user settings. (Also, add the relevant setting.)
+                intent.putExtra(ApodFragment.EXTRA_APOD_MORPH_IO_MODELS, Parcels.wrap(imageFragmentStatePagerAdapter.apodMorphIoModels));
+                // intent.putExtra(ApodFragment.EXTRA_APOD_NASA_MODELS, Parcels.wrap(imageFragmentStatePagerAdapter.apodNasaModels));
+                intent.putExtra(ApodFragment.EXTRA_APOD_CALENDAR, imageFragmentStatePagerAdapter.calendar);
+                intent.putExtra(ApodFragment.EXTRA_APOD_POSITION, viewPager.getCurrentItem());
+                break;
+        }
+
+        setResult(RESULT_OK, intent);
+        super.finish();
     }
 }

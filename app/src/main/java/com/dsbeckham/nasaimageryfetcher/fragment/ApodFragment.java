@@ -38,6 +38,7 @@ public class ApodFragment extends Fragment {
     public EndlessRecyclerOnScrollListener endlessRecyclerOnScrollListener;
     public FastItemAdapter<ApodAdapter> fastItemAdapter = new FastItemAdapter<>();
     public FooterAdapter<ProgressItem> footerAdapter = new FooterAdapter<>();
+    public LinearLayoutManager linearLayoutManager;
 
     @Bind(R.id.fragment_apod_progress_bar)
     public View progressBar;
@@ -80,12 +81,12 @@ public class ApodFragment extends Fragment {
                 // intent.putExtra(EXTRA_APOD_NASA_MODELS, Parcels.wrap(apodNasaModels));
                 intent.putExtra(EXTRA_APOD_CALENDAR, calendar);
                 intent.putExtra(EXTRA_APOD_POSITION, position);
-                startActivity(intent);
+                startActivityForResult(intent, 0);
                 return false;
             }
         });
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(footerAdapter.wrap(fastItemAdapter));
@@ -144,5 +145,10 @@ public class ApodFragment extends Fragment {
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState = fastItemAdapter.saveInstanceState(savedInstanceState);
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        QueryUtils.updateApodData(getActivity(), data);
     }
 }

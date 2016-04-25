@@ -1,6 +1,8 @@
 package com.dsbeckham.nasaimageryfetcher.util;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.util.TypedValue;
 import android.view.View;
 
 import com.dsbeckham.nasaimageryfetcher.BuildConfig;
@@ -13,6 +15,8 @@ import com.dsbeckham.nasaimageryfetcher.fragment.IotdFragment;
 import com.dsbeckham.nasaimageryfetcher.model.ApodMorphIoModel;
 import com.dsbeckham.nasaimageryfetcher.model.ApodNasaModel;
 import com.dsbeckham.nasaimageryfetcher.model.IotdRssModel;
+
+import org.parceler.Parcels;
 
 import java.util.Calendar;
 import java.util.List;
@@ -303,6 +307,35 @@ public class QueryUtils {
         }
     }
 
+    public static void updateApodData(Activity activity, Intent intent) {
+        ApodFragment apodFragment = (ApodFragment) activity.getFragmentManager().findFragmentByTag("apod");
+
+        if (apodFragment == null) {
+            return;
+        }
+
+        // Add a check here that determines which API should be used based
+        // on the user settings. (Also, add the relevant setting.)
+        apodFragment.apodMorphIoModels = Parcels.unwrap(intent.getParcelableExtra(ApodFragment.EXTRA_APOD_MORPH_IO_MODELS));
+        // apodFragment.apodNasaModels = Parcels.unwrap(activity.getIntent().getParcelableExtra(ApodFragment.EXTRA_APOD_NASA_MODELS));
+        apodFragment.calendar = (Calendar) intent.getSerializableExtra(ApodFragment.EXTRA_APOD_CALENDAR);
+
+        apodFragment.fastItemAdapter.clear();
+
+        for (ApodMorphIoModel apodMorphIoModel : apodFragment.apodMorphIoModels) {
+            apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(apodMorphIoModel, QueryUtils.APOD_MODEL_MORPH_IO));
+        }
+
+        // for (ApodNasaModel apodNasaModel : apodFragment.apodNasaModels) {
+        //     apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(apodNasaModel, QueryUtils.APOD_MODEL_NASA));
+        // }
+
+        TypedValue typedValue = new TypedValue();
+        activity.getTheme().resolveAttribute(android.support.v7.appcompat.R.attr.actionBarSize, typedValue, true);
+
+        apodFragment.linearLayoutManager.scrollToPositionWithOffset(intent.getIntExtra(ApodFragment.EXTRA_APOD_POSITION, 0), activity.getResources().getDimensionPixelSize(typedValue.resourceId));
+    }
+
     public static void beginIotdFetch(Activity activity) {
         IotdFragment iotdFragment = (IotdFragment) activity.getFragmentManager().findFragmentByTag("iotd");
 
@@ -370,5 +403,18 @@ public class QueryUtils {
                 iotdFragment.swipeRefreshLayout.setRefreshing(false);
             }
         });
+    }
+
+    public static void updateIotdData(Activity activity, Intent intent) {
+        final IotdFragment iotdFragment = (IotdFragment) activity.getFragmentManager().findFragmentByTag("iotd");
+
+        if (iotdFragment == null) {
+            return;
+        }
+
+        TypedValue typedValue = new TypedValue();
+        activity.getTheme().resolveAttribute(android.support.v7.appcompat.R.attr.actionBarSize, typedValue, true);
+
+        iotdFragment.linearLayoutManager.scrollToPositionWithOffset(intent.getIntExtra(IotdFragment.EXTRA_IOTD_POSITION, 0), activity.getResources().getDimensionPixelSize(typedValue.resourceId));
     }
 }
