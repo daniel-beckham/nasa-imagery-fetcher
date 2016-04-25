@@ -6,7 +6,7 @@
     android:layout_height="240dp">
 
     <ProgressBar
-        android:id="@+id/item_recyclerview_progress_bar"
+        android:id="@+id/item_recyclerview_progressbar"
         style="@style/Widget.AppCompat.ProgressBar"
         android:layout_width="40dp"
         android:layout_height="40dp"

@@ -28,7 +28,7 @@ public class ImageFragment extends Fragment {
     TextView description;
     @Bind(R.id.fragment_image_detail_image)
     ImageView image;
-    @Bind(R.id.fragment_image_detail_progress_bar)
+    @Bind(R.id.fragment_image_detail_progressbar)
     View progressBar;
     @Bind(R.id.fragment_image_detail_title)
     TextView title;

@@ -5,7 +5,7 @@
     android:orientation="vertical">
 
     <FrameLayout
-        android:id="@+id/fragment_apod_progress_bar"
+        android:id="@+id/fragment_apod_progressbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true"
@@ -21,12 +21,12 @@
     </FrameLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/fragment_apod_swipe_refresh_layout"
+        android:id="@+id/fragment_apod_swiperefreshlayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/fragment_apod_recycler_view"
+            android:id="@+id/fragment_apodrecyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

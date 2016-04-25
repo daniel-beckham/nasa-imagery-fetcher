@@ -36,11 +36,11 @@ public class IotdFragment extends Fragment {
     public FooterAdapter<ProgressItem> footerAdapter = new FooterAdapter<>();
     public LinearLayoutManager linearLayoutManager;
 
-    @Bind(R.id.fragment_iotd_progress_bar)
+    @Bind(R.id.fragment_iotd_progressbar)
     public View progressBar;
-    @Bind(R.id.fragment_iotd_recycler_view)
+    @Bind(R.id.fragment_iotd_recyclerview)
     public RecyclerView recyclerView;
-    @Bind(R.id.fragment_iotd_swipe_refresh_layout)
+    @Bind(R.id.fragment_iotd_swiperefreshlayout)
     public SwipeRefreshLayout swipeRefreshLayout;
 
     public List<IotdRssModel.Channel.Item> iotdRssModels = new ArrayList<>();

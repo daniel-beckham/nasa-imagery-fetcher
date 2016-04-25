@@ -40,11 +40,11 @@ public class ApodFragment extends Fragment {
     public FooterAdapter<ProgressItem> footerAdapter = new FooterAdapter<>();
     public LinearLayoutManager linearLayoutManager;
 
-    @Bind(R.id.fragment_apod_progress_bar)
+    @Bind(R.id.fragment_apod_progressbar)
     public View progressBar;
-    @Bind(R.id.fragment_apod_recycler_view)
+    @Bind(R.id.fragment_apodrecyclerview)
     public RecyclerView recyclerView;
-    @Bind(R.id.fragment_apod_swipe_refresh_layout)
+    @Bind(R.id.fragment_apod_swiperefreshlayout)
     public SwipeRefreshLayout swipeRefreshLayout;
 
     public List<ApodMorphIoModel> apodMorphIoModels = new ArrayList<>();

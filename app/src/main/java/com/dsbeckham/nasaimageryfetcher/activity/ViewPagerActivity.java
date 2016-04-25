@@ -20,7 +20,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class ViewPagerActivity extends AppCompatActivity {
-    @Bind(R.id.view_pager)
+    @Bind(R.id.viewpager)
     public ViewPager viewPager;
 
     public ImageFragmentStatePagerAdapter imageFragmentStatePagerAdapter;

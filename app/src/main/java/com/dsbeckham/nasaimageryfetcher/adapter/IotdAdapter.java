@@ -59,7 +59,7 @@ public class IotdAdapter extends AbstractItem<IotdAdapter, IotdAdapter.ViewHolde
     protected static class ViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.item_recyclerview_date) TextView date;
         @Bind(R.id.item_recyclerview_image) ImageView image;
-        @Bind(R.id.item_recyclerview_progress_bar) View progressBar;
+        @Bind(R.id.item_recyclerview_progressbar) View progressBar;
         @Bind(R.id.item_recyclerview_title) TextView title;
 
         public ViewHolder(View view) {

@@ -85,7 +85,7 @@ public class ApodAdapter<T> extends AbstractItem<ApodAdapter<T>, ApodAdapter.Vie
     protected static class ViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.item_recyclerview_date) TextView date;
         @Bind(R.id.item_recyclerview_image) ImageView image;
-        @Bind(R.id.item_recyclerview_progress_bar) View progressBar;
+        @Bind(R.id.item_recyclerview_progressbar) View progressBar;
         @Bind(R.id.item_recyclerview_title) TextView title;
 
         public ViewHolder(View view) {

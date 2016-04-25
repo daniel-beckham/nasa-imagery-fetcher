@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .replace(R.id.content, new IotdFragment(), "iotd")
+                    .replace(R.id.coordinatorlayout, new IotdFragment(), "iotd")
                     .commit();
 
             PreferenceManager.getDefaultSharedPreferences(this).edit().putString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "iotd").apply();
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             .commit();
                 } else {
                     getFragmentManager().beginTransaction()
-                            .add(R.id.content, new IotdFragment(), "iotd")
+                            .add(R.id.coordinatorlayout, new IotdFragment(), "iotd")
                             .commit();
                 }
 
@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             .commit();
                 } else {
                     getFragmentManager().beginTransaction()
-                            .add(R.id.content, new ApodFragment(), "apod")
+                            .add(R.id.coordinatorlayout, new ApodFragment(), "apod")
                             .commit();
                 }
 
