@@ -29,11 +29,11 @@ public class IotdAdapter extends AbstractItem<IotdAdapter, IotdAdapter.ViewHolde
         viewHolder.progressBar.setVisibility(View.VISIBLE);
         viewHolder.date.setText(DateTimeUtils.formatDate(viewHolder.date.getContext(), iotdRssModelItem.getPubDate(), "EEE, dd MMM yyyy HH:mm zzz"));
         viewHolder.title.setText(iotdRssModelItem.getTitle());
-        Picasso.with(viewHolder.image.getContext())
+        Picasso.with(viewHolder.imageView.getContext())
                 .load(iotdRssModelItem.getEnclosure().getUrl().replace("styles/full_width_feature/public/", ""))
                 .fit()
                 .centerCrop()
-                .into(viewHolder.image, new Callback() {
+                .into(viewHolder.imageView, new Callback() {
                     @Override
                     public void onSuccess() {
                         viewHolder.progressBar.setVisibility(View.GONE);
@@ -58,7 +58,7 @@ public class IotdAdapter extends AbstractItem<IotdAdapter, IotdAdapter.ViewHolde
 
     protected static class ViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.item_recyclerview_date_textview) TextView date;
-        @Bind(R.id.item_recyclerview_imageview) ImageView image;
+        @Bind(R.id.item_recyclerview_imageview) ImageView imageView;
         @Bind(R.id.item_recyclerview_progressbar) View progressBar;
         @Bind(R.id.item_recyclerview_title_textview) TextView title;
 

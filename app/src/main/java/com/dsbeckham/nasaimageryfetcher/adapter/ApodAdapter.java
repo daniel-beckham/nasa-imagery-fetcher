@@ -34,11 +34,11 @@ public class ApodAdapter<T> extends AbstractItem<ApodAdapter<T>, ApodAdapter.Vie
             case QueryUtils.APOD_MODEL_MORPH_IO:
                 viewHolder.date.setText(DateTimeUtils.formatDate(viewHolder.date.getContext(), ((ApodMorphIoModel) apodModel).getDate(), "yyyy-MM-dd"));
                 viewHolder.title.setText(((ApodMorphIoModel) apodModel).getTitle());
-                Picasso.with(viewHolder.image.getContext())
+                Picasso.with(viewHolder.imageView.getContext())
                         .load(((ApodMorphIoModel) apodModel).getPictureThumbnailUrl())
                         .fit()
                         .centerCrop()
-                        .into(viewHolder.image, new Callback() {
+                        .into(viewHolder.imageView, new Callback() {
                             @Override
                             public void onSuccess() {
                                 viewHolder.progressBar.setVisibility(View.GONE);
@@ -53,11 +53,11 @@ public class ApodAdapter<T> extends AbstractItem<ApodAdapter<T>, ApodAdapter.Vie
             case QueryUtils.APOD_MODEL_NASA:
                 viewHolder.date.setText(DateTimeUtils.formatDate(viewHolder.date.getContext(), ((ApodNasaModel) apodModel).getDate(), "yyyy-MM-dd"));
                 viewHolder.title.setText(((ApodNasaModel) apodModel).getTitle());
-                Picasso.with(viewHolder.image.getContext())
+                Picasso.with(viewHolder.imageView.getContext())
                         .load(((ApodNasaModel) apodModel).getUrl())
                         .fit()
                         .centerCrop()
-                        .into(viewHolder.image, new Callback() {
+                        .into(viewHolder.imageView, new Callback() {
                             @Override
                             public void onSuccess() {
                                 viewHolder.progressBar.setVisibility(View.GONE);
@@ -84,7 +84,7 @@ public class ApodAdapter<T> extends AbstractItem<ApodAdapter<T>, ApodAdapter.Vie
 
     protected static class ViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.item_recyclerview_date_textview) TextView date;
-        @Bind(R.id.item_recyclerview_imageview) ImageView image;
+        @Bind(R.id.item_recyclerview_imageview) ImageView imageView;
         @Bind(R.id.item_recyclerview_progressbar) View progressBar;
         @Bind(R.id.item_recyclerview_title_textview) TextView title;
 
