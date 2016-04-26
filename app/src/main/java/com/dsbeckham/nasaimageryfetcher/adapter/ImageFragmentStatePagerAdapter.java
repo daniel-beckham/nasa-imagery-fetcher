@@ -51,7 +51,7 @@ public class ImageFragmentStatePagerAdapter extends SmartFragmentStatePagerAdapt
         ((ViewPagerActivity) activity).viewPager.post(new Runnable() {
             @Override
             public void run() {
-                ((ViewPagerActivity) activity).viewPager.setCurrentItem(((ViewPagerActivity) activity).viewPagerCurrentItem);
+                ((ViewPagerActivity) activity).viewPager.setCurrentItem(((ViewPagerActivity) activity).viewPagerCurrentItem, false);
             }
         });
     }
