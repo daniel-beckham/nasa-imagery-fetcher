@@ -24,6 +24,8 @@ import butterknife.ButterKnife;
 public class ImageFragment extends Fragment {
     @Bind(R.id.fragment_image_credit_textview)
     TextView credit;
+    @Bind(R.id.fragment_image_date_textview)
+    TextView date;
     @Bind(R.id.fragment_image_description_textview)
     TextView description;
     @Bind(R.id.fragment_image_imageview)
@@ -58,7 +60,8 @@ public class ImageFragment extends Fragment {
         switch (((ViewPagerActivity) getActivity()).currentFragment) {
             case "iotd":
                 IotdRssModel.Channel.Item iotdRssModelItem = ((ViewPagerActivity) getActivity()).imageFragmentStatePagerAdapter.iotdRssModels.get(position);
-                description.setText(Html.fromHtml(getActivity().getString(R.string.image_fragment_description, DateTimeUtils.formatDate(getActivity(), iotdRssModelItem.getPubDate(), "EEE, dd MMM yyyy HH:mm zzz"), iotdRssModelItem.getDescription())));
+                date.setText(String.format("%1$s%2$s", DateTimeUtils.formatDate(getActivity(), iotdRssModelItem.getPubDate(), "EEE, dd MMM yyyy HH:mm zzz"), System.getProperty ("line.separator")));
+                description.setText(String.format("%1$s%2$s", iotdRssModelItem.getDescription(), System.getProperty ("line.separator")));
                 title.setText(iotdRssModelItem.getTitle());
                 Picasso.with(getContext())
                         .load(iotdRssModelItem.getEnclosure().getUrl().replace("styles/full_width_feature/public/", ""))
@@ -80,9 +83,10 @@ public class ImageFragment extends Fragment {
                 // Add a check here that determines which API should be used based
                 // on the user settings. (Also, add the relevant setting.)
                 ApodMorphIoModel apodMorphIoModel = ((ViewPagerActivity) getActivity()).imageFragmentStatePagerAdapter.apodMorphIoModels.get(position);
-                credit.setText(Html.fromHtml(getActivity().getString(R.string.image_fragment_credit, apodMorphIoModel.getCredit())));
+                credit.setText(Html.fromHtml(apodMorphIoModel.getCredit()));
                 credit.setMovementMethod(LinkMovementMethod.getInstance());
-                description.setText(Html.fromHtml(getActivity().getString(R.string.image_fragment_description, DateTimeUtils.formatDate(getActivity(), apodMorphIoModel.getDate(), "yyyy-MM-dd"), apodMorphIoModel.getExplanation())));
+                date.setText(String.format("%1$s%2$s", DateTimeUtils.formatDate(getActivity(), apodMorphIoModel.getDate(), "yyyy-MM-dd"), System.getProperty ("line.separator")));
+                description.setText(Html.fromHtml(String.format("%1$s%2$s", apodMorphIoModel.getExplanation(), "<br>")));
                 description.setMovementMethod(LinkMovementMethod.getInstance());
                 title.setText(apodMorphIoModel.getTitle());
                 Picasso.with(getContext())
