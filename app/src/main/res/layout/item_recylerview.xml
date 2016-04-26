@@ -14,7 +14,7 @@
         android:adjustViewBounds="true" />
 
     <ImageView
-        android:id="@+id/item_recyclerview_image"
+        android:id="@+id/item_recyclerview_imageview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
@@ -29,7 +29,7 @@
         android:padding="20dp">
 
         <TextView
-            android:id="@+id/item_recyclerview_title"
+            android:id="@+id/item_recyclerview_title_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -42,10 +42,10 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/item_recyclerview_date"
+            android:id="@+id/item_recyclerview_date_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/item_recyclerview_title"
+            android:layout_below="@+id/item_recyclerview_title_textview"
             android:ellipsize="end"
             android:shadowColor="#aa000000"
             android:shadowDx="1"

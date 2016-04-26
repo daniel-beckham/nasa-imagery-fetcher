@@ -22,15 +22,15 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class ImageFragment extends Fragment {
-    @Bind(R.id.fragment_image_detail_credit)
+    @Bind(R.id.fragment_image_credit_textview)
     TextView credit;
-    @Bind(R.id.fragment_image_detail_description)
+    @Bind(R.id.fragment_image_description_textview)
     TextView description;
-    @Bind(R.id.fragment_image_detail_image)
+    @Bind(R.id.fragment_image_imageview)
     ImageView image;
     @Bind(R.id.fragment_image_detail_progressbar)
     View progressBar;
-    @Bind(R.id.fragment_image_detail_title)
+    @Bind(R.id.fragment_image_title_textview)
     TextView title;
 
     private int page;

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_image"
@@ -25,7 +24,7 @@
                 android:adjustViewBounds="true" />
 
             <ImageView
-                android:id="@+id/fragment_image_detail_image"
+                android:id="@+id/fragment_image_imageview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
@@ -39,7 +38,7 @@
             android:padding="10dp">
 
             <TextView
-                android:id="@+id/fragment_image_detail_title"
+                android:id="@+id/fragment_image_title_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
@@ -47,19 +46,19 @@
                 android:textSize="22sp" />
 
             <TextView
-                android:id="@+id/fragment_image_detail_credit"
+                android:id="@+id/fragment_image_credit_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/fragment_image_detail_title"
+                android:layout_below="@+id/fragment_image_title_textview"
                 android:fontFamily="sans-serif-medium"
                 android:textColor="#ffffff"
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/fragment_image_detail_description"
+                android:id="@+id/fragment_image_description_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/fragment_image_detail_credit"
+                android:layout_below="@+id/fragment_image_credit_textview"
                 android:fontFamily="sans-serif-light"
                 android:textColor="#ffffff"
                 android:textSize="14sp" />
