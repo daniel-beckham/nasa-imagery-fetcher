@@ -27,20 +27,18 @@ public class ImageFragment extends Fragment {
     @Bind(R.id.fragment_image_description_textview)
     TextView description;
     @Bind(R.id.fragment_image_imageview)
-    ImageView image;
+    ImageView imageView;
     @Bind(R.id.fragment_image_detail_progressbar)
     View progressBar;
     @Bind(R.id.fragment_image_title_textview)
     TextView title;
 
-    private int page;
-    private String type;
+    private int position;
 
-    public static ImageFragment newInstance(int page, String type) {
+    public static ImageFragment newInstance(int page) {
         ImageFragment imageFragment = new ImageFragment();
         Bundle bundle = new Bundle();
-        bundle.putInt("page", page);
-        bundle.putString("type", type);
+        bundle.putInt("position", page);
         imageFragment.setArguments(bundle);
         return imageFragment;
     }
@@ -49,9 +47,7 @@ public class ImageFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-
-        page = getArguments().getInt("page", 0);
-        type = getArguments().getString("type", "iotd");
+        position = getArguments().getInt("position", 0);
     }
 
     @Override
@@ -59,16 +55,16 @@ public class ImageFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_image, container, false);
         ButterKnife.bind(this, view);
 
-        switch (type) {
+        switch (((ViewPagerActivity) getActivity()).currentFragment) {
             case "iotd":
-                IotdRssModel.Channel.Item iotdRssModelItem = ((ViewPagerActivity) getActivity()).imageFragmentStatePagerAdapter.iotdRssModels.get(page);
+                IotdRssModel.Channel.Item iotdRssModelItem = ((ViewPagerActivity) getActivity()).imageFragmentStatePagerAdapter.iotdRssModels.get(position);
                 description.setText(Html.fromHtml(getActivity().getString(R.string.image_fragment_description, DateTimeUtils.formatDate(getActivity(), iotdRssModelItem.getPubDate(), "EEE, dd MMM yyyy HH:mm zzz"), iotdRssModelItem.getDescription())));
                 title.setText(iotdRssModelItem.getTitle());
-                Picasso.with(image.getContext())
+                Picasso.with(getContext())
                         .load(iotdRssModelItem.getEnclosure().getUrl().replace("styles/full_width_feature/public/", ""))
                         .fit()
                         .centerCrop()
-                        .into(image, new Callback() {
+                        .into(imageView, new Callback() {
                             @Override
                             public void onSuccess() {
                                 progressBar.setVisibility(View.GONE);
@@ -83,17 +79,17 @@ public class ImageFragment extends Fragment {
             case "apod":
                 // Add a check here that determines which API should be used based
                 // on the user settings. (Also, add the relevant setting.)
-                ApodMorphIoModel apodMorphIoModel = ((ViewPagerActivity) getActivity()).imageFragmentStatePagerAdapter.apodMorphIoModels.get(page);
+                ApodMorphIoModel apodMorphIoModel = ((ViewPagerActivity) getActivity()).imageFragmentStatePagerAdapter.apodMorphIoModels.get(position);
                 credit.setText(Html.fromHtml(getActivity().getString(R.string.image_fragment_credit, apodMorphIoModel.getCredit())));
                 credit.setMovementMethod(LinkMovementMethod.getInstance());
                 description.setText(Html.fromHtml(getActivity().getString(R.string.image_fragment_description, DateTimeUtils.formatDate(getActivity(), apodMorphIoModel.getDate(), "yyyy-MM-dd"), apodMorphIoModel.getExplanation())));
                 description.setMovementMethod(LinkMovementMethod.getInstance());
                 title.setText(apodMorphIoModel.getTitle());
-                Picasso.with(image.getContext())
+                Picasso.with(getContext())
                         .load(apodMorphIoModel.getPictureThumbnailUrl())
                         .fit()
                         .centerCrop()
-                        .into(image, new Callback() {
+                        .into(imageView, new Callback() {
                             @Override
                             public void onSuccess() {
                                 progressBar.setVisibility(View.GONE);
@@ -105,7 +101,7 @@ public class ImageFragment extends Fragment {
                             }
                         });
                 /*
-                ApodNasaModel apodNasaModel = ((ViewPagerActivity) getActivity()).imageFragmentStatePagerAdapter.apodNasaModels.get(page);
+                ApodNasaModel apodNasaModel = ((ViewPagerActivity) getActivity()).imageFragmentStatePagerAdapter.apodNasaModels.get(position);
                 description.setText(apodNasaModel.getExplanation());
                 subtitle.setText(Html.fromHtml(String.format("%1$s<br>%2$s<br>", apodNasaModel.getDate(), apodNasaModel.getCopyright())));
                 title.setText(apodNasaModel.getTitle());

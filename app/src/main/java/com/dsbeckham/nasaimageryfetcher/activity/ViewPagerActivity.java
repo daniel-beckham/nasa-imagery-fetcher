@@ -22,6 +22,7 @@ public class ViewPagerActivity extends AppCompatActivity {
     @Bind(R.id.viewpager)
     public ViewPager viewPager;
 
+    public String currentFragment;
     public ImageFragmentStatePagerAdapter imageFragmentStatePagerAdapter;
     public int viewPagerCurrentItem;
 
@@ -33,8 +34,10 @@ public class ViewPagerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_viewpager);
         ButterKnife.bind(this);
 
+        currentFragment = PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "iotd");
+
         if (savedInstanceState == null) {
-            switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "iotd")) {
+            switch (currentFragment) {
                 case "iotd":
                     viewPagerCurrentItem = getIntent().getIntExtra(IotdFragment.EXTRA_IOTD_POSITION, 0);
                     break;
@@ -61,19 +64,6 @@ public class ViewPagerActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "iotd")) {
-            case "iotd":
-                setTitle(getString(R.string.nav_iotd));
-                break;
-            case "apod":
-                setTitle(getString(R.string.nav_apod));
-                break;
-        }
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putInt(VIEW_PAGER_CURRENT_ITEM, viewPager.getCurrentItem());
         super.onSaveInstanceState(savedInstanceState);
@@ -83,7 +73,7 @@ public class ViewPagerActivity extends AppCompatActivity {
     public void finish() {
         Intent intent = new Intent();
 
-        switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "iotd")) {
+        switch (currentFragment) {
             case "iotd":
                 intent.putExtra(IotdFragment.EXTRA_IOTD_POSITION, viewPager.getCurrentItem());
                 break;

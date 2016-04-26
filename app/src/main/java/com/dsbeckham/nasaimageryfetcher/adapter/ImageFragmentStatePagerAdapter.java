@@ -1,7 +1,6 @@
 package com.dsbeckham.nasaimageryfetcher.adapter;
 
 import android.app.Activity;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
@@ -12,7 +11,6 @@ import com.dsbeckham.nasaimageryfetcher.fragment.IotdFragment;
 import com.dsbeckham.nasaimageryfetcher.model.ApodMorphIoModel;
 import com.dsbeckham.nasaimageryfetcher.model.ApodNasaModel;
 import com.dsbeckham.nasaimageryfetcher.model.IotdRssModel;
-import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
 import com.dsbeckham.nasaimageryfetcher.util.QueryUtils;
 
 import org.parceler.Parcels;
@@ -23,7 +21,6 @@ import java.util.List;
 
 public class ImageFragmentStatePagerAdapter extends SmartFragmentStatePagerAdapter {
     private Activity activity;
-    private String type;
 
     public List<ApodMorphIoModel> apodMorphIoModels = new ArrayList<>();
     public List<ApodNasaModel> apodNasaModels = new ArrayList<>();
@@ -37,9 +34,8 @@ public class ImageFragmentStatePagerAdapter extends SmartFragmentStatePagerAdapt
         super(fragmentManager);
 
         this.activity = activity;
-        type = PreferenceManager.getDefaultSharedPreferences(activity).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "iotd");
 
-        switch (type) {
+        switch (((ViewPagerActivity) activity).currentFragment) {
             case "iotd":
                 iotdRssModels = Parcels.unwrap(activity.getIntent().getParcelableExtra(IotdFragment.EXTRA_IOTD_RSS_MODELS));
                 break;
@@ -62,7 +58,7 @@ public class ImageFragmentStatePagerAdapter extends SmartFragmentStatePagerAdapt
 
     @Override
     public int getCount() {
-        switch (type) {
+        switch (((ViewPagerActivity) activity).currentFragment) {
             case "iotd":
                 return iotdRssModels.size();
             case "apod":
@@ -76,11 +72,11 @@ public class ImageFragmentStatePagerAdapter extends SmartFragmentStatePagerAdapt
 
     @Override
     public Fragment getItem(int position) {
-        if (type.equals("apod")) {
+        if (((ViewPagerActivity) activity).currentFragment.equals("apod")) {
             if (position == apodMorphIoModels.size() - 1) {
                 QueryUtils.beginApodQuery(activity, QueryUtils.QUERY_MODE_VIEWPAGER);
             }
         }
-        return ImageFragment.newInstance(position, type);
+        return ImageFragment.newInstance(position);
     }
 }
