@@ -63,6 +63,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
+            case "iotd":
+                setTitle(getString(R.string.nav_iotd));
+                break;
+            case "apod":
+                setTitle(getString(R.string.nav_apod));
+                break;
+        }
+    }
+
+    @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.nav_iotd:
@@ -115,18 +128,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
-            case "iotd":
-                setTitle(getString(R.string.nav_iotd));
-                break;
-            case "apod":
-                setTitle(getString(R.string.nav_apod));
-                break;
-        }
     }
 }
