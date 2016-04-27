@@ -3,6 +3,7 @@ package com.dsbeckham.nasaimageryfetcher.fragment;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,7 +17,8 @@ import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.activity.ViewPagerActivity;
 import com.dsbeckham.nasaimageryfetcher.adapter.ApodAdapter;
 import com.dsbeckham.nasaimageryfetcher.model.ApodMorphIoModel;
-import com.dsbeckham.nasaimageryfetcher.model.ApodNasaModel;
+import com.dsbeckham.nasaimageryfetcher.model.ApodNasaGovModel;
+import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
 import com.dsbeckham.nasaimageryfetcher.util.QueryUtils;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
@@ -48,14 +50,14 @@ public class ApodFragment extends Fragment {
     public SwipeRefreshLayout swipeRefreshLayout;
 
     public List<ApodMorphIoModel> apodMorphIoModels = new ArrayList<>();
-    public List<ApodNasaModel> apodNasaModels = new ArrayList<>();
+    public List<ApodNasaGovModel> apodNasaGovModels = new ArrayList<>();
 
     public Calendar calendar = Calendar.getInstance();
     public boolean loadingData = false;
-    public int nasaApiQueryCount = QueryUtils.APOD_NASA_API_QUERIES;
+    public int nasaGovApiQueryCount = QueryUtils.APOD_NASA_GOV_API_QUERIES;
 
     public static String EXTRA_APOD_MORPH_IO_MODELS = "com.dsbeckham.nasaimageryfetcher.extra.APOD_MORPH_IO_MODELS";
-    public static String EXTRA_APOD_NASA_MODELS = "com.dsbeckham.nasaimageryfetcher.extra.APOD_NASA_MODELS";
+    public static String EXTRA_APOD_NASA_GOV_MODELS = "com.dsbeckham.nasaimageryfetcher.extra.APOD_NASA_GOV_MODELS";
     public static String EXTRA_APOD_CALENDAR = "com.dsbeckham.nasaimageryfetcher.extra.APOD_CALENDAR";
     public static String EXTRA_APOD_POSITION = "com.dsbeckham.nasaimageryfetcher.extra.APOD_POSITION";
 
@@ -75,10 +77,16 @@ public class ApodFragment extends Fragment {
             @Override
             public boolean onClick(View view, IAdapter<ApodAdapter> iAdapter, ApodAdapter apodAdapter, int position) {
                 Intent intent = new Intent(getActivity(), ViewPagerActivity.class);
-                // Add a check here that determines which API should be used based
-                // on the user settings. (Also, add the relevant setting.)
-                intent.putExtra(EXTRA_APOD_MORPH_IO_MODELS, Parcels.wrap(apodMorphIoModels));
-                // intent.putExtra(EXTRA_APOD_NASA_MODELS, Parcels.wrap(apodNasaModels));
+
+                switch (PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(PreferenceUtils.PREF_APOD_FETCH_SERVICE, "")) {
+                    case "morph_io":
+                        intent.putExtra(EXTRA_APOD_MORPH_IO_MODELS, Parcels.wrap(apodMorphIoModels));
+                        break;
+                    case "nasa_gov":
+                        intent.putExtra(EXTRA_APOD_NASA_GOV_MODELS, Parcels.wrap(apodNasaGovModels));
+                        break;
+                }
+
                 intent.putExtra(EXTRA_APOD_CALENDAR, calendar);
                 intent.putExtra(EXTRA_APOD_POSITION, position);
                 startActivityForResult(intent, 0);
@@ -107,8 +115,6 @@ public class ApodFragment extends Fragment {
                 R.color.colorAccent,
                 R.color.colorAccent);
 
-        // This is a workaround for a bug that causes the progress bar to be hidden underneath the
-        // action bar.
         TypedValue typedValue = new TypedValue();
         getActivity().getTheme().resolveAttribute(android.support.v7.appcompat.R.attr.actionBarSize, typedValue, true);
         swipeRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(typedValue.resourceId)

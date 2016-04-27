@@ -6,7 +6,7 @@ import org.parceler.Parcel;
 import org.parceler.Parcel.Serialization;
 
 @Parcel(Serialization.BEAN)
-public class ApodNasaModel {
+public class ApodNasaGovModel {
     private String copyright;
     private String date;
     private String explanation;
@@ -85,6 +85,6 @@ public class ApodNasaModel {
 
     @Override
     public boolean equals(Object object) {
-        return this == object || ((!(object == null || getClass() != object.getClass()) && date.equals(((ApodNasaModel) object).date)));
+        return this == object || ((!(object == null || getClass() != object.getClass()) && date.equals(((ApodNasaGovModel) object).date)));
     }
 }

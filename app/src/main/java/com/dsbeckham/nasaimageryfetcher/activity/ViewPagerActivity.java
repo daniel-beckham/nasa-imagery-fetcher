@@ -30,6 +30,7 @@ public class ViewPagerActivity extends AppCompatActivity {
     @Bind(R.id.viewpager)
     public ViewPager viewPager;
 
+    public String apodFetchService;
     public String currentFragment;
     public ImageFragmentStatePagerAdapter imageFragmentStatePagerAdapter;
     public int viewPagerCurrentItem;
@@ -59,7 +60,8 @@ public class ViewPagerActivity extends AppCompatActivity {
             }
         }
 
-        currentFragment = PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "iotd");
+        apodFetchService = PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_APOD_FETCH_SERVICE, "");
+        currentFragment = PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "");
 
         if (savedInstanceState == null) {
             switch (currentFragment) {
@@ -94,7 +96,7 @@ public class ViewPagerActivity extends AppCompatActivity {
         super.onSaveInstanceState(savedInstanceState);
     }
 
-        @Override
+    @Override
     public void finish() {
         Intent intent = new Intent();
 
@@ -103,10 +105,15 @@ public class ViewPagerActivity extends AppCompatActivity {
                 intent.putExtra(IotdFragment.EXTRA_IOTD_POSITION, viewPager.getCurrentItem());
                 break;
             case "apod":
-                // Add a check here that determines which API should be used based
-                // on the user settings. (Also, add the relevant setting.)
-                intent.putExtra(ApodFragment.EXTRA_APOD_MORPH_IO_MODELS, Parcels.wrap(imageFragmentStatePagerAdapter.apodMorphIoModels));
-                // intent.putExtra(ApodFragment.EXTRA_APOD_NASA_MODELS, Parcels.wrap(imageFragmentStatePagerAdapter.apodNasaModels));
+                switch (apodFetchService) {
+                    case "morph_io":
+                        intent.putExtra(ApodFragment.EXTRA_APOD_MORPH_IO_MODELS, Parcels.wrap(imageFragmentStatePagerAdapter.apodMorphIoModels));
+                        break;
+                    case "nasa_gov":
+                        intent.putExtra(ApodFragment.EXTRA_APOD_NASA_GOV_MODELS, Parcels.wrap(imageFragmentStatePagerAdapter.apodNasaGovModels));
+                        break;
+                }
+
                 intent.putExtra(ApodFragment.EXTRA_APOD_CALENDAR, imageFragmentStatePagerAdapter.calendar);
                 intent.putExtra(ApodFragment.EXTRA_APOD_POSITION, viewPager.getCurrentItem());
                 break;

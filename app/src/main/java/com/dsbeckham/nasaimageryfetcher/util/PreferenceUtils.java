@@ -1,6 +1,7 @@
 package com.dsbeckham.nasaimageryfetcher.util;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
 
@@ -13,25 +14,18 @@ import java.util.Map;
 
 public class PreferenceUtils {
     public static final String PREF_FETCH_MODE = "pref_fetch_mode";
-    public static final String PREF_FETCH_CATEGORIES = "pref_fetch_categories";
     public static final String PREF_AUTOMATIC_UPDATES = "pref_automatic_updates";
     public static final String PREF_WIFI_UPDATES_ONLY = "pref_wifi_updates_only";
+    public static final String PREF_FETCH_CATEGORIES = "pref_fetch_categories";
+    public static final String PREF_NOTIFICATIONS = "pref_notifications";
     public static final String PREF_UPDATE_TIME = "pref_update_time";
     public static final String PREF_RANDOM_IMAGES_UPDATE_FREQUENCY = "pref_update_frequency";
     public static final String PREF_DISPLAY_CATEGORIES = "pref_display_categories";
     public static final String PREF_CATEGORY_CYCLE_INTERVAL = "pref_category_cycle_interval";
-    public static final String PREF_CACHED_IMAGES_ONLY = "pref_cached_images_only";
-    public static final String PREF_CACHED_IMAGES_CYCLE_INTERVAL = "pref_cached_images_cycle_interval";
-    public static final String PREF_SEND_NOTIFICATIONS = "pref_send_notifications";
-
+    public static final String PREF_DOWNLOADED_IMAGES_ONLY = "pref_downloaded_images_only";
+    public static final String PREF_DOWNLOADED_IMAGES_CYCLE_INTERVAL = "pref_downloaded_images_cycle_interval";
+    public static final String PREF_APOD_FETCH_SERVICE = "pref_apod_fetch_service";
     public static final String PREF_CURRENT_FRAGMENT = "pref_current_fragment";
-
-    public static final int PREF_FETCH_MODE_DAILY_IMAGES = 0;
-    public static final int PREF_FETCH_MODE_RANDOM_IMAGES = 1;
-
-    public static final int PREF_CATEGORIES_IOTD_APOD = 0;
-    public static final int PREF_CATEGORIES_IOTD = 1;
-    public static final int PREF_CATEGORIES_APOD = 2;
 
     public static void setDefaultValuesForPreferences(Activity activity) {
         String time = PreferenceManager.getDefaultSharedPreferences(activity).getString(PREF_UPDATE_TIME, "");
@@ -75,11 +69,11 @@ public class PreferenceUtils {
 
         Map<String, ?> preferenceMap = PreferenceManager.getDefaultSharedPreferences(activity).getAll();
         for (Map.Entry<String, ?> entry: preferenceMap.entrySet()) {
-            togglePreferencesBasedOnCurrentKeyValue(activity, entry.getKey());
+            togglePreferencesBasedOnCurrentKeyValue(activity, PreferenceManager.getDefaultSharedPreferences(activity), entry.getKey());
         }
     }
 
-    public static void togglePreferencesBasedOnCurrentKeyValue(Activity activity, String key) {
+    public static void togglePreferencesBasedOnCurrentKeyValue(Activity activity, SharedPreferences sharedPreferences, String key) {
         final SettingsFragment settingsFragment = (SettingsFragment) activity.getFragmentManager().findFragmentByTag("settings");
 
         if (settingsFragment == null) {
@@ -88,40 +82,40 @@ public class PreferenceUtils {
 
         switch (key) {
             case PREF_FETCH_MODE:
-                switch (Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(activity).getString(PREF_FETCH_MODE, ""))) {
-                    case PREF_FETCH_MODE_DAILY_IMAGES:
+                switch (sharedPreferences.getString(key, "")) {
+                    case "daily_images":
                         settingsFragment.findPreference(PREF_UPDATE_TIME).setEnabled(true);
                         settingsFragment.findPreference(PREF_RANDOM_IMAGES_UPDATE_FREQUENCY).setEnabled(false);
                         break;
-                    case PREF_FETCH_MODE_RANDOM_IMAGES:
+                    case "random_images":
                         settingsFragment.findPreference(PREF_UPDATE_TIME).setEnabled(false);
                         settingsFragment.findPreference(PREF_RANDOM_IMAGES_UPDATE_FREQUENCY).setEnabled(true);
                         break;
                 }
                 break;
             case PREF_AUTOMATIC_UPDATES:
-                if (PreferenceManager.getDefaultSharedPreferences(activity).getBoolean(PREF_AUTOMATIC_UPDATES, false)) {
+                if (sharedPreferences.getBoolean(key, false)) {
                     settingsFragment.findPreference(PREF_WIFI_UPDATES_ONLY).setEnabled(true);
                 } else {
                     settingsFragment.findPreference(PREF_WIFI_UPDATES_ONLY).setEnabled(false);
                 }
                 break;
             case PREF_DISPLAY_CATEGORIES:
-                switch (Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(activity).getString(PREF_DISPLAY_CATEGORIES, ""))) {
-                    case PREF_CATEGORIES_APOD:
-                    case PREF_CATEGORIES_IOTD:
+                switch (sharedPreferences.getString(key, "")) {
+                    case "iotd":
+                    case "apod":
                         settingsFragment.findPreference(PREF_CATEGORY_CYCLE_INTERVAL).setEnabled(false);
                         break;
-                    case PREF_CATEGORIES_IOTD_APOD:
+                    case "iotd_apod":
                         settingsFragment.findPreference(PREF_CATEGORY_CYCLE_INTERVAL).setEnabled(true);
                         break;
                 }
                 break;
-            case PREF_CACHED_IMAGES_ONLY:
-                if (PreferenceManager.getDefaultSharedPreferences(activity).getBoolean(PREF_CACHED_IMAGES_ONLY, false)) {
-                    settingsFragment.findPreference(PREF_CACHED_IMAGES_CYCLE_INTERVAL).setEnabled(true);
+            case PREF_DOWNLOADED_IMAGES_ONLY:
+                if (sharedPreferences.getBoolean(key, false)) {
+                    settingsFragment.findPreference(PREF_DOWNLOADED_IMAGES_CYCLE_INTERVAL).setEnabled(true);
                 } else {
-                    settingsFragment.findPreference(PREF_CACHED_IMAGES_CYCLE_INTERVAL).setEnabled(false);
+                    settingsFragment.findPreference(PREF_DOWNLOADED_IMAGES_CYCLE_INTERVAL).setEnabled(false);
                 }
                 break;
         }

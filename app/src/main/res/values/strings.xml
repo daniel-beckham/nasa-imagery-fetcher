@@ -17,6 +17,8 @@
     <string name="pref_wifi_updates_only_title">Wi-Fi updates only</string>
     <string name="pref_wifi_updates_only_summary">Only download images when connected to Wi-Fi</string>
     <string name="pref_fetch_categories_title">Fetch categories</string>
+    <string name="pref_notifications_title">Notifications</string>
+    <string name="pref_notifications_summary">Notify whenever a new image has been fetched</string>
 
     <string name="pref_daily_images_category">Daily images</string>
     <string name="pref_update_time_title">Update time</string>
@@ -27,12 +29,11 @@
     <string name="pref_live_wallpaper_category">Live wallpaper</string>
     <string name="pref_display_categories_title">Display categories</string>
     <string name="pref_category_cycle_interval_title">Category cycle interval</string>
-    <string name="pref_cached_images_only_title">Cached images only</string>
-    <string name="pref_cached_images_only_summary">Only display images that have been downloaded (useful if automatic updates are disabled)</string>
-    <string name="pref_cached_images_cycle_interval_title">Cached images cycle interval</string>
+    <string name="pref_downloaded_images_only_title">Downloaded images only</string>
+    <string name="pref_downloaded_images_only_summary">Only display images that have been downloaded (useful if automatic updates are disabled)</string>
+    <string name="pref_downloaded_images_cycle_interval_title">Downloaded images cycle interval</string>
 
-    <string name="pref_notifications_category">Notifications</string>
-    <string name="pref_send_notifications_title">Send notifications</string>
-    <string name="pref_send_notifications_summary">Notify whenever a new image has been fetched</string>
+    <string name="pref_advanced_category">Advanced</string>
+    <string name="pref_apod_fetch_service_title">APOD fetch service</string>
 
 </resources>

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.activity.ViewPagerActivity;
 import com.dsbeckham.nasaimageryfetcher.model.ApodMorphIoModel;
+import com.dsbeckham.nasaimageryfetcher.model.ApodNasaGovModel;
 import com.dsbeckham.nasaimageryfetcher.model.IotdRssModel;
 import com.dsbeckham.nasaimageryfetcher.util.DateTimeUtils;
 import com.squareup.picasso.Callback;
@@ -80,51 +81,54 @@ public class ImageFragment extends Fragment {
                         });
                 break;
             case "apod":
-                // Add a check here that determines which API should be used based
-                // on the user settings. (Also, add the relevant setting.)
-                ApodMorphIoModel apodMorphIoModel = ((ViewPagerActivity) getActivity()).imageFragmentStatePagerAdapter.apodMorphIoModels.get(position);
-                credit.setText(Html.fromHtml(apodMorphIoModel.getCredit()));
-                credit.setMovementMethod(LinkMovementMethod.getInstance());
-                date.setText(String.format("%1$s%2$s", DateTimeUtils.formatDate(getActivity(), apodMorphIoModel.getDate(), "yyyy-MM-dd"), System.getProperty ("line.separator")));
-                description.setText(Html.fromHtml(String.format("%1$s%2$s", apodMorphIoModel.getExplanation(), "<br>")));
-                description.setMovementMethod(LinkMovementMethod.getInstance());
-                title.setText(apodMorphIoModel.getTitle());
-                Picasso.with(getContext())
-                        .load(apodMorphIoModel.getPictureThumbnailUrl())
-                        .fit()
-                        .centerCrop()
-                        .into(imageView, new Callback() {
-                            @Override
-                            public void onSuccess() {
-                                progressBar.setVisibility(View.GONE);
-                            }
+                switch (((ViewPagerActivity) getActivity()).apodFetchService) {
+                    case "morph_io":
+                        ApodMorphIoModel apodMorphIoModel = ((ViewPagerActivity) getActivity()).imageFragmentStatePagerAdapter.apodMorphIoModels.get(position);
+                        credit.setText(Html.fromHtml(apodMorphIoModel.getCredit()));
+                        credit.setMovementMethod(LinkMovementMethod.getInstance());
+                        date.setText(String.format("%1$s%2$s", DateTimeUtils.formatDate(getActivity(), apodMorphIoModel.getDate(), "yyyy-MM-dd"), System.getProperty ("line.separator")));
+                        description.setText(Html.fromHtml(String.format("%1$s%2$s", apodMorphIoModel.getExplanation(), "<br>")));
+                        description.setMovementMethod(LinkMovementMethod.getInstance());
+                        title.setText(apodMorphIoModel.getTitle());
+                        Picasso.with(getContext())
+                                .load(apodMorphIoModel.getPictureThumbnailUrl())
+                                .fit()
+                                .centerCrop()
+                                .into(imageView, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        progressBar.setVisibility(View.GONE);
+                                    }
 
-                            @Override
-                            public void onError() {
-                                progressBar.setVisibility(View.GONE);
-                            }
-                        });
-                /*
-                ApodNasaModel apodNasaModel = ((ViewPagerActivity) getActivity()).imageFragmentStatePagerAdapter.apodNasaModels.get(position);
-                description.setText(apodNasaModel.getExplanation());
-                subtitle.setText(Html.fromHtml(String.format("%1$s<br>%2$s<br>", apodNasaModel.getDate(), apodNasaModel.getCopyright())));
-                title.setText(apodNasaModel.getTitle());
-                Picasso.with(image.getContext())
-                        .load(apodNasaModel.getUrl())
-                        .fit()
-                        .centerInside()
-                        .into(image, new Callback() {
-                            @Override
-                            public void onSuccess() {
-                                progressBar.setVisibility(View.GONE);
-                            }
+                                    @Override
+                                    public void onError() {
+                                        progressBar.setVisibility(View.GONE);
+                                    }
+                                });
+                        break;
+                    case "nasa_gov":
+                        ApodNasaGovModel apodNasaGovModel = ((ViewPagerActivity) getActivity()).imageFragmentStatePagerAdapter.apodNasaGovModels.get(position);
+                        credit.setText(apodNasaGovModel.getCopyright());
+                        date.setText(String.format("%1$s%2$s", DateTimeUtils.formatDate(getActivity(), apodNasaGovModel.getDate(), "yyyy-MM-dd"), System.getProperty ("line.separator")));
+                        description.setText(String.format("%1$s%2$s", apodNasaGovModel.getExplanation(), System.getProperty ("line.separator")));
+                        title.setText(apodNasaGovModel.getTitle());
+                        Picasso.with(imageView.getContext())
+                                .load(apodNasaGovModel.getUrl())
+                                .fit()
+                                .centerCrop()
+                                .into(imageView, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        progressBar.setVisibility(View.GONE);
+                                    }
 
-                            @Override
-                            public void onError() {
-                                progressBar.setVisibility(View.GONE);
-                            }
-                        });
-                */
+                                    @Override
+                                    public void onError() {
+                                        progressBar.setVisibility(View.GONE);
+                                    }
+                                });
+                        break;
+                }
                 break;
         }
 

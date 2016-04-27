@@ -2,6 +2,7 @@ package com.dsbeckham.nasaimageryfetcher.util;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.preference.PreferenceManager;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -13,7 +14,7 @@ import com.dsbeckham.nasaimageryfetcher.adapter.IotdAdapter;
 import com.dsbeckham.nasaimageryfetcher.fragment.ApodFragment;
 import com.dsbeckham.nasaimageryfetcher.fragment.IotdFragment;
 import com.dsbeckham.nasaimageryfetcher.model.ApodMorphIoModel;
-import com.dsbeckham.nasaimageryfetcher.model.ApodNasaModel;
+import com.dsbeckham.nasaimageryfetcher.model.ApodNasaGovModel;
 import com.dsbeckham.nasaimageryfetcher.model.IotdRssModel;
 
 import org.parceler.Parcels;
@@ -32,9 +33,9 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public class QueryUtils {
-    public static final String APOD_NASA_BASE_URL = "https://api.nasa.gov/";
-    public static final String APOD_NASA_API_KEY = BuildConfig.APOD_NASA_API_KEY;
-    public static final int APOD_NASA_API_QUERIES = 5;
+    public static final String APOD_NASA_GOV_BASE_URL = "https://api.nasa.gov/";
+    public static final String APOD_NASA_GOV_API_KEY = BuildConfig.APOD_NASA_GOV_API_KEY;
+    public static final int APOD_NASA_GOV_API_QUERIES = 5;
 
     public static final String APOD_MORPH_IO_BASE_URL = "https://api.morph.io/";
     public static final String APOD_MORPH_IO_API_KEY = BuildConfig.APOD_MORPH_IO_API_KEY;
@@ -42,7 +43,7 @@ public class QueryUtils {
     public static final String IOTD_RSS_BASE_URL = "https://www.nasa.gov/";
 
     public static final int APOD_MODEL_MORPH_IO = 0;
-    public static final int APOD_MODEL_NASA = 1;
+    public static final int APOD_MODEL_NASA_GOV = 1;
 
     public static final int QUERY_MODE_RECYCLERVIEW = 0;
     public static final int QUERY_MODE_VIEWPAGER = 1;
@@ -54,9 +55,9 @@ public class QueryUtils {
                 @Query("query") String query);
     }
 
-    public interface ApodNasaService {
+    public interface ApodNasaGovService {
         @GET("planetary/apod")
-        Call<ApodNasaModel> get(
+        Call<ApodNasaGovModel> get(
                 @Query("api_key") String apiKey,
                 @Query("date") String date);
     }
@@ -67,7 +68,7 @@ public class QueryUtils {
     }
 
     public static ApodMorphIoService apodMorphIoService;
-    public static ApodNasaService apodNasaService;
+    public static ApodNasaGovService apodNasaGovService;
     public static IotdRssService iotdRssService;
 
     public static void setUpIoServices() {
@@ -77,11 +78,11 @@ public class QueryUtils {
 
         apodMorphIoService = retrofit.create(ApodMorphIoService.class);
 
-        retrofit = new Retrofit.Builder().baseUrl(APOD_NASA_BASE_URL)
+        retrofit = new Retrofit.Builder().baseUrl(APOD_NASA_GOV_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        apodNasaService = retrofit.create(ApodNasaService.class);
+        apodNasaGovService = retrofit.create(ApodNasaGovService.class);
 
         retrofit = new Retrofit.Builder().baseUrl(IOTD_RSS_BASE_URL)
                 .addConverterFactory(SimpleXmlConverterFactory.createNonStrict())
@@ -103,12 +104,15 @@ public class QueryUtils {
                     apodFragment.progressBar.setVisibility(View.VISIBLE);
                 }
 
-                // Add a check here that determines which API should be used based
-                // on the user settings. (Also, add the relevant setting.)
-                queryApodMorphIoApi(activity, QUERY_MODE_RECYCLERVIEW);
-                // If the NASA API is being used, reset the query count first.
-                // apodFragment.nasaApiQueryCount = APOD_NASA_API_QUERIES;
-                // queryApodNasaApi(activity, QUERY_MODE_RECYCLERVIEW);
+                switch (PreferenceManager.getDefaultSharedPreferences(activity).getString(PreferenceUtils.PREF_APOD_FETCH_SERVICE, "")) {
+                    case "morph_io":
+                        queryApodMorphIoApi(activity, QUERY_MODE_RECYCLERVIEW);
+                        break;
+                    case "nasa_gov":
+                        apodFragment.nasaGovApiQueryCount = APOD_NASA_GOV_API_QUERIES;
+                        queryApodNasaGovApi(activity, QUERY_MODE_RECYCLERVIEW);
+                        break;
+                }
             }
         } else if (mode == QUERY_MODE_VIEWPAGER) {
             final ImageFragmentStatePagerAdapter imageFragmentStatePagerAdapter = ((ViewPagerActivity) activity).imageFragmentStatePagerAdapter;
@@ -117,12 +121,17 @@ public class QueryUtils {
                 return;
             }
 
-            // Add a check here that determines which API should be used based
-            // on the user settings. (Also, add the relevant setting.)
-            queryApodMorphIoApi(activity, QUERY_MODE_VIEWPAGER);
-            // If the NASA API is being used, reset the query count first.
-            // apodFragment.nasaApiQueryCount = APOD_NASA_API_QUERIES;
-            // queryApodNasaApi(activity, QUERY_MODE_VIEWPAGER);
+            if (!imageFragmentStatePagerAdapter.loadingData) {
+                switch (PreferenceManager.getDefaultSharedPreferences(activity).getString(PreferenceUtils.PREF_APOD_FETCH_SERVICE, "")) {
+                    case "morph_io":
+                        queryApodMorphIoApi(activity, QUERY_MODE_VIEWPAGER);
+                        break;
+                    case "nasa_gov":
+                        imageFragmentStatePagerAdapter.nasaGovApiQueryCount = APOD_NASA_GOV_API_QUERIES;
+                        queryApodNasaGovApi(activity, QUERY_MODE_VIEWPAGER);
+                        break;
+                }
+            }
         }
     }
 
@@ -135,7 +144,7 @@ public class QueryUtils {
 
         if (!apodFragment.loadingData) {
             apodFragment.apodMorphIoModels.clear();
-            apodFragment.apodNasaModels.clear();
+            apodFragment.apodNasaGovModels.clear();
             apodFragment.calendar = Calendar.getInstance();
             apodFragment.endlessRecyclerOnScrollListener.resetPageCount();
             apodFragment.fastItemAdapter.clear();
@@ -220,7 +229,7 @@ public class QueryUtils {
         }
     }
 
-    public static void queryApodNasaApi(final Activity activity, final int mode) {
+    public static void queryApodNasaGovApi(final Activity activity, final int mode) {
         if (mode == QUERY_MODE_RECYCLERVIEW) {
             final ApodFragment apodFragment = (ApodFragment) activity.getFragmentManager().findFragmentByTag("apod");
 
@@ -231,24 +240,24 @@ public class QueryUtils {
             apodFragment.loadingData = true;
 
             String date = String.format(Locale.US, "%d-%02d-%02d", apodFragment.calendar.get(Calendar.YEAR), (apodFragment.calendar.get(Calendar.MONTH) + 1), apodFragment.calendar.get(Calendar.DAY_OF_MONTH));
-            Call<ApodNasaModel> call = apodNasaService.get(APOD_NASA_API_KEY, date);
-            call.enqueue(new Callback<ApodNasaModel>() {
+            Call<ApodNasaGovModel> call = apodNasaGovService.get(APOD_NASA_GOV_API_KEY, date);
+            call.enqueue(new Callback<ApodNasaGovModel>() {
                 @Override
-                public void onResponse(Call<ApodNasaModel> call, Response<ApodNasaModel> response) {
+                public void onResponse(Call<ApodNasaGovModel> call, Response<ApodNasaGovModel> response) {
                     if (response.isSuccessful()) {
                         apodFragment.footerAdapter.clear();
                         apodFragment.progressBar.setVisibility(View.GONE);
 
-                        if (!apodFragment.apodNasaModels.contains(response.body()) && response.body().getMediaType().equals("image")) {
-                            apodFragment.apodNasaModels.add(response.body());
-                            apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(response.body(), QueryUtils.APOD_MODEL_NASA));
+                        if (!apodFragment.apodNasaGovModels.contains(response.body()) && response.body().getMediaType().equals("image")) {
+                            apodFragment.apodNasaGovModels.add(response.body());
+                            apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(response.body(), QueryUtils.APOD_MODEL_NASA_GOV));
                         }
 
                         apodFragment.calendar.add(Calendar.DAY_OF_YEAR, -1);
-                        apodFragment.nasaApiQueryCount--;
+                        apodFragment.nasaGovApiQueryCount--;
 
-                        if (apodFragment.nasaApiQueryCount > 0) {
-                            queryApodNasaApi(activity, mode);
+                        if (apodFragment.nasaGovApiQueryCount > 0) {
+                            queryApodNasaGovApi(activity, mode);
                         } else {
                             apodFragment.loadingData = false;
                             apodFragment.swipeRefreshLayout.setRefreshing(false);
@@ -258,7 +267,7 @@ public class QueryUtils {
                 }
 
                 @Override
-                public void onFailure(Call<ApodNasaModel> call, Throwable t) {
+                public void onFailure(Call<ApodNasaGovModel> call, Throwable t) {
                     apodFragment.footerAdapter.clear();
                     apodFragment.loadingData = false;
                     apodFragment.progressBar.setVisibility(View.GONE);
@@ -275,22 +284,20 @@ public class QueryUtils {
             imageFragmentStatePagerAdapter.loadingData = true;
 
             String date = String.format(Locale.US, "%d-%02d-%02d", imageFragmentStatePagerAdapter.calendar.get(Calendar.YEAR), (imageFragmentStatePagerAdapter.calendar.get(Calendar.MONTH) + 1), imageFragmentStatePagerAdapter.calendar.get(Calendar.DAY_OF_MONTH));
-            Call<ApodNasaModel> call = apodNasaService.get(APOD_NASA_API_KEY, date);
-            call.enqueue(new Callback<ApodNasaModel>() {
+            Call<ApodNasaGovModel> call = apodNasaGovService.get(APOD_NASA_GOV_API_KEY, date);
+            call.enqueue(new Callback<ApodNasaGovModel>() {
                 @Override
-                public void onResponse(Call<ApodNasaModel> call, Response<ApodNasaModel> response) {
+                public void onResponse(Call<ApodNasaGovModel> call, Response<ApodNasaGovModel> response) {
                     if (response.isSuccessful()) {
-                        imageFragmentStatePagerAdapter.calendar.add(Calendar.DAY_OF_YEAR, -1);
-
-                        if (!imageFragmentStatePagerAdapter.apodNasaModels.contains(response.body()) && !response.body().getHdUrl().isEmpty()) {
-                            imageFragmentStatePagerAdapter.apodNasaModels.add(response.body());
+                        if (!imageFragmentStatePagerAdapter.apodNasaGovModels.contains(response.body()) && !response.body().getUrl().isEmpty()) {
+                            imageFragmentStatePagerAdapter.apodNasaGovModels.add(response.body());
                         }
 
                         imageFragmentStatePagerAdapter.calendar.add(Calendar.DAY_OF_YEAR, -1);
-                        imageFragmentStatePagerAdapter.nasaApiQueryCount--;
+                        imageFragmentStatePagerAdapter.nasaGovApiQueryCount--;
 
-                        if (imageFragmentStatePagerAdapter.nasaApiQueryCount > 0) {
-                            queryApodNasaApi(activity, mode);
+                        if (imageFragmentStatePagerAdapter.nasaGovApiQueryCount > 0) {
+                            queryApodNasaGovApi(activity, mode);
                         } else {
                             imageFragmentStatePagerAdapter.loadingData = false;
                         }
@@ -300,7 +307,7 @@ public class QueryUtils {
                 }
 
                 @Override
-                public void onFailure(Call<ApodNasaModel> call, Throwable t) {
+                public void onFailure(Call<ApodNasaGovModel> call, Throwable t) {
                     imageFragmentStatePagerAdapter.loadingData = false;
                 }
             });
@@ -314,21 +321,25 @@ public class QueryUtils {
             return;
         }
 
-        // Add a check here that determines which API should be used based
-        // on the user settings. (Also, add the relevant setting.)
-        apodFragment.apodMorphIoModels = Parcels.unwrap(intent.getParcelableExtra(ApodFragment.EXTRA_APOD_MORPH_IO_MODELS));
-        // apodFragment.apodNasaModels = Parcels.unwrap(activity.getIntent().getParcelableExtra(ApodFragment.EXTRA_APOD_NASA_MODELS));
         apodFragment.calendar = (Calendar) intent.getSerializableExtra(ApodFragment.EXTRA_APOD_CALENDAR);
-
         apodFragment.fastItemAdapter.clear();
 
-        for (ApodMorphIoModel apodMorphIoModel : apodFragment.apodMorphIoModels) {
-            apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(apodMorphIoModel, QueryUtils.APOD_MODEL_MORPH_IO));
-        }
+        switch (PreferenceManager.getDefaultSharedPreferences(activity).getString(PreferenceUtils.PREF_APOD_FETCH_SERVICE, "")) {
+            case "morph_io":
+                apodFragment.apodMorphIoModels = Parcels.unwrap(intent.getParcelableExtra(ApodFragment.EXTRA_APOD_MORPH_IO_MODELS));
 
-        // for (ApodNasaModel apodNasaModel : apodFragment.apodNasaModels) {
-        //     apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(apodNasaModel, QueryUtils.APOD_MODEL_NASA));
-        // }
+                for (ApodMorphIoModel apodMorphIoModel : apodFragment.apodMorphIoModels) {
+                    apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(apodMorphIoModel, QueryUtils.APOD_MODEL_MORPH_IO));
+                }
+                break;
+            case "nasa_gov":
+                apodFragment.apodNasaGovModels = Parcels.unwrap(intent.getParcelableExtra(ApodFragment.EXTRA_APOD_NASA_GOV_MODELS));
+
+                for (ApodNasaGovModel apodNasaGovModel : apodFragment.apodNasaGovModels) {
+                    apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(apodNasaGovModel, QueryUtils.APOD_MODEL_NASA_GOV));
+                }
+                break;
+        }
 
         TypedValue typedValue = new TypedValue();
         activity.getTheme().resolveAttribute(android.support.v7.appcompat.R.attr.actionBarSize, typedValue, true);

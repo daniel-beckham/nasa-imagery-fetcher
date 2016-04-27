@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.model.ApodMorphIoModel;
-import com.dsbeckham.nasaimageryfetcher.model.ApodNasaModel;
+import com.dsbeckham.nasaimageryfetcher.model.ApodNasaGovModel;
 import com.dsbeckham.nasaimageryfetcher.util.DateTimeUtils;
 import com.dsbeckham.nasaimageryfetcher.util.QueryUtils;
 import com.mikepenz.fastadapter.items.AbstractItem;
@@ -50,11 +50,11 @@ public class ApodAdapter<T> extends AbstractItem<ApodAdapter<T>, ApodAdapter.Vie
                             }
                         });
                 break;
-            case QueryUtils.APOD_MODEL_NASA:
-                viewHolder.date.setText(DateTimeUtils.formatDate(viewHolder.date.getContext(), ((ApodNasaModel) apodModel).getDate(), "yyyy-MM-dd"));
-                viewHolder.title.setText(((ApodNasaModel) apodModel).getTitle());
+            case QueryUtils.APOD_MODEL_NASA_GOV:
+                viewHolder.date.setText(DateTimeUtils.formatDate(viewHolder.date.getContext(), ((ApodNasaGovModel) apodModel).getDate(), "yyyy-MM-dd"));
+                viewHolder.title.setText(((ApodNasaGovModel) apodModel).getTitle());
                 Picasso.with(viewHolder.imageView.getContext())
-                        .load(((ApodNasaModel) apodModel).getUrl())
+                        .load(((ApodNasaGovModel) apodModel).getUrl())
                         .fit()
                         .centerCrop()
                         .into(viewHolder.imageView, new Callback() {

@@ -83,8 +83,6 @@ public class IotdFragment extends Fragment {
                 R.color.colorAccent,
                 R.color.colorAccent);
 
-        // This is a workaround for a bug that causes the progress bar to be hidden underneath the
-        // action bar.
         TypedValue typedValue = new TypedValue();
         getActivity().getTheme().resolveAttribute(android.support.v7.appcompat.R.attr.actionBarSize, typedValue, true);
         swipeRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(typedValue.resourceId)

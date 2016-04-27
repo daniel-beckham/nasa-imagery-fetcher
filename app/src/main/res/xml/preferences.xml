@@ -3,7 +3,7 @@
 
     <PreferenceCategory android:title="@string/pref_general_category">
         <com.dsbeckham.nasaimageryfetcher.util.ListPreferenceHelper
-            android:defaultValue="0"
+            android:defaultValue="daily_images"
             android:entries="@array/mode_options"
             android:entryValues="@array/mode_values"
             android:key="pref_fetch_mode"
@@ -19,11 +19,16 @@
             android:summary="@string/pref_wifi_updates_only_summary"
             android:title="@string/pref_wifi_updates_only_title" />
         <com.dsbeckham.nasaimageryfetcher.util.ListPreferenceHelper
-            android:defaultValue="0"
+            android:defaultValue="iotd_apod"
             android:entries="@array/categories_options"
             android:entryValues="@array/categories_values"
             android:key="pref_general_fetch_categories"
             android:title="@string/pref_fetch_categories_title" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="pref_notifications"
+            android:summary="@string/pref_notifications_summary"
+            android:title="@string/pref_notifications_title" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_daily_images_category">
@@ -43,7 +48,7 @@
 
     <PreferenceCategory android:title="@string/pref_live_wallpaper_category">
         <com.dsbeckham.nasaimageryfetcher.util.ListPreferenceHelper
-            android:defaultValue="2"
+            android:defaultValue="apod"
             android:entries="@array/categories_options"
             android:entryValues="@array/categories_values"
             android:key="pref_display_categories"
@@ -56,23 +61,24 @@
             android:title="@string/pref_category_cycle_interval_title" />
         <SwitchPreference
             android:defaultValue="false"
-            android:key="pref_cached_images_only"
-            android:summary="@string/pref_cached_images_only_summary"
-            android:title="@string/pref_cached_images_only_title" />
+            android:key="pref_downloaded_images_only"
+            android:summary="@string/pref_downloaded_images_only_summary"
+            android:title="@string/pref_downloaded_images_only_title" />
         <com.dsbeckham.nasaimageryfetcher.util.ListPreferenceHelper
             android:defaultValue="300"
             android:entries="@array/frequency_options"
             android:entryValues="@array/frequency_values"
-            android:key="pref_cached_images_cycle_interval"
-            android:title="@string/pref_cached_images_cycle_interval_title" />
+            android:key="pref_downloaded_images_cycle_interval"
+            android:title="@string/pref_downloaded_images_cycle_interval_title" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_notifications_category">
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="pref_send_notifications"
-            android:summary="@string/pref_send_notifications_summary"
-            android:title="@string/pref_send_notifications_title" />
+    <PreferenceCategory android:title="@string/pref_advanced_category">
+        <com.dsbeckham.nasaimageryfetcher.util.ListPreferenceHelper
+            android:defaultValue="morph_io"
+            android:entries="@array/apod_fetch_service_options"
+            android:entryValues="@array/apod_fetch_service_values"
+            android:key="pref_apod_fetch_service"
+            android:title="@string/pref_apod_fetch_service_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

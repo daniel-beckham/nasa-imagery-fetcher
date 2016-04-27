@@ -7,20 +7,20 @@
     </string-array>
 
     <string-array name="mode_values">
-        <item>0</item>
-        <item>1</item>
+        <item>daily_images</item>
+        <item>random_images</item>
     </string-array>
 
     <string-array name="categories_options">
-        <item>Image of the Day, Astronomy Picture of the Day</item>
         <item>Image of the Day</item>
         <item>Astronomy Picture of the Day</item>
+        <item>Image of the Day, Astronomy Picture of the Day</item>
     </string-array>
 
     <string-array name="categories_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
+        <item>iotd</item>
+        <item>apod</item>
+        <item>iotd_apod</item>
     </string-array>
 
     <string-array name="frequency_options">
@@ -53,6 +53,16 @@
         <item>172800</item>
         <item>345600</item>
         <item>604800</item>
+    </string-array>
+
+    <string-array name="apod_fetch_service_options">
+        <item>morph.io</item>
+        <item>nasa.gov</item>
+    </string-array>
+
+    <string-array name="apod_fetch_service_values">
+        <item>morph_io</item>
+        <item>nasa_gov</item>
     </string-array>
 
 </resources>
