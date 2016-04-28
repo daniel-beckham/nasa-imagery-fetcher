@@ -17,21 +17,21 @@ import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 import retrofit2.http.GET;
 
 public class IotdQueryUtils {
-    public static final String IOTD_RSS_BASE_URL = "https://www.nasa.gov/";
+    public static final String RSS_BASE_URL = "https://www.nasa.gov/";
 
-    public interface IotdRssService {
+    public interface RssService {
         @GET("rss/dyn/lg_image_of_the_day.rss")
         Call<IotdRssModel> get();
     }
 
-    public static IotdRssService iotdRssService;
+    public static RssService rssService;
 
     public static void setUpIoService() {
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(IOTD_RSS_BASE_URL)
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(RSS_BASE_URL)
                 .addConverterFactory(SimpleXmlConverterFactory.createNonStrict())
                 .build();
 
-        iotdRssService = retrofit.create(IotdRssService.class);
+        rssService = retrofit.create(RssService.class);
     }
 
     public static void beginFetch(Activity activity) {
@@ -42,7 +42,7 @@ public class IotdQueryUtils {
         }
 
         if (!iotdFragment.loadingData) {
-            if (iotdFragment.iotdRssModels.isEmpty()) {
+            if (iotdFragment.rssModels.isEmpty()) {
                 iotdFragment.progressBar.setVisibility(View.VISIBLE);
             }
 
@@ -58,7 +58,7 @@ public class IotdQueryUtils {
         }
 
         if (!iotdFragment.loadingData) {
-            iotdFragment.iotdRssModels.clear();
+            iotdFragment.rssModels.clear();
             iotdFragment.fastItemAdapter.clear();
             iotdFragment.footerAdapter.clear();
         }
@@ -73,7 +73,7 @@ public class IotdQueryUtils {
 
         iotdFragment.loadingData = true;
 
-        Call<IotdRssModel> call = iotdRssService.get();
+        Call<IotdRssModel> call = rssService.get();
         call.enqueue(new Callback<IotdRssModel>() {
             @Override
             public void onResponse(Call<IotdRssModel> call, Response<IotdRssModel> response) {
@@ -81,10 +81,10 @@ public class IotdQueryUtils {
                     iotdFragment.footerAdapter.clear();
                     iotdFragment.progressBar.setVisibility(View.GONE);
 
-                    for (IotdRssModel.Channel.Item iotdRssModelItem : response.body().getChannel().getItems()) {
-                        if (!iotdFragment.iotdRssModels.contains(iotdRssModelItem) && !iotdRssModelItem.getEnclosure().getUrl().isEmpty()) {
-                            iotdFragment.iotdRssModels.add(iotdRssModelItem);
-                            iotdFragment.fastItemAdapter.add(iotdFragment.fastItemAdapter.getAdapterItemCount(), new IotdAdapter(iotdRssModelItem));
+                    for (IotdRssModel.Channel.Item iotdRssModelChannelItem : response.body().getChannel().getItems()) {
+                        if (!iotdFragment.rssModels.contains(iotdRssModelChannelItem) && !iotdRssModelChannelItem.getEnclosure().getUrl().isEmpty()) {
+                            iotdFragment.rssModels.add(iotdRssModelChannelItem);
+                            iotdFragment.fastItemAdapter.add(iotdFragment.fastItemAdapter.getAdapterItemCount(), new IotdAdapter(iotdRssModelChannelItem));
                         }
                     }
 

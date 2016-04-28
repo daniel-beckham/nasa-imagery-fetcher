@@ -49,12 +49,12 @@ public class ApodFragment extends Fragment {
     @Bind(R.id.fragment_apod_swiperefreshlayout)
     public SwipeRefreshLayout swipeRefreshLayout;
 
-    public List<ApodMorphIoModel> apodMorphIoModels = new ArrayList<>();
-    public List<ApodNasaGovModel> apodNasaGovModels = new ArrayList<>();
+    public List<ApodMorphIoModel> morphIoModels = new ArrayList<>();
+    public List<ApodNasaGovModel> nasaGovModels = new ArrayList<>();
 
     public Calendar calendar = Calendar.getInstance();
     public boolean loadingData = false;
-    public int nasaGovApiQueryCount = ApodQueryUtils.APOD_NASA_GOV_API_QUERIES;
+    public int nasaGovApiQueries = ApodQueryUtils.NASA_GOV_API_QUERIES;
 
     public static String EXTRA_APOD_MORPH_IO_MODELS = "com.dsbeckham.nasaimageryfetcher.extra.APOD_MORPH_IO_MODELS";
     public static String EXTRA_APOD_NASA_GOV_MODELS = "com.dsbeckham.nasaimageryfetcher.extra.APOD_NASA_GOV_MODELS";
@@ -80,10 +80,10 @@ public class ApodFragment extends Fragment {
 
                 switch (PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(PreferenceUtils.PREF_APOD_FETCH_SERVICE, "")) {
                     case "morph_io":
-                        intent.putExtra(EXTRA_APOD_MORPH_IO_MODELS, Parcels.wrap(apodMorphIoModels));
+                        intent.putExtra(EXTRA_APOD_MORPH_IO_MODELS, Parcels.wrap(morphIoModels));
                         break;
                     case "nasa_gov":
-                        intent.putExtra(EXTRA_APOD_NASA_GOV_MODELS, Parcels.wrap(apodNasaGovModels));
+                        intent.putExtra(EXTRA_APOD_NASA_GOV_MODELS, Parcels.wrap(nasaGovModels));
                         break;
                 }
 

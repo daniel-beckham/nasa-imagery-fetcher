@@ -18,24 +18,24 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class ApodAdapter<T> extends AbstractItem<ApodAdapter<T>, ApodAdapter.ViewHolder> {
-    public T apodModel;
-    private int apodModelType;
+    public T model;
+    private int modelType;
 
-    public ApodAdapter(T apodModel, int apodModelType) {
-        this.apodModel = apodModel;
-        this.apodModelType = apodModelType;
+    public ApodAdapter(T model, int modelType) {
+        this.model = model;
+        this.modelType = modelType;
     }
 
     @Override
     public void bindView(final ViewHolder viewHolder) {
         super.bindView(viewHolder);
 
-        switch (apodModelType) {
-            case ApodQueryUtils.APOD_MODEL_MORPH_IO:
-                viewHolder.date.setText(DateTimeUtils.formatDate(viewHolder.date.getContext(), ((ApodMorphIoModel) apodModel).getDate(), "yyyy-MM-dd"));
-                viewHolder.title.setText(((ApodMorphIoModel) apodModel).getTitle());
+        switch (modelType) {
+            case ApodQueryUtils.MODEL_MORPH_IO:
+                viewHolder.date.setText(DateTimeUtils.formatDate(viewHolder.date.getContext(), ((ApodMorphIoModel) model).getDate(), "yyyy-MM-dd"));
+                viewHolder.title.setText(((ApodMorphIoModel) model).getTitle());
                 Picasso.with(viewHolder.imageView.getContext())
-                        .load(((ApodMorphIoModel) apodModel).getPictureThumbnailUrl())
+                        .load(((ApodMorphIoModel) model).getPictureThumbnailUrl())
                         .fit()
                         .centerCrop()
                         .into(viewHolder.imageView, new Callback() {
@@ -50,11 +50,11 @@ public class ApodAdapter<T> extends AbstractItem<ApodAdapter<T>, ApodAdapter.Vie
                             }
                         });
                 break;
-            case ApodQueryUtils.APOD_MODEL_NASA_GOV:
-                viewHolder.date.setText(DateTimeUtils.formatDate(viewHolder.date.getContext(), ((ApodNasaGovModel) apodModel).getDate(), "yyyy-MM-dd"));
-                viewHolder.title.setText(((ApodNasaGovModel) apodModel).getTitle());
+            case ApodQueryUtils.MODEL_NASA_GOV:
+                viewHolder.date.setText(DateTimeUtils.formatDate(viewHolder.date.getContext(), ((ApodNasaGovModel) model).getDate(), "yyyy-MM-dd"));
+                viewHolder.title.setText(((ApodNasaGovModel) model).getTitle());
                 Picasso.with(viewHolder.imageView.getContext())
-                        .load(((ApodNasaGovModel) apodModel).getUrl())
+                        .load(((ApodNasaGovModel) model).getUrl())
                         .fit()
                         .centerCrop()
                         .into(viewHolder.imageView, new Callback() {

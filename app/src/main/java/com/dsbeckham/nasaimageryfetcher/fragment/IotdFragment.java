@@ -43,7 +43,7 @@ public class IotdFragment extends Fragment {
     @Bind(R.id.fragment_iotd_swiperefreshlayout)
     public SwipeRefreshLayout swipeRefreshLayout;
 
-    public List<IotdRssModel.Channel.Item> iotdRssModels = new ArrayList<>();
+    public List<IotdRssModel.Channel.Item> rssModels = new ArrayList<>();
 
     public boolean loadingData = false;
 
@@ -66,7 +66,7 @@ public class IotdFragment extends Fragment {
             @Override
             public boolean onClick(View view, IAdapter<IotdAdapter> iAdapter, IotdAdapter iotdAdapter, int position) {
                 Intent intent = new Intent(getActivity(), ViewPagerActivity.class);
-                intent.putExtra(EXTRA_IOTD_RSS_MODELS, Parcels.wrap(iotdRssModels));
+                intent.putExtra(EXTRA_IOTD_RSS_MODELS, Parcels.wrap(rssModels));
                 intent.putExtra(EXTRA_IOTD_POSITION, position);
                 startActivityForResult(intent, 0);
                 return false;

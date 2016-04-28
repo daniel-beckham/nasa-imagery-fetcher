@@ -60,12 +60,12 @@ public class ImageFragment extends Fragment {
 
         switch (((ViewPagerActivity) getActivity()).currentFragment) {
             case "iotd":
-                IotdRssModel.Channel.Item iotdRssModelItem = ((ViewPagerActivity) getActivity()).imageFragmentStatePagerAdapter.iotdRssModels.get(position);
-                date.setText(String.format("%1$s%2$s", DateTimeUtils.formatDate(getActivity(), iotdRssModelItem.getPubDate(), "EEE, dd MMM yyyy HH:mm zzz"), System.getProperty ("line.separator")));
-                description.setText(String.format("%1$s%2$s", iotdRssModelItem.getDescription(), System.getProperty ("line.separator")));
-                title.setText(iotdRssModelItem.getTitle());
+                IotdRssModel.Channel.Item iotdRssModelChannelItem = ((ViewPagerActivity) getActivity()).iotdRssModels.get(position);
+                date.setText(String.format("%1$s%2$s", DateTimeUtils.formatDate(getActivity(), iotdRssModelChannelItem.getPubDate(), "EEE, dd MMM yyyy HH:mm zzz"), System.getProperty ("line.separator")));
+                description.setText(String.format("%1$s%2$s", iotdRssModelChannelItem.getDescription(), System.getProperty ("line.separator")));
+                title.setText(iotdRssModelChannelItem.getTitle());
                 Picasso.with(getContext())
-                        .load(iotdRssModelItem.getEnclosure().getUrl().replace("styles/full_width_feature/public/", ""))
+                        .load(iotdRssModelChannelItem.getEnclosure().getUrl().replace("styles/full_width_feature/public/", ""))
                         .fit()
                         .centerCrop()
                         .into(imageView, new Callback() {
@@ -83,7 +83,7 @@ public class ImageFragment extends Fragment {
             case "apod":
                 switch (((ViewPagerActivity) getActivity()).apodFetchService) {
                     case "morph_io":
-                        ApodMorphIoModel apodMorphIoModel = ((ViewPagerActivity) getActivity()).imageFragmentStatePagerAdapter.apodMorphIoModels.get(position);
+                        ApodMorphIoModel apodMorphIoModel = ((ViewPagerActivity) getActivity()).apodMorphIoModels.get(position);
                         credit.setText(Html.fromHtml(apodMorphIoModel.getCredit()));
                         credit.setMovementMethod(LinkMovementMethod.getInstance());
                         date.setText(String.format("%1$s%2$s", DateTimeUtils.formatDate(getActivity(), apodMorphIoModel.getDate(), "yyyy-MM-dd"), System.getProperty ("line.separator")));
@@ -107,7 +107,7 @@ public class ImageFragment extends Fragment {
                                 });
                         break;
                     case "nasa_gov":
-                        ApodNasaGovModel apodNasaGovModel = ((ViewPagerActivity) getActivity()).imageFragmentStatePagerAdapter.apodNasaGovModels.get(position);
+                        ApodNasaGovModel apodNasaGovModel = ((ViewPagerActivity) getActivity()).apodNasaGovModels.get(position);
                         credit.setText(apodNasaGovModel.getCopyright());
                         date.setText(String.format("%1$s%2$s", DateTimeUtils.formatDate(getActivity(), apodNasaGovModel.getDate(), "yyyy-MM-dd"), System.getProperty ("line.separator")));
                         description.setText(String.format("%1$s%2$s", apodNasaGovModel.getExplanation(), System.getProperty ("line.separator")));
