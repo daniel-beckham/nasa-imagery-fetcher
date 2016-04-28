@@ -14,8 +14,9 @@ import android.view.MenuItem;
 import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.fragment.ApodFragment;
 import com.dsbeckham.nasaimageryfetcher.fragment.IotdFragment;
+import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
+import com.dsbeckham.nasaimageryfetcher.util.IotdQueryUtils;
 import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
-import com.dsbeckham.nasaimageryfetcher.util.QueryUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -42,7 +43,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         PreferenceUtils.setDefaultValuesForPreferences(this);
-        QueryUtils.setUpIoServices();
+        ApodQueryUtils.setUpIoServices();
+        IotdQueryUtils.setUpIoService();
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()

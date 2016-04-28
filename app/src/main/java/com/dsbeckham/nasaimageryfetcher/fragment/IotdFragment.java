@@ -16,7 +16,7 @@ import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.activity.ViewPagerActivity;
 import com.dsbeckham.nasaimageryfetcher.adapter.IotdAdapter;
 import com.dsbeckham.nasaimageryfetcher.model.IotdRssModel;
-import com.dsbeckham.nasaimageryfetcher.util.QueryUtils;
+import com.dsbeckham.nasaimageryfetcher.util.IotdQueryUtils;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.adapters.FastItemAdapter;
@@ -91,13 +91,13 @@ public class IotdFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                QueryUtils.clearIotdData(getActivity());
-                QueryUtils.beginIotdFetch(getActivity());
+                IotdQueryUtils.clearData(getActivity());
+                IotdQueryUtils.beginFetch(getActivity());
             }
         });
 
         if (savedInstanceState == null) {
-            QueryUtils.beginIotdFetch(getActivity());
+            IotdQueryUtils.beginFetch(getActivity());
         }
 
         return view;
@@ -123,6 +123,6 @@ public class IotdFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        QueryUtils.updateIotdData(getActivity(), data);
+        IotdQueryUtils.updateData(getActivity(), data);
     }
 }

@@ -11,7 +11,7 @@ import com.dsbeckham.nasaimageryfetcher.fragment.IotdFragment;
 import com.dsbeckham.nasaimageryfetcher.model.ApodMorphIoModel;
 import com.dsbeckham.nasaimageryfetcher.model.ApodNasaGovModel;
 import com.dsbeckham.nasaimageryfetcher.model.IotdRssModel;
-import com.dsbeckham.nasaimageryfetcher.util.QueryUtils;
+import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
 
 import org.parceler.Parcels;
 
@@ -28,7 +28,7 @@ public class ImageFragmentStatePagerAdapter extends SmartFragmentStatePagerAdapt
 
     public Calendar calendar = Calendar.getInstance();
     public boolean loadingData = false;
-    public int nasaGovApiQueryCount = QueryUtils.APOD_NASA_GOV_API_QUERIES;
+    public int nasaGovApiQueryCount = ApodQueryUtils.APOD_NASA_GOV_API_QUERIES;
 
     public ImageFragmentStatePagerAdapter(final Activity activity, FragmentManager fragmentManager) {
         super(fragmentManager);
@@ -81,7 +81,7 @@ public class ImageFragmentStatePagerAdapter extends SmartFragmentStatePagerAdapt
     public Fragment getItem(int position) {
         if (((ViewPagerActivity) activity).currentFragment.equals("apod")) {
             if (position == getCount() - 1) {
-                QueryUtils.beginApodQuery(activity, QueryUtils.QUERY_MODE_VIEWPAGER);
+                ApodQueryUtils.beginQuery(activity, ApodQueryUtils.QUERY_MODE_VIEWPAGER);
             }
         }
         return ImageFragment.newInstance(position);

@@ -10,12 +10,9 @@ import com.dsbeckham.nasaimageryfetcher.BuildConfig;
 import com.dsbeckham.nasaimageryfetcher.activity.ViewPagerActivity;
 import com.dsbeckham.nasaimageryfetcher.adapter.ApodAdapter;
 import com.dsbeckham.nasaimageryfetcher.adapter.ImageFragmentStatePagerAdapter;
-import com.dsbeckham.nasaimageryfetcher.adapter.IotdAdapter;
 import com.dsbeckham.nasaimageryfetcher.fragment.ApodFragment;
-import com.dsbeckham.nasaimageryfetcher.fragment.IotdFragment;
 import com.dsbeckham.nasaimageryfetcher.model.ApodMorphIoModel;
 import com.dsbeckham.nasaimageryfetcher.model.ApodNasaGovModel;
-import com.dsbeckham.nasaimageryfetcher.model.IotdRssModel;
 
 import org.parceler.Parcels;
 
@@ -28,19 +25,16 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
-public class QueryUtils {
+public class ApodQueryUtils {
     public static final String APOD_NASA_GOV_BASE_URL = "https://api.nasa.gov/";
     public static final String APOD_NASA_GOV_API_KEY = BuildConfig.APOD_NASA_GOV_API_KEY;
     public static final int APOD_NASA_GOV_API_QUERIES = 5;
 
     public static final String APOD_MORPH_IO_BASE_URL = "https://api.morph.io/";
     public static final String APOD_MORPH_IO_API_KEY = BuildConfig.APOD_MORPH_IO_API_KEY;
-
-    public static final String IOTD_RSS_BASE_URL = "https://www.nasa.gov/";
 
     public static final int APOD_MODEL_MORPH_IO = 0;
     public static final int APOD_MODEL_NASA_GOV = 1;
@@ -62,14 +56,8 @@ public class QueryUtils {
                 @Query("date") String date);
     }
 
-    public interface IotdRssService {
-        @GET("rss/dyn/lg_image_of_the_day.rss")
-        Call<IotdRssModel> get();
-    }
-
     public static ApodMorphIoService apodMorphIoService;
     public static ApodNasaGovService apodNasaGovService;
-    public static IotdRssService iotdRssService;
 
     public static void setUpIoServices() {
         Retrofit retrofit = new Retrofit.Builder().baseUrl(APOD_MORPH_IO_BASE_URL)
@@ -83,15 +71,9 @@ public class QueryUtils {
                 .build();
 
         apodNasaGovService = retrofit.create(ApodNasaGovService.class);
-
-        retrofit = new Retrofit.Builder().baseUrl(IOTD_RSS_BASE_URL)
-                .addConverterFactory(SimpleXmlConverterFactory.createNonStrict())
-                .build();
-
-        iotdRssService = retrofit.create(IotdRssService.class);
     }
 
-    public static void beginApodQuery(Activity activity, int mode) {
+    public static void beginQuery(Activity activity, int mode) {
         if (mode == QUERY_MODE_RECYCLERVIEW) {
             ApodFragment apodFragment = (ApodFragment) activity.getFragmentManager().findFragmentByTag("apod");
 
@@ -106,11 +88,11 @@ public class QueryUtils {
 
                 switch (PreferenceManager.getDefaultSharedPreferences(activity).getString(PreferenceUtils.PREF_APOD_FETCH_SERVICE, "")) {
                     case "morph_io":
-                        queryApodMorphIoApi(activity, QUERY_MODE_RECYCLERVIEW);
+                        queryMorphIoApi(activity, QUERY_MODE_RECYCLERVIEW);
                         break;
                     case "nasa_gov":
                         apodFragment.nasaGovApiQueryCount = APOD_NASA_GOV_API_QUERIES;
-                        queryApodNasaGovApi(activity, QUERY_MODE_RECYCLERVIEW);
+                        queryNasaGovApi(activity, QUERY_MODE_RECYCLERVIEW);
                         break;
                 }
             }
@@ -124,18 +106,18 @@ public class QueryUtils {
             if (!imageFragmentStatePagerAdapter.loadingData) {
                 switch (PreferenceManager.getDefaultSharedPreferences(activity).getString(PreferenceUtils.PREF_APOD_FETCH_SERVICE, "")) {
                     case "morph_io":
-                        queryApodMorphIoApi(activity, QUERY_MODE_VIEWPAGER);
+                        queryMorphIoApi(activity, QUERY_MODE_VIEWPAGER);
                         break;
                     case "nasa_gov":
                         imageFragmentStatePagerAdapter.nasaGovApiQueryCount = APOD_NASA_GOV_API_QUERIES;
-                        queryApodNasaGovApi(activity, QUERY_MODE_VIEWPAGER);
+                        queryNasaGovApi(activity, QUERY_MODE_VIEWPAGER);
                         break;
                 }
             }
         }
     }
 
-    public static void clearApodData(Activity activity) {
+    public static void clearData(Activity activity) {
         ApodFragment apodFragment = (ApodFragment) activity.getFragmentManager().findFragmentByTag("apod");
 
         if (apodFragment == null) {
@@ -152,7 +134,7 @@ public class QueryUtils {
         }
     }
 
-    public static void queryApodMorphIoApi(final Activity activity, final int mode) {
+    public static void queryMorphIoApi(final Activity activity, final int mode) {
         if (mode == QUERY_MODE_RECYCLERVIEW) {
             final ApodFragment apodFragment = (ApodFragment) activity.getFragmentManager().findFragmentByTag("apod");
 
@@ -174,7 +156,7 @@ public class QueryUtils {
                         for (ApodMorphIoModel apodMorphIoModel : response.body()) {
                             if (!apodFragment.apodMorphIoModels.contains(apodMorphIoModel) && !apodMorphIoModel.getPictureThumbnailUrl().isEmpty()) {
                                 apodFragment.apodMorphIoModels.add(apodMorphIoModel);
-                                apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(apodMorphIoModel, QueryUtils.APOD_MODEL_MORPH_IO));
+                                apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(apodMorphIoModel, ApodQueryUtils.APOD_MODEL_MORPH_IO));
                             }
 
                             apodFragment.calendar.add(Calendar.DAY_OF_YEAR, -1);
@@ -229,7 +211,7 @@ public class QueryUtils {
         }
     }
 
-    public static void queryApodNasaGovApi(final Activity activity, final int mode) {
+    public static void queryNasaGovApi(final Activity activity, final int mode) {
         if (mode == QUERY_MODE_RECYCLERVIEW) {
             final ApodFragment apodFragment = (ApodFragment) activity.getFragmentManager().findFragmentByTag("apod");
 
@@ -250,14 +232,14 @@ public class QueryUtils {
 
                         if (!apodFragment.apodNasaGovModels.contains(response.body()) && response.body().getMediaType().equals("image")) {
                             apodFragment.apodNasaGovModels.add(response.body());
-                            apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(response.body(), QueryUtils.APOD_MODEL_NASA_GOV));
+                            apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(response.body(), ApodQueryUtils.APOD_MODEL_NASA_GOV));
                         }
 
                         apodFragment.calendar.add(Calendar.DAY_OF_YEAR, -1);
                         apodFragment.nasaGovApiQueryCount--;
 
                         if (apodFragment.nasaGovApiQueryCount > 0) {
-                            queryApodNasaGovApi(activity, mode);
+                            queryNasaGovApi(activity, mode);
                         } else {
                             apodFragment.loadingData = false;
                             apodFragment.swipeRefreshLayout.setRefreshing(false);
@@ -297,7 +279,7 @@ public class QueryUtils {
                         imageFragmentStatePagerAdapter.nasaGovApiQueryCount--;
 
                         if (imageFragmentStatePagerAdapter.nasaGovApiQueryCount > 0) {
-                            queryApodNasaGovApi(activity, mode);
+                            queryNasaGovApi(activity, mode);
                         } else {
                             imageFragmentStatePagerAdapter.loadingData = false;
                         }
@@ -314,7 +296,7 @@ public class QueryUtils {
         }
     }
 
-    public static void updateApodData(Activity activity, Intent intent) {
+    public static void updateData(Activity activity, Intent intent) {
         ApodFragment apodFragment = (ApodFragment) activity.getFragmentManager().findFragmentByTag("apod");
 
         if (apodFragment == null) {
@@ -329,14 +311,14 @@ public class QueryUtils {
                 apodFragment.apodMorphIoModels = Parcels.unwrap(intent.getParcelableExtra(ApodFragment.EXTRA_APOD_MORPH_IO_MODELS));
 
                 for (ApodMorphIoModel apodMorphIoModel : apodFragment.apodMorphIoModels) {
-                    apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(apodMorphIoModel, QueryUtils.APOD_MODEL_MORPH_IO));
+                    apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(apodMorphIoModel, ApodQueryUtils.APOD_MODEL_MORPH_IO));
                 }
                 break;
             case "nasa_gov":
                 apodFragment.apodNasaGovModels = Parcels.unwrap(intent.getParcelableExtra(ApodFragment.EXTRA_APOD_NASA_GOV_MODELS));
 
                 for (ApodNasaGovModel apodNasaGovModel : apodFragment.apodNasaGovModels) {
-                    apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(apodNasaGovModel, QueryUtils.APOD_MODEL_NASA_GOV));
+                    apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(apodNasaGovModel, ApodQueryUtils.APOD_MODEL_NASA_GOV));
                 }
                 break;
         }
@@ -345,87 +327,5 @@ public class QueryUtils {
         activity.getTheme().resolveAttribute(android.support.v7.appcompat.R.attr.actionBarSize, typedValue, true);
 
         apodFragment.linearLayoutManager.scrollToPositionWithOffset(intent.getIntExtra(ApodFragment.EXTRA_APOD_POSITION, 0), activity.getResources().getDimensionPixelSize(typedValue.resourceId));
-    }
-
-    public static void beginIotdFetch(Activity activity) {
-        IotdFragment iotdFragment = (IotdFragment) activity.getFragmentManager().findFragmentByTag("iotd");
-
-        if (iotdFragment == null) {
-            return;
-        }
-
-        if (!iotdFragment.loadingData) {
-            if (iotdFragment.iotdRssModels.isEmpty()) {
-                iotdFragment.progressBar.setVisibility(View.VISIBLE);
-            }
-
-            fetchIotdRssFeed(activity);
-        }
-    }
-
-    public static void clearIotdData(Activity activity) {
-        IotdFragment iotdFragment = (IotdFragment) activity.getFragmentManager().findFragmentByTag("iotd");
-
-        if (iotdFragment == null) {
-            return;
-        }
-
-        if (!iotdFragment.loadingData) {
-            iotdFragment.iotdRssModels.clear();
-            iotdFragment.fastItemAdapter.clear();
-            iotdFragment.footerAdapter.clear();
-        }
-    }
-
-    public static void fetchIotdRssFeed(final Activity activity) {
-        final IotdFragment iotdFragment = (IotdFragment) activity.getFragmentManager().findFragmentByTag("iotd");
-
-        if (iotdFragment == null) {
-            return;
-        }
-
-        iotdFragment.loadingData = true;
-
-        Call<IotdRssModel> call = iotdRssService.get();
-        call.enqueue(new Callback<IotdRssModel>() {
-            @Override
-            public void onResponse(Call<IotdRssModel> call, Response<IotdRssModel> response) {
-                if (response.isSuccessful()) {
-                    iotdFragment.footerAdapter.clear();
-                    iotdFragment.progressBar.setVisibility(View.GONE);
-
-                    for (IotdRssModel.Channel.Item iotdRssModelItem : response.body().getChannel().getItems()) {
-                        if (!iotdFragment.iotdRssModels.contains(iotdRssModelItem) && !iotdRssModelItem.getEnclosure().getUrl().isEmpty()) {
-                            iotdFragment.iotdRssModels.add(iotdRssModelItem);
-                            iotdFragment.fastItemAdapter.add(iotdFragment.fastItemAdapter.getAdapterItemCount(), new IotdAdapter(iotdRssModelItem));
-                        }
-                    }
-
-                    iotdFragment.loadingData = false;
-                    iotdFragment.swipeRefreshLayout.setRefreshing(false);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<IotdRssModel> call, Throwable t) {
-                iotdFragment.footerAdapter.clear();
-                iotdFragment.loadingData = false;
-                iotdFragment.progressBar.setVisibility(View.GONE);
-                iotdFragment.swipeRefreshLayout.setRefreshing(false);
-            }
-        });
-    }
-
-    public static void updateIotdData(Activity activity, Intent intent) {
-        final IotdFragment iotdFragment = (IotdFragment) activity.getFragmentManager().findFragmentByTag("iotd");
-
-        if (iotdFragment == null) {
-            return;
-        }
-
-        TypedValue typedValue = new TypedValue();
-        activity.getTheme().resolveAttribute(android.support.v7.appcompat.R.attr.actionBarSize, typedValue, true);
-
-        iotdFragment.linearLayoutManager.scrollToPositionWithOffset(intent.getIntExtra(IotdFragment.EXTRA_IOTD_POSITION, 0), activity.getResources().getDimensionPixelSize(typedValue.resourceId));
     }
 }

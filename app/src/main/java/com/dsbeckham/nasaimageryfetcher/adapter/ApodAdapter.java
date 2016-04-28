@@ -9,7 +9,7 @@ import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.model.ApodMorphIoModel;
 import com.dsbeckham.nasaimageryfetcher.model.ApodNasaGovModel;
 import com.dsbeckham.nasaimageryfetcher.util.DateTimeUtils;
-import com.dsbeckham.nasaimageryfetcher.util.QueryUtils;
+import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
 import com.mikepenz.fastadapter.items.AbstractItem;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -31,7 +31,7 @@ public class ApodAdapter<T> extends AbstractItem<ApodAdapter<T>, ApodAdapter.Vie
         super.bindView(viewHolder);
 
         switch (apodModelType) {
-            case QueryUtils.APOD_MODEL_MORPH_IO:
+            case ApodQueryUtils.APOD_MODEL_MORPH_IO:
                 viewHolder.date.setText(DateTimeUtils.formatDate(viewHolder.date.getContext(), ((ApodMorphIoModel) apodModel).getDate(), "yyyy-MM-dd"));
                 viewHolder.title.setText(((ApodMorphIoModel) apodModel).getTitle());
                 Picasso.with(viewHolder.imageView.getContext())
@@ -50,7 +50,7 @@ public class ApodAdapter<T> extends AbstractItem<ApodAdapter<T>, ApodAdapter.Vie
                             }
                         });
                 break;
-            case QueryUtils.APOD_MODEL_NASA_GOV:
+            case ApodQueryUtils.APOD_MODEL_NASA_GOV:
                 viewHolder.date.setText(DateTimeUtils.formatDate(viewHolder.date.getContext(), ((ApodNasaGovModel) apodModel).getDate(), "yyyy-MM-dd"));
                 viewHolder.title.setText(((ApodNasaGovModel) apodModel).getTitle());
                 Picasso.with(viewHolder.imageView.getContext())

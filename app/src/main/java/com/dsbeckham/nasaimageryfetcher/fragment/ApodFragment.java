@@ -19,7 +19,7 @@ import com.dsbeckham.nasaimageryfetcher.adapter.ApodAdapter;
 import com.dsbeckham.nasaimageryfetcher.model.ApodMorphIoModel;
 import com.dsbeckham.nasaimageryfetcher.model.ApodNasaGovModel;
 import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
-import com.dsbeckham.nasaimageryfetcher.util.QueryUtils;
+import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.adapters.FastItemAdapter;
@@ -54,7 +54,7 @@ public class ApodFragment extends Fragment {
 
     public Calendar calendar = Calendar.getInstance();
     public boolean loadingData = false;
-    public int nasaGovApiQueryCount = QueryUtils.APOD_NASA_GOV_API_QUERIES;
+    public int nasaGovApiQueryCount = ApodQueryUtils.APOD_NASA_GOV_API_QUERIES;
 
     public static String EXTRA_APOD_MORPH_IO_MODELS = "com.dsbeckham.nasaimageryfetcher.extra.APOD_MORPH_IO_MODELS";
     public static String EXTRA_APOD_NASA_GOV_MODELS = "com.dsbeckham.nasaimageryfetcher.extra.APOD_NASA_GOV_MODELS";
@@ -104,7 +104,7 @@ public class ApodFragment extends Fragment {
             public void onLoadMore(int currentPage) {
                 footerAdapter.clear();
                 footerAdapter.add(new ProgressItem());
-                QueryUtils.beginApodQuery(getActivity(), QueryUtils.QUERY_MODE_RECYCLERVIEW);
+                ApodQueryUtils.beginQuery(getActivity(), ApodQueryUtils.QUERY_MODE_RECYCLERVIEW);
             }
         };
 
@@ -123,13 +123,13 @@ public class ApodFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                QueryUtils.clearApodData(getActivity());
-                QueryUtils.beginApodQuery(getActivity(), QueryUtils.QUERY_MODE_RECYCLERVIEW);
+                ApodQueryUtils.clearData(getActivity());
+                ApodQueryUtils.beginQuery(getActivity(), ApodQueryUtils.QUERY_MODE_RECYCLERVIEW);
             }
         });
 
         if (savedInstanceState == null) {
-            QueryUtils.beginApodQuery(getActivity(), QueryUtils.QUERY_MODE_RECYCLERVIEW);
+            ApodQueryUtils.beginQuery(getActivity(), ApodQueryUtils.QUERY_MODE_RECYCLERVIEW);
         }
 
         return view;
@@ -155,6 +155,6 @@ public class ApodFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        QueryUtils.updateApodData(getActivity(), data);
+        ApodQueryUtils.updateData(getActivity(), data);
     }
 }
