@@ -14,7 +14,7 @@
         android:id="@+id/viewpager_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@android:color/transparent"
+        android:background="@drawable/gradient_viewpager_toolbar"
         app:popupTheme="@style/MainTheme.PopupOverlay" />
 
 </RelativeLayout>
