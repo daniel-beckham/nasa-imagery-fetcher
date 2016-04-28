@@ -1,5 +1,6 @@
 package com.dsbeckham.nasaimageryfetcher.fragment;
 
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -7,7 +8,10 @@ import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver.OnScrollChangedListener;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.dsbeckham.nasaimageryfetcher.R;
@@ -31,11 +35,14 @@ public class ImageFragment extends Fragment {
     TextView description;
     @Bind(R.id.fragment_image_imageview)
     ImageView imageView;
-    @Bind(R.id.fragment_image_detail_progressbar)
-    View progressBar;
+    @Bind(R.id.fragment_image_progressbar)
+    ProgressBar progressBar;
+    @Bind(R.id.fragment_image_scrollview)
+    ScrollView scrollView;
     @Bind(R.id.fragment_image_title_textview)
     TextView title;
 
+    private int rectTop;
     private int position;
 
     public static ImageFragment newInstance(int page) {
@@ -57,6 +64,19 @@ public class ImageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_image, container, false);
         ButterKnife.bind(this, view);
+
+        scrollView.getViewTreeObserver().addOnScrollChangedListener(new OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                Rect rect = new Rect();
+                imageView.getLocalVisibleRect(rect);
+
+                if (rectTop != rect.top) {
+                    rectTop = rect.top;
+                    imageView.setY((float) (rect.top / 2.0));
+                }
+            }
+        });
 
         switch (((ViewPagerActivity) getActivity()).currentFragment) {
             case "iotd":

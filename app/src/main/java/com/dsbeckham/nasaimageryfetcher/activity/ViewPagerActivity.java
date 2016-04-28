@@ -22,6 +22,7 @@ import com.dsbeckham.nasaimageryfetcher.model.ApodNasaGovModel;
 import com.dsbeckham.nasaimageryfetcher.model.IotdRssModel;
 import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
 import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
+import com.xgc1986.parallaxPagerTransformer.ParallaxPagerTransformer;
 
 import org.parceler.Parcels;
 
@@ -120,6 +121,8 @@ public class ViewPagerActivity extends AppCompatActivity {
                 viewPager.setCurrentItem(viewPagerCurrentItem, false);
             }
         });
+
+        viewPager.setPageTransformer(true, new ParallaxPagerTransformer(R.id.fragment_image_imageview));
     }
 
     @Override
