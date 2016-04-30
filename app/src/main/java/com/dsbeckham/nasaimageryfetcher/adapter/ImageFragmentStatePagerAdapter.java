@@ -20,14 +20,9 @@ public class ImageFragmentStatePagerAdapter extends SmartFragmentStatePagerAdapt
     public int getCount() {
         switch (((ViewPagerActivity) activity).currentFragment) {
             case "iotd":
-                return ((ViewPagerActivity) activity).iotdRssModels.size();
+                return ((ViewPagerActivity) activity).iotdModels.size();
             case "apod":
-                switch (((ViewPagerActivity) activity).apodFetchService) {
-                    case "morph_io":
-                        return ((ViewPagerActivity) activity).apodMorphIoModels.size();
-                    case "nasa_gov":
-                        return ((ViewPagerActivity) activity).apodNasaGovModels.size();
-                }
+                 return ((ViewPagerActivity) activity).apodModels.size();
         }
         return 0;
     }

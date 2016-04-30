@@ -6,7 +6,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dsbeckham.nasaimageryfetcher.R;
-import com.dsbeckham.nasaimageryfetcher.model.IotdRssModel;
+import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 import com.dsbeckham.nasaimageryfetcher.util.DateTimeUtils;
 import com.mikepenz.fastadapter.items.AbstractItem;
 import com.squareup.picasso.Callback;
@@ -15,11 +15,11 @@ import com.squareup.picasso.Picasso;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class IotdAdapter extends AbstractItem<IotdAdapter, IotdAdapter.ViewHolder> {
-    public IotdRssModel.Channel.Item rssModelChannelItem;
+public class RecyclerViewAdapter extends AbstractItem<RecyclerViewAdapter, RecyclerViewAdapter.ViewHolder> {
+    public UniversalImageModel universalImageModel;
 
-    public IotdAdapter(IotdRssModel.Channel.Item rssModelChannelItem) {
-        this.rssModelChannelItem = rssModelChannelItem;
+    public RecyclerViewAdapter(UniversalImageModel universalImageModel) {
+        this.universalImageModel = universalImageModel;
     }
 
     @Override
@@ -27,10 +27,12 @@ public class IotdAdapter extends AbstractItem<IotdAdapter, IotdAdapter.ViewHolde
         super.bindView(viewHolder);
 
         viewHolder.progressBar.setVisibility(View.VISIBLE);
-        viewHolder.date.setText(DateTimeUtils.convertDateToLongDateFormat(viewHolder.date.getContext(), rssModelChannelItem.getPubDate(), "EEE, dd MMM yyyy HH:mm zzz"));
-        viewHolder.title.setText(rssModelChannelItem.getTitle());
+
+        viewHolder.date.setText(DateTimeUtils.convertDateToLongDateFormat(viewHolder.date.getContext(), universalImageModel.getDate(), "yyyy-MM-dd"));
+        viewHolder.title.setText(universalImageModel.getTitle());
+
         Picasso.with(viewHolder.imageView.getContext())
-                .load(rssModelChannelItem.getEnclosure().getUrl().replace("styles/full_width_feature/public/", ""))
+                .load(universalImageModel.getImageThumbnailUrl())
                 .fit()
                 .centerCrop()
                 .into(viewHolder.imageView, new Callback() {

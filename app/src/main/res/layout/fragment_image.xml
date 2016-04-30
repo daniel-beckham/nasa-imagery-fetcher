@@ -54,7 +54,7 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/fragment_image_description_textview"
+                android:id="@+id/fragment_image_body_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/fragment_image_date_textview"
@@ -63,10 +63,10 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/fragment_image_credit_textview"
+                android:id="@+id/fragment_image_footer_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/fragment_image_description_textview"
+                android:layout_below="@+id/fragment_image_body_textview"
                 android:fontFamily="sans-serif-thin"
                 android:textStyle="italic"
                 android:textColor="#ffffff"

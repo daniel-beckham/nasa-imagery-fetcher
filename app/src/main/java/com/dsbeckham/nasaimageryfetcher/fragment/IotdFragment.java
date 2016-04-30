@@ -14,8 +14,8 @@ import android.view.ViewGroup;
 
 import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.activity.ViewPagerActivity;
-import com.dsbeckham.nasaimageryfetcher.adapter.IotdAdapter;
-import com.dsbeckham.nasaimageryfetcher.model.IotdRssModel;
+import com.dsbeckham.nasaimageryfetcher.adapter.RecyclerViewAdapter;
+import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 import com.dsbeckham.nasaimageryfetcher.util.IotdQueryUtils;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
@@ -32,7 +32,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class IotdFragment extends Fragment {
-    public FastItemAdapter<IotdAdapter> fastItemAdapter = new FastItemAdapter<>();
+    public FastItemAdapter<RecyclerViewAdapter> fastItemAdapter = new FastItemAdapter<>();
     public FooterAdapter<ProgressItem> footerAdapter = new FooterAdapter<>();
     public LinearLayoutManager linearLayoutManager;
 
@@ -43,11 +43,11 @@ public class IotdFragment extends Fragment {
     @Bind(R.id.fragment_iotd_swiperefreshlayout)
     public SwipeRefreshLayout swipeRefreshLayout;
 
-    public List<IotdRssModel.Channel.Item> rssModels = new ArrayList<>();
+    public List<UniversalImageModel> models = new ArrayList<>();
 
     public boolean loadingData = false;
 
-    public static String EXTRA_IOTD_RSS_MODELS = "com.dsbeckham.nasaimageryfetcher.extra.IOTD_RSS_MODELS";
+    public static String EXTRA_IOTD_MODELS = "com.dsbeckham.nasaimageryfetcher.extra.IOTD_MODELS";
     public static String EXTRA_IOTD_POSITION = "com.dsbeckham.nasaimageryfetcher.extra.IOTD_POSITION";
 
     @Override
@@ -62,11 +62,11 @@ public class IotdFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         fastItemAdapter.withSavedInstanceState(savedInstanceState);
-        fastItemAdapter.withOnClickListener(new FastAdapter.OnClickListener<IotdAdapter>() {
+        fastItemAdapter.withOnClickListener(new FastAdapter.OnClickListener<RecyclerViewAdapter>() {
             @Override
-            public boolean onClick(View view, IAdapter<IotdAdapter> iAdapter, IotdAdapter iotdAdapter, int position) {
+            public boolean onClick(View view, IAdapter<RecyclerViewAdapter> iAdapter, RecyclerViewAdapter recyclerViewAdapter, int position) {
                 Intent intent = new Intent(getActivity(), ViewPagerActivity.class);
-                intent.putExtra(EXTRA_IOTD_RSS_MODELS, Parcels.wrap(rssModels));
+                intent.putExtra(EXTRA_IOTD_MODELS, Parcels.wrap(models));
                 intent.putExtra(EXTRA_IOTD_POSITION, position);
                 startActivityForResult(intent, 0);
                 return false;

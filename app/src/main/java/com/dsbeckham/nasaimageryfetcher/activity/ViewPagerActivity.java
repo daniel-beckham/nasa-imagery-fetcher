@@ -17,9 +17,7 @@ import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.adapter.ImageFragmentStatePagerAdapter;
 import com.dsbeckham.nasaimageryfetcher.fragment.ApodFragment;
 import com.dsbeckham.nasaimageryfetcher.fragment.IotdFragment;
-import com.dsbeckham.nasaimageryfetcher.model.ApodMorphIoModel;
-import com.dsbeckham.nasaimageryfetcher.model.ApodNasaGovModel;
-import com.dsbeckham.nasaimageryfetcher.model.IotdRssModel;
+import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
 import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
 import com.xgc1986.parallaxPagerTransformer.ParallaxPagerTransformer;
@@ -45,9 +43,8 @@ public class ViewPagerActivity extends AppCompatActivity {
 
     public ImageFragmentStatePagerAdapter imageFragmentStatePagerAdapter;
 
-    public List<ApodMorphIoModel> apodMorphIoModels = new ArrayList<>();
-    public List<ApodNasaGovModel> apodNasaGovModels = new ArrayList<>();
-    public List<IotdRssModel.Channel.Item> iotdRssModels = new ArrayList<>();
+    public List<UniversalImageModel> apodModels = new ArrayList<>();
+    public List<UniversalImageModel> iotdModels = new ArrayList<>();
 
     public Calendar calendar = Calendar.getInstance();
     public boolean loadingData = false;
@@ -83,18 +80,10 @@ public class ViewPagerActivity extends AppCompatActivity {
 
         switch (currentFragment) {
             case "iotd":
-                iotdRssModels = Parcels.unwrap(getIntent().getParcelableExtra(IotdFragment.EXTRA_IOTD_RSS_MODELS));
+                iotdModels = Parcels.unwrap(getIntent().getParcelableExtra(IotdFragment.EXTRA_IOTD_MODELS));
                 break;
             case "apod":
-                switch (apodFetchService) {
-                    case "morph_io":
-                        apodMorphIoModels = Parcels.unwrap(getIntent().getParcelableExtra(ApodFragment.EXTRA_APOD_MORPH_IO_MODELS));
-                        break;
-                    case "nasa_gov":
-                        apodNasaGovModels = Parcels.unwrap(getIntent().getParcelableExtra(ApodFragment.EXTRA_APOD_NASA_GOV_MODELS));
-                        break;
-                }
-
+                apodModels = Parcels.unwrap(getIntent().getParcelableExtra(ApodFragment.EXTRA_APOD_MODELS));
                 calendar = (Calendar) getIntent().getSerializableExtra(ApodFragment.EXTRA_APOD_CALENDAR);
                 break;
         }
@@ -150,16 +139,8 @@ public class ViewPagerActivity extends AppCompatActivity {
                 intent.putExtra(IotdFragment.EXTRA_IOTD_POSITION, viewPager.getCurrentItem());
                 break;
             case "apod":
-                switch (apodFetchService) {
-                    case "morph_io":
-                        intent.putExtra(ApodFragment.EXTRA_APOD_MORPH_IO_MODELS, Parcels.wrap(apodMorphIoModels));
-                        break;
-                    case "nasa_gov":
-                        intent.putExtra(ApodFragment.EXTRA_APOD_NASA_GOV_MODELS, Parcels.wrap(apodNasaGovModels));
-                        break;
-                }
-
                 intent.putExtra(ApodFragment.EXTRA_APOD_CALENDAR, calendar);
+                intent.putExtra(ApodFragment.EXTRA_APOD_MODELS, Parcels.wrap(apodModels));
                 intent.putExtra(ApodFragment.EXTRA_APOD_POSITION, viewPager.getCurrentItem());
                 break;
         }

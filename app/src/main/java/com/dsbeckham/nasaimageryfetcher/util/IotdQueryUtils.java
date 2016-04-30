@@ -5,9 +5,10 @@ import android.content.Intent;
 import android.util.TypedValue;
 import android.view.View;
 
-import com.dsbeckham.nasaimageryfetcher.adapter.IotdAdapter;
+import com.dsbeckham.nasaimageryfetcher.adapter.RecyclerViewAdapter;
 import com.dsbeckham.nasaimageryfetcher.fragment.IotdFragment;
 import com.dsbeckham.nasaimageryfetcher.model.IotdRssModel;
+import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -42,7 +43,7 @@ public class IotdQueryUtils {
         }
 
         if (!iotdFragment.loadingData) {
-            if (iotdFragment.rssModels.isEmpty()) {
+            if (iotdFragment.models.isEmpty()) {
                 iotdFragment.progressBar.setVisibility(View.VISIBLE);
             }
 
@@ -58,9 +59,9 @@ public class IotdQueryUtils {
         }
 
         if (!iotdFragment.loadingData) {
-            iotdFragment.rssModels.clear();
             iotdFragment.fastItemAdapter.clear();
             iotdFragment.footerAdapter.clear();
+            iotdFragment.models.clear();
         }
     }
 
@@ -82,9 +83,11 @@ public class IotdQueryUtils {
                     iotdFragment.progressBar.setVisibility(View.GONE);
 
                     for (IotdRssModel.Channel.Item iotdRssModelChannelItem : response.body().getChannel().getItems()) {
-                        if (!iotdFragment.rssModels.contains(iotdRssModelChannelItem) && !iotdRssModelChannelItem.getEnclosure().getUrl().isEmpty()) {
-                            iotdFragment.rssModels.add(iotdRssModelChannelItem);
-                            iotdFragment.fastItemAdapter.add(iotdFragment.fastItemAdapter.getAdapterItemCount(), new IotdAdapter(iotdRssModelChannelItem));
+                        UniversalImageModel universalImageModel = ModelUtils.convertIotdRssModelChannelItem(iotdRssModelChannelItem);
+
+                        if (!iotdFragment.models.contains(universalImageModel) && !iotdRssModelChannelItem.getEnclosure().getUrl().isEmpty()) {
+                            iotdFragment.models.add(universalImageModel);
+                            iotdFragment.fastItemAdapter.add(iotdFragment.fastItemAdapter.getAdapterItemCount(), new RecyclerViewAdapter(universalImageModel));
                         }
                     }
 

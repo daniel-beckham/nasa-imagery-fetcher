@@ -3,7 +3,6 @@ package com.dsbeckham.nasaimageryfetcher.fragment;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,10 +14,8 @@ import android.view.ViewGroup;
 
 import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.activity.ViewPagerActivity;
-import com.dsbeckham.nasaimageryfetcher.adapter.ApodAdapter;
-import com.dsbeckham.nasaimageryfetcher.model.ApodMorphIoModel;
-import com.dsbeckham.nasaimageryfetcher.model.ApodNasaGovModel;
-import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
+import com.dsbeckham.nasaimageryfetcher.adapter.RecyclerViewAdapter;
+import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
@@ -38,7 +35,7 @@ import butterknife.ButterKnife;
 
 public class ApodFragment extends Fragment {
     public EndlessRecyclerOnScrollListener endlessRecyclerOnScrollListener;
-    public FastItemAdapter<ApodAdapter> fastItemAdapter = new FastItemAdapter<>();
+    public FastItemAdapter<RecyclerViewAdapter> fastItemAdapter = new FastItemAdapter<>();
     public FooterAdapter<ProgressItem> footerAdapter = new FooterAdapter<>();
     public LinearLayoutManager linearLayoutManager;
 
@@ -49,16 +46,14 @@ public class ApodFragment extends Fragment {
     @Bind(R.id.fragment_apod_swiperefreshlayout)
     public SwipeRefreshLayout swipeRefreshLayout;
 
-    public List<ApodMorphIoModel> morphIoModels = new ArrayList<>();
-    public List<ApodNasaGovModel> nasaGovModels = new ArrayList<>();
+    public List<UniversalImageModel> models = new ArrayList<>();
 
     public Calendar calendar = Calendar.getInstance();
     public boolean loadingData = false;
     public int nasaGovApiQueries = ApodQueryUtils.NASA_GOV_API_QUERIES;
 
-    public static String EXTRA_APOD_MORPH_IO_MODELS = "com.dsbeckham.nasaimageryfetcher.extra.APOD_MORPH_IO_MODELS";
-    public static String EXTRA_APOD_NASA_GOV_MODELS = "com.dsbeckham.nasaimageryfetcher.extra.APOD_NASA_GOV_MODELS";
     public static String EXTRA_APOD_CALENDAR = "com.dsbeckham.nasaimageryfetcher.extra.APOD_CALENDAR";
+    public static String EXTRA_APOD_MODELS = "com.dsbeckham.nasaimageryfetcher.extra.APOD_MODELS";
     public static String EXTRA_APOD_POSITION = "com.dsbeckham.nasaimageryfetcher.extra.APOD_POSITION";
 
     @Override
@@ -73,21 +68,13 @@ public class ApodFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         fastItemAdapter.withSavedInstanceState(savedInstanceState);
-        fastItemAdapter.withOnClickListener(new FastAdapter.OnClickListener<ApodAdapter>() {
+        fastItemAdapter.withOnClickListener(new FastAdapter.OnClickListener<RecyclerViewAdapter>() {
             @Override
-            public boolean onClick(View view, IAdapter<ApodAdapter> iAdapter, ApodAdapter apodAdapter, int position) {
+            public boolean onClick(View view, IAdapter<RecyclerViewAdapter> iAdapter, RecyclerViewAdapter recyclerViewAdapter, int position) {
                 Intent intent = new Intent(getActivity(), ViewPagerActivity.class);
 
-                switch (PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(PreferenceUtils.PREF_APOD_FETCH_SERVICE, "")) {
-                    case "morph_io":
-                        intent.putExtra(EXTRA_APOD_MORPH_IO_MODELS, Parcels.wrap(morphIoModels));
-                        break;
-                    case "nasa_gov":
-                        intent.putExtra(EXTRA_APOD_NASA_GOV_MODELS, Parcels.wrap(nasaGovModels));
-                        break;
-                }
-
                 intent.putExtra(EXTRA_APOD_CALENDAR, calendar);
+                intent.putExtra(EXTRA_APOD_MODELS, Parcels.wrap(models));
                 intent.putExtra(EXTRA_APOD_POSITION, position);
                 startActivityForResult(intent, 0);
                 return false;

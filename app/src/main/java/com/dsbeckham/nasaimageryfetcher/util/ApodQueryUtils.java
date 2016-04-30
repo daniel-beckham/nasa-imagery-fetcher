@@ -8,10 +8,11 @@ import android.view.View;
 
 import com.dsbeckham.nasaimageryfetcher.BuildConfig;
 import com.dsbeckham.nasaimageryfetcher.activity.ViewPagerActivity;
-import com.dsbeckham.nasaimageryfetcher.adapter.ApodAdapter;
+import com.dsbeckham.nasaimageryfetcher.adapter.RecyclerViewAdapter;
 import com.dsbeckham.nasaimageryfetcher.fragment.ApodFragment;
 import com.dsbeckham.nasaimageryfetcher.model.ApodMorphIoModel;
 import com.dsbeckham.nasaimageryfetcher.model.ApodNasaGovModel;
+import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 
 import org.parceler.Parcels;
 
@@ -34,9 +35,6 @@ public class ApodQueryUtils {
 
     public static final String MORPH_IO_BASE_URL = "https://api.morph.io/";
     public static final String MORPH_IO_API_KEY = BuildConfig.MORPH_IO_API_KEY;
-
-    public static final int MODEL_MORPH_IO = 0;
-    public static final int MODEL_NASA_GOV = 1;
 
     public static final int QUERY_MODE_RECYCLERVIEW = 0;
     public static final int QUERY_MODE_VIEWPAGER = 1;
@@ -81,7 +79,7 @@ public class ApodQueryUtils {
             }
 
             if (!apodFragment.loadingData) {
-                if (apodFragment.morphIoModels.isEmpty()) {
+                if (apodFragment.models.isEmpty()) {
                     apodFragment.progressBar.setVisibility(View.VISIBLE);
                 }
 
@@ -124,10 +122,9 @@ public class ApodQueryUtils {
         }
 
         if (!apodFragment.loadingData) {
-            apodFragment.morphIoModels.clear();
-            apodFragment.nasaGovModels.clear();
             apodFragment.calendar = Calendar.getInstance();
             apodFragment.endlessRecyclerOnScrollListener.resetPageCount();
+            apodFragment.models.clear();
             apodFragment.fastItemAdapter.clear();
             apodFragment.footerAdapter.clear();
         }
@@ -153,9 +150,11 @@ public class ApodQueryUtils {
                         apodFragment.progressBar.setVisibility(View.GONE);
 
                         for (ApodMorphIoModel apodMorphIoModel : response.body()) {
-                            if (!apodFragment.morphIoModels.contains(apodMorphIoModel) && !apodMorphIoModel.getPictureThumbnailUrl().isEmpty()) {
-                                apodFragment.morphIoModels.add(apodMorphIoModel);
-                                apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(apodMorphIoModel, ApodQueryUtils.MODEL_MORPH_IO));
+                            UniversalImageModel universalImageModel = ModelUtils.convertApodMorphIoModel(apodMorphIoModel);
+
+                            if (!apodFragment.models.contains(universalImageModel) && !apodMorphIoModel.getPictureThumbnailUrl().isEmpty()) {
+                                apodFragment.models.add(universalImageModel);
+                                apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new RecyclerViewAdapter(universalImageModel));
                             }
 
                             apodFragment.calendar.add(Calendar.DAY_OF_YEAR, -1);
@@ -188,8 +187,10 @@ public class ApodQueryUtils {
                 public void onResponse(Call<List<ApodMorphIoModel>> call, Response<List<ApodMorphIoModel>> response) {
                     if (response.isSuccessful()) {
                         for (ApodMorphIoModel apodMorphIoModel : response.body()) {
-                            if (!viewPagerActivity.apodMorphIoModels.contains(apodMorphIoModel) && !apodMorphIoModel.getPictureThumbnailUrl().isEmpty()) {
-                                viewPagerActivity.apodMorphIoModels.add(apodMorphIoModel);
+                            UniversalImageModel universalImageModel = ModelUtils.convertApodMorphIoModel(apodMorphIoModel);
+
+                            if (!viewPagerActivity.apodModels.contains(universalImageModel) && !apodMorphIoModel.getPictureThumbnailUrl().isEmpty()) {
+                                viewPagerActivity.apodModels.add(universalImageModel);
                             }
 
                             viewPagerActivity.calendar.add(Calendar.DAY_OF_YEAR, -1);
@@ -227,9 +228,11 @@ public class ApodQueryUtils {
                         apodFragment.footerAdapter.clear();
                         apodFragment.progressBar.setVisibility(View.GONE);
 
-                        if (!apodFragment.nasaGovModels.contains(response.body()) && response.body().getMediaType().equals("image")) {
-                            apodFragment.nasaGovModels.add(response.body());
-                            apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(response.body(), ApodQueryUtils.MODEL_NASA_GOV));
+                        UniversalImageModel universalImageModel = ModelUtils.convertApodNasaGovModel(response.body());
+
+                        if (!apodFragment.models.contains(universalImageModel) && response.body().getMediaType().equals("image")) {
+                            apodFragment.models.add(universalImageModel);
+                            apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new RecyclerViewAdapter(universalImageModel));
                         }
 
                         apodFragment.calendar.add(Calendar.DAY_OF_YEAR, -1);
@@ -268,8 +271,10 @@ public class ApodQueryUtils {
                 @Override
                 public void onResponse(Call<ApodNasaGovModel> call, Response<ApodNasaGovModel> response) {
                     if (response.isSuccessful()) {
-                        if (!viewPagerActivity.apodNasaGovModels.contains(response.body()) && !response.body().getUrl().isEmpty()) {
-                            viewPagerActivity.apodNasaGovModels.add(response.body());
+                        UniversalImageModel universalImageModel = ModelUtils.convertApodNasaGovModel(response.body());
+
+                        if (!viewPagerActivity.apodModels.contains(universalImageModel) && !response.body().getUrl().isEmpty()) {
+                            viewPagerActivity.apodModels.add(universalImageModel);
                         }
 
                         viewPagerActivity.calendar.add(Calendar.DAY_OF_YEAR, -1);
@@ -300,24 +305,13 @@ public class ApodQueryUtils {
             return;
         }
 
-        apodFragment.calendar = (Calendar) intent.getSerializableExtra(ApodFragment.EXTRA_APOD_CALENDAR);
         apodFragment.fastItemAdapter.clear();
 
-        switch (PreferenceManager.getDefaultSharedPreferences(activity).getString(PreferenceUtils.PREF_APOD_FETCH_SERVICE, "")) {
-            case "morph_io":
-                apodFragment.morphIoModels = Parcels.unwrap(intent.getParcelableExtra(ApodFragment.EXTRA_APOD_MORPH_IO_MODELS));
+        apodFragment.calendar = (Calendar) intent.getSerializableExtra(ApodFragment.EXTRA_APOD_CALENDAR);
+        apodFragment.models = Parcels.unwrap(intent.getParcelableExtra(ApodFragment.EXTRA_APOD_MODELS));
 
-                for (ApodMorphIoModel apodMorphIoModel : apodFragment.morphIoModels) {
-                    apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(apodMorphIoModel, ApodQueryUtils.MODEL_MORPH_IO));
-                }
-                break;
-            case "nasa_gov":
-                apodFragment.nasaGovModels = Parcels.unwrap(intent.getParcelableExtra(ApodFragment.EXTRA_APOD_NASA_GOV_MODELS));
-
-                for (ApodNasaGovModel apodNasaGovModel : apodFragment.nasaGovModels) {
-                    apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new ApodAdapter<>(apodNasaGovModel, ApodQueryUtils.MODEL_NASA_GOV));
-                }
-                break;
+        for (UniversalImageModel universalImageModel : apodFragment.models) {
+            apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new RecyclerViewAdapter(universalImageModel));
         }
 
         TypedValue typedValue = new TypedValue();
