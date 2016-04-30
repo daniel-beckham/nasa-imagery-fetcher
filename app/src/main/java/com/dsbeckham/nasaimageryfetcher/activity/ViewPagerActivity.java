@@ -37,11 +37,8 @@ public class ViewPagerActivity extends AppCompatActivity {
     @Bind(R.id.viewpager)
     public ViewPager viewPager;
 
-    public String apodFetchService;
-    public String currentFragment;
-    private int viewPagerCurrentItem;
-
     public ImageFragmentStatePagerAdapter imageFragmentStatePagerAdapter;
+    private int viewPagerCurrentItem;
 
     public List<UniversalImageModel> apodModels = new ArrayList<>();
     public List<UniversalImageModel> iotdModels = new ArrayList<>();
@@ -75,10 +72,7 @@ public class ViewPagerActivity extends AppCompatActivity {
             }
         }
 
-        apodFetchService = PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_APOD_FETCH_SERVICE, "");
-        currentFragment = PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "");
-
-        switch (currentFragment) {
+        switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
             case "iotd":
                 iotdModels = Parcels.unwrap(getIntent().getParcelableExtra(IotdFragment.EXTRA_IOTD_MODELS));
                 break;
@@ -89,7 +83,7 @@ public class ViewPagerActivity extends AppCompatActivity {
         }
 
         if (savedInstanceState == null) {
-            switch (currentFragment) {
+            switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
                 case "iotd":
                     viewPagerCurrentItem = getIntent().getIntExtra(IotdFragment.EXTRA_IOTD_POSITION, 0);
                     break;
@@ -134,7 +128,7 @@ public class ViewPagerActivity extends AppCompatActivity {
     public void finish() {
         Intent intent = new Intent();
 
-        switch (currentFragment) {
+        switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
             case "iotd":
                 intent.putExtra(IotdFragment.EXTRA_IOTD_POSITION, viewPager.getCurrentItem());
                 break;

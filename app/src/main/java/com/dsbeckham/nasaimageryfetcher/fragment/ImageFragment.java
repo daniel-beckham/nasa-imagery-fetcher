@@ -2,6 +2,7 @@ package com.dsbeckham.nasaimageryfetcher.fragment;
 
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -18,6 +19,7 @@ import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.activity.ViewPagerActivity;
 import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 import com.dsbeckham.nasaimageryfetcher.util.DateTimeUtils;
+import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -78,7 +80,7 @@ public class ImageFragment extends Fragment {
 
         UniversalImageModel universalImageModel = null;
 
-        switch (((ViewPagerActivity) getActivity()).currentFragment) {
+        switch (PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
             case "iotd":
                 universalImageModel = ((ViewPagerActivity) getActivity()).iotdModels.get(position);
                 break;

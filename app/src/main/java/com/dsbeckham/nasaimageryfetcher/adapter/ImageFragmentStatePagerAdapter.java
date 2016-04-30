@@ -1,12 +1,14 @@
 package com.dsbeckham.nasaimageryfetcher.adapter;
 
 import android.app.Activity;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import com.dsbeckham.nasaimageryfetcher.activity.ViewPagerActivity;
 import com.dsbeckham.nasaimageryfetcher.fragment.ImageFragment;
 import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
+import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
 
 public class ImageFragmentStatePagerAdapter extends SmartFragmentStatePagerAdapter {
     private Activity activity;
@@ -18,7 +20,7 @@ public class ImageFragmentStatePagerAdapter extends SmartFragmentStatePagerAdapt
 
     @Override
     public int getCount() {
-        switch (((ViewPagerActivity) activity).currentFragment) {
+        switch (PreferenceManager.getDefaultSharedPreferences(activity).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
             case "iotd":
                 return ((ViewPagerActivity) activity).iotdModels.size();
             case "apod":
@@ -29,7 +31,7 @@ public class ImageFragmentStatePagerAdapter extends SmartFragmentStatePagerAdapt
 
     @Override
     public Fragment getItem(int position) {
-        if (((ViewPagerActivity) activity).currentFragment.equals("apod")) {
+        if (PreferenceManager.getDefaultSharedPreferences(activity).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "").equals("apod")) {
             if (position == getCount() - 1) {
                 ApodQueryUtils.beginQuery(activity, ApodQueryUtils.QUERY_MODE_VIEWPAGER);
             }
