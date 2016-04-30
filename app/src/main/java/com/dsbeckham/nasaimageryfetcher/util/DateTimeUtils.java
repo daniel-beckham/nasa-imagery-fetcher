@@ -28,6 +28,10 @@ public class DateTimeUtils {
             output = simpleDateFormat.format(date);
         }
 
+        if (output.isEmpty()) {
+            output = input;
+        }
+
         return output;
     }
 
@@ -46,6 +50,10 @@ public class DateTimeUtils {
         if (date != null) {
             java.text.DateFormat dateFormat = android.text.format.DateFormat.getLongDateFormat(context);
             output = dateFormat.format(date);
+        }
+
+        if (output.isEmpty()) {
+            output = input;
         }
 
         return output;
@@ -100,6 +108,10 @@ public class DateTimeUtils {
             }
 
             output = simpleDateFormat.format(date);
+        }
+
+        if (output.isEmpty()) {
+            output = String.format(Locale.US, "%02d:%02d", hour, minute);
         }
 
         return output;
