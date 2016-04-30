@@ -27,17 +27,7 @@ public class PreferenceUtils {
     public static final String PREF_APOD_FETCH_SERVICE = "pref_apod_fetch_service";
     public static final String PREF_CURRENT_FRAGMENT = "pref_current_fragment";
 
-    public static void setDefaultValuesForPreferences(Activity activity) {
-        String time = PreferenceManager.getDefaultSharedPreferences(activity).getString(PREF_UPDATE_TIME, "");
-
-        if (time.isEmpty()) {
-            PreferenceManager.getDefaultSharedPreferences(activity).edit().putString(PREF_UPDATE_TIME, "12:00").apply();
-        }
-
-        PreferenceManager.setDefaultValues(activity, R.xml.preferences, false);
-    }
-
-    public static void setUpPreferences(final Activity activity) {
+    public static void configureUpdateTimePreference(final Activity activity) {
         final SettingsFragment settingsFragment = (SettingsFragment) activity.getFragmentManager().findFragmentByTag("settings");
 
         if (settingsFragment == null) {
@@ -48,16 +38,16 @@ public class PreferenceUtils {
 
         if (updateTimePreference != null) {
             updateTimePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                  @Override
-                  public boolean onPreferenceClick(Preference preference) {
-                      if (preference.getKey().equals(PREF_UPDATE_TIME)) {
-                          TimePickerFragment timePickerFragment = new TimePickerFragment();
-                          timePickerFragment.setPreference(preference);
-                          timePickerFragment.setOnSharedPreferenceChangeListener(settingsFragment);
-                          timePickerFragment.show(activity.getFragmentManager(), "timePicker");
-                      }
-                      return false;
-                  }
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    if (preference.getKey().equals(PREF_UPDATE_TIME)) {
+                        TimePickerFragment timePickerFragment = new TimePickerFragment();
+                        timePickerFragment.setPreference(preference);
+                        timePickerFragment.setOnSharedPreferenceChangeListener(settingsFragment);
+                        timePickerFragment.show(activity.getFragmentManager(), "timePicker");
+                    }
+                    return false;
+                }
             });
 
             Calendar calendar = DateTimeUtils.getAssociatedPreferenceCalendar(activity, updateTimePreference);
@@ -66,7 +56,19 @@ public class PreferenceUtils {
 
             updateTimePreference.setSummary(time);
         }
+    }
 
+    public static void setDefaultValuesForPreferences(Activity activity) {
+        String time = PreferenceManager.getDefaultSharedPreferences(activity).getString(PREF_UPDATE_TIME, "");
+
+        if (time.isEmpty()) {
+            PreferenceManager.getDefaultSharedPreferences(activity).edit().putString(PREF_UPDATE_TIME, "12:00").apply();
+        }
+
+        PreferenceManager.setDefaultValues(activity, R.xml.preferences, false);
+    }
+
+    public static void togglePreferencesBasedOnAllCurrentKeyValues(Activity activity)  {
         Map<String, ?> preferenceMap = PreferenceManager.getDefaultSharedPreferences(activity).getAll();
         for (Map.Entry<String, ?> entry: preferenceMap.entrySet()) {
             togglePreferencesBasedOnCurrentKeyValue(activity, PreferenceManager.getDefaultSharedPreferences(activity), entry.getKey());

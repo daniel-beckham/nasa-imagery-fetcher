@@ -11,63 +11,97 @@ import java.util.Date;
 import java.util.Locale;
 
 public class DateTimeUtils {
-    public static Calendar getAssociatedPreferenceCalendar(Context context, Preference preference) {
-        final Calendar calendar = Calendar.getInstance();
-
-        String time = PreferenceManager.getDefaultSharedPreferences(context).getString(preference.getKey(), "");
-
-        if (!time.isEmpty()) {
-            SimpleDateFormat simpleDateFormat;
-
-            // If it doesn't contain a space, then it must be a 24-hour clock.
-            // Otherwise, it should be a 12-hour clock.
-            if (!time.contains(" ")) {
-                simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-            } else {
-                simpleDateFormat = new SimpleDateFormat("h:mm a", Locale.getDefault());
-            }
-            try {
-                Date date = simpleDateFormat.parse(time);
-                calendar.setTime(date);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-        return calendar;
-    }
-
-    public static String formatDate(Context context, String input, String format) {
-        java.text.DateFormat dateFormat = android.text.format.DateFormat.getLongDateFormat(context);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format, Locale.getDefault());
-
+    public static String convertDateToCustomDateFormat(String input, String inputFormat, String outputFormat) {
         Date date = null;
-        String output = "";
 
         try {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(inputFormat, Locale.getDefault());
             date = simpleDateFormat.parse(input);
-            output = dateFormat.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
+        }
+
+        String output = "";
+
+        if (date != null) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(outputFormat, Locale.getDefault());
+            output = simpleDateFormat.format(date);
         }
 
         return output;
     }
 
-    public static String formatTime(Context context, int hour, int minute) {
-        String time = String.format(Locale.US, "%02d:%02d", hour, minute);
+    public static String convertDateToLongDateFormat(Context context, String input, String inputFormat) {
+        Date date = null;
 
         try {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-            Date date = simpleDateFormat.parse(time);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(inputFormat, Locale.getDefault());
+            date = simpleDateFormat.parse(input);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
+        String output = "";
+
+        if (date != null) {
+            java.text.DateFormat dateFormat = android.text.format.DateFormat.getLongDateFormat(context);
+            output = dateFormat.format(date);
+        }
+
+        return output;
+    }
+
+    public static Calendar getAssociatedPreferenceCalendar(Context context, Preference preference) {
+        Calendar calendar = Calendar.getInstance();
+        String time = PreferenceManager.getDefaultSharedPreferences(context).getString(preference.getKey(), "");
+
+        if (!time.isEmpty()) {
+            Date date = null;
+            SimpleDateFormat simpleDateFormat = null;
+
+            // If it doesn't contain a space, then it's most likely a
+            // 24-hour clock. Otherwise, it's probably be a 12-hour clock.
+            if (!time.contains(" ")) {
+                simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            } else {
+                simpleDateFormat = new SimpleDateFormat("h:mm a", Locale.getDefault());
+            }
+
+            try {
+                date = simpleDateFormat.parse(time);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            if (date != null) {
+                calendar.setTime(date);
+            }
+        }
+
+        return calendar;
+    }
+
+    public static String formatTime(Context context, int hour, int minute) {
+        Date date = null;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+
+        try {
+            simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            date = simpleDateFormat.parse(String.format(Locale.US, "%02d:%02d", hour, minute));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        String output = "";
+
+        if (date != null) {
             if (!android.text.format.DateFormat.is24HourFormat(context)) {
                 simpleDateFormat = new SimpleDateFormat("h:mm a", Locale.getDefault());
             }
 
-            time = simpleDateFormat.format(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
+            output = simpleDateFormat.format(date);
         }
-        return time;
+
+        return output;
     }
 }

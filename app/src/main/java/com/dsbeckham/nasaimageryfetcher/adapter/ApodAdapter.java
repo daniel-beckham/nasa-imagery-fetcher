@@ -32,7 +32,7 @@ public class ApodAdapter<T> extends AbstractItem<ApodAdapter<T>, ApodAdapter.Vie
 
         switch (modelType) {
             case ApodQueryUtils.MODEL_MORPH_IO:
-                viewHolder.date.setText(DateTimeUtils.formatDate(viewHolder.date.getContext(), ((ApodMorphIoModel) model).getDate(), "yyyy-MM-dd"));
+                viewHolder.date.setText(DateTimeUtils.convertDateToLongDateFormat(viewHolder.date.getContext(), ((ApodMorphIoModel) model).getDate(), "yyyy-MM-dd"));
                 viewHolder.title.setText(((ApodMorphIoModel) model).getTitle());
                 Picasso.with(viewHolder.imageView.getContext())
                         .load(((ApodMorphIoModel) model).getPictureThumbnailUrl())
@@ -51,7 +51,7 @@ public class ApodAdapter<T> extends AbstractItem<ApodAdapter<T>, ApodAdapter.Vie
                         });
                 break;
             case ApodQueryUtils.MODEL_NASA_GOV:
-                viewHolder.date.setText(DateTimeUtils.formatDate(viewHolder.date.getContext(), ((ApodNasaGovModel) model).getDate(), "yyyy-MM-dd"));
+                viewHolder.date.setText(DateTimeUtils.convertDateToLongDateFormat(viewHolder.date.getContext(), ((ApodNasaGovModel) model).getDate(), "yyyy-MM-dd"));
                 viewHolder.title.setText(((ApodNasaGovModel) model).getTitle());
                 Picasso.with(viewHolder.imageView.getContext())
                         .load(((ApodNasaGovModel) model).getUrl())

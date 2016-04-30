@@ -81,7 +81,7 @@ public class ImageFragment extends Fragment {
         switch (((ViewPagerActivity) getActivity()).currentFragment) {
             case "iotd":
                 IotdRssModel.Channel.Item iotdRssModelChannelItem = ((ViewPagerActivity) getActivity()).iotdRssModels.get(position);
-                date.setText(String.format("%1$s%2$s", DateTimeUtils.formatDate(getActivity(), iotdRssModelChannelItem.getPubDate(), "EEE, dd MMM yyyy HH:mm zzz"), System.getProperty ("line.separator")));
+                date.setText(String.format("%1$s%2$s", DateTimeUtils.convertDateToLongDateFormat(getActivity(), iotdRssModelChannelItem.getPubDate(), "EEE, dd MMM yyyy HH:mm zzz"), System.getProperty ("line.separator")));
                 description.setText(String.format("%1$s%2$s", iotdRssModelChannelItem.getDescription(), System.getProperty ("line.separator")));
                 title.setText(iotdRssModelChannelItem.getTitle());
                 Picasso.with(getContext())
@@ -106,7 +106,7 @@ public class ImageFragment extends Fragment {
                         ApodMorphIoModel apodMorphIoModel = ((ViewPagerActivity) getActivity()).apodMorphIoModels.get(position);
                         credit.setText(Html.fromHtml(apodMorphIoModel.getCredit()));
                         credit.setMovementMethod(LinkMovementMethod.getInstance());
-                        date.setText(String.format("%1$s%2$s", DateTimeUtils.formatDate(getActivity(), apodMorphIoModel.getDate(), "yyyy-MM-dd"), System.getProperty ("line.separator")));
+                        date.setText(String.format("%1$s%2$s", DateTimeUtils.convertDateToLongDateFormat(getActivity(), apodMorphIoModel.getDate(), "yyyy-MM-dd"), System.getProperty ("line.separator")));
                         description.setText(Html.fromHtml(String.format("%1$s%2$s", apodMorphIoModel.getExplanation(), "<br>")));
                         description.setMovementMethod(LinkMovementMethod.getInstance());
                         title.setText(apodMorphIoModel.getTitle());
@@ -129,7 +129,7 @@ public class ImageFragment extends Fragment {
                     case "nasa_gov":
                         ApodNasaGovModel apodNasaGovModel = ((ViewPagerActivity) getActivity()).apodNasaGovModels.get(position);
                         credit.setText(apodNasaGovModel.getCopyright());
-                        date.setText(String.format("%1$s%2$s", DateTimeUtils.formatDate(getActivity(), apodNasaGovModel.getDate(), "yyyy-MM-dd"), System.getProperty ("line.separator")));
+                        date.setText(String.format("%1$s%2$s", DateTimeUtils.convertDateToLongDateFormat(getActivity(), apodNasaGovModel.getDate(), "yyyy-MM-dd"), System.getProperty ("line.separator")));
                         description.setText(String.format("%1$s%2$s", apodNasaGovModel.getExplanation(), System.getProperty ("line.separator")));
                         title.setText(apodNasaGovModel.getTitle());
                         Picasso.with(imageView.getContext())

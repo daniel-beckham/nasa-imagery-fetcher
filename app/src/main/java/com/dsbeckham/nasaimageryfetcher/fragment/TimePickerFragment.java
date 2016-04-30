@@ -5,9 +5,9 @@ import android.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.widget.TimePicker;
 
 import com.dsbeckham.nasaimageryfetcher.util.DateTimeUtils;
@@ -36,15 +36,15 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final Calendar calendar = DateTimeUtils.getAssociatedPreferenceCalendar(getActivity(), preference);
+        Calendar calendar = DateTimeUtils.getAssociatedPreferenceCalendar(getActivity(), preference);
         int hour = calendar.get(Calendar.HOUR_OF_DAY), minute = calendar.get(Calendar.MINUTE);
         return new TimePickerDialog(getActivity(), this, hour, minute, android.text.format.DateFormat.is24HourFormat(getActivity()));
     }
 
     public void onTimeSet(TimePicker view, int hour, int minute) {
         String time = DateTimeUtils.formatTime(getActivity(), hour, minute);
-        sharedPreferences.edit().putString(preference.getKey(), time).apply();
         preference.setSummary(time);
+        sharedPreferences.edit().putString(preference.getKey(), time).apply();
         onSharedPreferenceChangeListener.onSharedPreferenceChanged(sharedPreferences, preference.getKey());
     }
 }
