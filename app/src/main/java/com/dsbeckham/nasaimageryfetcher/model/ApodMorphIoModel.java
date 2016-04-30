@@ -2,10 +2,6 @@ package com.dsbeckham.nasaimageryfetcher.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import org.parceler.Parcel;
-import org.parceler.Parcel.Serialization;
-
-@Parcel(Serialization.BEAN)
 public class ApodMorphIoModel {
     private String url;
     private String date;
