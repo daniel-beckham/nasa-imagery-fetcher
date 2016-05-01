@@ -80,7 +80,7 @@ public class ApodQueryUtils {
 
             if (!apodFragment.loadingData) {
                 if (apodFragment.models.isEmpty()) {
-                    apodFragment.progressBar.setVisibility(View.VISIBLE);
+                    apodFragment.progressBarLayout.setVisibility(View.VISIBLE);
                 }
 
                 switch (PreferenceManager.getDefaultSharedPreferences(activity).getString(PreferenceUtils.PREF_APOD_FETCH_SERVICE, "")) {
@@ -147,7 +147,7 @@ public class ApodQueryUtils {
                 public void onResponse(Call<List<ApodMorphIoModel>> call, Response<List<ApodMorphIoModel>> response) {
                     if (response.isSuccessful()) {
                         apodFragment.footerAdapter.clear();
-                        apodFragment.progressBar.setVisibility(View.GONE);
+                        apodFragment.progressBarLayout.setVisibility(View.GONE);
 
                         for (ApodMorphIoModel apodMorphIoModel : response.body()) {
                             UniversalImageModel universalImageModel = ModelUtils.convertApodMorphIoModel(apodMorphIoModel);
@@ -169,7 +169,7 @@ public class ApodQueryUtils {
                 public void onFailure(Call<List<ApodMorphIoModel>> call, Throwable t) {
                     apodFragment.footerAdapter.clear();
                     apodFragment.loadingData = false;
-                    apodFragment.progressBar.setVisibility(View.GONE);
+                    apodFragment.progressBarLayout.setVisibility(View.GONE);
                     apodFragment.swipeRefreshLayout.setRefreshing(false);
                 }
             });
@@ -226,7 +226,7 @@ public class ApodQueryUtils {
                 public void onResponse(Call<ApodNasaGovModel> call, Response<ApodNasaGovModel> response) {
                     if (response.isSuccessful()) {
                         apodFragment.footerAdapter.clear();
-                        apodFragment.progressBar.setVisibility(View.GONE);
+                        apodFragment.progressBarLayout.setVisibility(View.GONE);
 
                         UniversalImageModel universalImageModel = ModelUtils.convertApodNasaGovModel(response.body());
 
@@ -252,7 +252,7 @@ public class ApodQueryUtils {
                 public void onFailure(Call<ApodNasaGovModel> call, Throwable t) {
                     apodFragment.footerAdapter.clear();
                     apodFragment.loadingData = false;
-                    apodFragment.progressBar.setVisibility(View.GONE);
+                    apodFragment.progressBarLayout.setVisibility(View.GONE);
                     apodFragment.swipeRefreshLayout.setRefreshing(false);
                 }
             });

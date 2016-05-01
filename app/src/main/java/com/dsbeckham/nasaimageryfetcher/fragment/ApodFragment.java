@@ -11,6 +11,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.activity.ViewPagerActivity;
@@ -35,8 +36,8 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 public class ApodFragment extends Fragment {
-    @BindView(R.id.fragment_apod_progressbar)
-    public View progressBar;
+    @BindView(R.id.fragment_apod_progressbar_layout)
+    public FrameLayout progressBarLayout;
     @BindView(R.id.fragment_apodrecyclerview)
     public RecyclerView recyclerView;
     @BindView(R.id.fragment_apod_swiperefreshlayout)

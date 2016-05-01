@@ -5,7 +5,7 @@
     android:orientation="vertical">
 
     <FrameLayout
-        android:id="@+id/fragment_apod_progressbar"
+        android:id="@+id/fragment_apod_progressbar_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true"

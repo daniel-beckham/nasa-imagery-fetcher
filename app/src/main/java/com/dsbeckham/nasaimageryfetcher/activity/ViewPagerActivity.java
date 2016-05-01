@@ -33,7 +33,7 @@ import butterknife.ButterKnife;
 
 public class ViewPagerActivity extends AppCompatActivity {
     @BindView(R.id.viewpager_toolbar)
-    Toolbar toolbar;
+    public Toolbar toolbar;
     @BindView(R.id.viewpager)
     public ViewPager viewPager;
 

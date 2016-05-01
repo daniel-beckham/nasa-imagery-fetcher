@@ -44,7 +44,7 @@ public class IotdQueryUtils {
 
         if (!iotdFragment.loadingData) {
             if (iotdFragment.models.isEmpty()) {
-                iotdFragment.progressBar.setVisibility(View.VISIBLE);
+                iotdFragment.progressBarLayout.setVisibility(View.VISIBLE);
             }
 
             fetchRssFeed(activity);
@@ -80,7 +80,7 @@ public class IotdQueryUtils {
             public void onResponse(Call<IotdRssModel> call, Response<IotdRssModel> response) {
                 if (response.isSuccessful()) {
                     iotdFragment.footerAdapter.clear();
-                    iotdFragment.progressBar.setVisibility(View.GONE);
+                    iotdFragment.progressBarLayout.setVisibility(View.GONE);
 
                     for (IotdRssModel.Channel.Item iotdRssModelChannelItem : response.body().getChannel().getItems()) {
                         UniversalImageModel universalImageModel = ModelUtils.convertIotdRssModelChannelItem(iotdRssModelChannelItem);
@@ -100,7 +100,7 @@ public class IotdQueryUtils {
             public void onFailure(Call<IotdRssModel> call, Throwable t) {
                 iotdFragment.footerAdapter.clear();
                 iotdFragment.loadingData = false;
-                iotdFragment.progressBar.setVisibility(View.GONE);
+                iotdFragment.progressBarLayout.setVisibility(View.GONE);
                 iotdFragment.swipeRefreshLayout.setRefreshing(false);
             }
         });

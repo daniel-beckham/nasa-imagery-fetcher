@@ -3,6 +3,7 @@ package com.dsbeckham.nasaimageryfetcher.adapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dsbeckham.nasaimageryfetcher.R;
@@ -59,10 +60,14 @@ public class RecyclerViewAdapter extends AbstractItem<RecyclerViewAdapter, Recyc
     }
 
     protected static class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.item_recyclerview_date_textview) TextView date;
-        @BindView(R.id.item_recyclerview_imageview) ImageView imageView;
-        @BindView(R.id.item_recyclerview_progressbar) View progressBar;
-        @BindView(R.id.item_recyclerview_title_textview) TextView title;
+        @BindView(R.id.item_recyclerview_date_textview)
+        TextView date;
+        @BindView(R.id.item_recyclerview_imageview)
+        ImageView imageView;
+        @BindView(R.id.item_recyclerview_progressbar)
+        ProgressBar progressBar;
+        @BindView(R.id.item_recyclerview_title_textview)
+        TextView title;
 
         public ViewHolder(View view) {
             super(view);

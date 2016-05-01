@@ -15,7 +15,7 @@ public class DateTimeUtils {
         Date date = null;
 
         try {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(inputFormat, Locale.getDefault());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(inputFormat, Locale.US);
             date = simpleDateFormat.parse(input);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -39,7 +39,7 @@ public class DateTimeUtils {
         Date date = null;
 
         try {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(inputFormat, Locale.getDefault());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(inputFormat, Locale.US);
             date = simpleDateFormat.parse(input);
         } catch (ParseException e) {
             e.printStackTrace();

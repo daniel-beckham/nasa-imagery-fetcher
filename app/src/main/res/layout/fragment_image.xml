@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_image_scrollview"
     android:layout_width="match_parent"
@@ -11,8 +11,10 @@
         android:orientation="vertical">
 
         <FrameLayout
+            android:id="@+id/fragment_image_header_layout"
             android:layout_width="match_parent"
-            android:layout_height="320dp">
+            android:layout_height="320dp"
+            android:background="@drawable/gradient_imageview">
 
             <ProgressBar
                 android:id="@+id/fragment_image_progressbar"
@@ -32,8 +34,10 @@
         </FrameLayout>
 
         <RelativeLayout
+            android:id="@+id/fragment_image_subheader_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
             android:padding="10dp">
 
             <TextView
@@ -41,39 +45,47 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
-                android:textColor="#ffffff"
-                android:textSize="16sp" />
+                android:textColor="#ffffffff"
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/fragment_image_date_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/fragment_image_title_textview"
-                android:fontFamily="sans-serif-thin"
-                android:textColor="#ffffff"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/fragment_image_body_textview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/fragment_image_date_textview"
                 android:fontFamily="sans-serif-light"
-                android:textColor="#ffffff"
+                android:textColor="#ffffffff"
+                android:textSize="16sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/fragment_image_description_textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:textColor="#ffffffff"
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/fragment_image_footer_textview"
+                android:id="@+id/fragment_image_credit_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/fragment_image_body_textview"
+                android:layout_below="@+id/fragment_image_description_textview"
                 android:fontFamily="sans-serif-thin"
+                android:paddingTop="10dp"
+                android:textColor="#ffffffff"
+                android:textSize="14sp"
                 android:textStyle="italic"
-                android:textColor="#ffffff"
-                android:textSize="14sp" />
+                android:visibility="gone" />
 
         </RelativeLayout>
 
     </LinearLayout>
 
-</ScrollView>
+</android.support.v4.widget.NestedScrollView>

@@ -23,7 +23,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/gradient_image"
+        android:background="@drawable/gradient_imageview"
         android:foreground="?attr/selectableItemBackgroundBorderless"
         android:gravity="bottom"
         android:padding="20dp">
@@ -38,7 +38,7 @@
             android:shadowDx="1"
             android:shadowDy="1"
             android:shadowRadius="1"
-            android:textColor="#ffffff"
+            android:textColor="#ffffffff"
             android:textSize="14sp" />
 
         <TextView
@@ -51,7 +51,7 @@
             android:shadowDx="1"
             android:shadowDy="1"
             android:shadowRadius="1"
-            android:textColor="#ffffff"
+            android:textColor="#ffffffff"
             android:textSize="14sp" />
 
     </RelativeLayout>
