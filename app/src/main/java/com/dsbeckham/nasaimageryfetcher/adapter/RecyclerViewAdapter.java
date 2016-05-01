@@ -12,7 +12,7 @@ import com.mikepenz.fastadapter.items.AbstractItem;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class RecyclerViewAdapter extends AbstractItem<RecyclerViewAdapter, RecyclerViewAdapter.ViewHolder> {
@@ -59,10 +59,10 @@ public class RecyclerViewAdapter extends AbstractItem<RecyclerViewAdapter, Recyc
     }
 
     protected static class ViewHolder extends RecyclerView.ViewHolder {
-        @Bind(R.id.item_recyclerview_date_textview) TextView date;
-        @Bind(R.id.item_recyclerview_imageview) ImageView imageView;
-        @Bind(R.id.item_recyclerview_progressbar) View progressBar;
-        @Bind(R.id.item_recyclerview_title_textview) TextView title;
+        @BindView(R.id.item_recyclerview_date_textview) TextView date;
+        @BindView(R.id.item_recyclerview_imageview) ImageView imageView;
+        @BindView(R.id.item_recyclerview_progressbar) View progressBar;
+        @BindView(R.id.item_recyclerview_title_textview) TextView title;
 
         public ViewHolder(View view) {
             super(view);

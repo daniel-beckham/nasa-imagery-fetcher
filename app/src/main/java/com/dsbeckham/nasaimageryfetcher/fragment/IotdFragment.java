@@ -28,20 +28,22 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class IotdFragment extends Fragment {
+    @BindView(R.id.fragment_iotd_progressbar)
+    public View progressBar;
+    @BindView(R.id.fragment_iotd_recyclerview)
+    public RecyclerView recyclerView;
+    @BindView(R.id.fragment_iotd_swiperefreshlayout)
+    public SwipeRefreshLayout swipeRefreshLayout;
+    private Unbinder unbinder;
+
     public FastItemAdapter<RecyclerViewAdapter> fastItemAdapter = new FastItemAdapter<>();
     public FooterAdapter<ProgressItem> footerAdapter = new FooterAdapter<>();
     public LinearLayoutManager linearLayoutManager;
-
-    @Bind(R.id.fragment_iotd_progressbar)
-    public View progressBar;
-    @Bind(R.id.fragment_iotd_recyclerview)
-    public RecyclerView recyclerView;
-    @Bind(R.id.fragment_iotd_swiperefreshlayout)
-    public SwipeRefreshLayout swipeRefreshLayout;
 
     public List<UniversalImageModel> models = new ArrayList<>();
 
@@ -59,7 +61,7 @@ public class IotdFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_iotd, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
 
         fastItemAdapter.withSavedInstanceState(savedInstanceState);
         fastItemAdapter.withOnClickListener(new FastAdapter.OnClickListener<RecyclerViewAdapter>() {
@@ -106,7 +108,7 @@ public class IotdFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
+        unbinder.unbind();
     }
 
     @Override

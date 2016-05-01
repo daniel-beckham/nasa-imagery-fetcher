@@ -23,23 +23,23 @@ import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ImageFragment extends Fragment {
-    @Bind(R.id.fragment_image_body_textview)
+    @BindView(R.id.fragment_image_body_textview)
     TextView body;
-    @Bind(R.id.fragment_image_date_textview)
+    @BindView(R.id.fragment_image_date_textview)
     TextView date;
-    @Bind(R.id.fragment_image_footer_textview)
+    @BindView(R.id.fragment_image_footer_textview)
     TextView footer;
-    @Bind(R.id.fragment_image_imageview)
+    @BindView(R.id.fragment_image_imageview)
     ImageView imageView;
-    @Bind(R.id.fragment_image_progressbar)
+    @BindView(R.id.fragment_image_progressbar)
     ProgressBar progressBar;
-    @Bind(R.id.fragment_image_scrollview)
+    @BindView(R.id.fragment_image_scrollview)
     ScrollView scrollView;
-    @Bind(R.id.fragment_image_title_textview)
+    @BindView(R.id.fragment_image_title_textview)
     TextView title;
 
     private int rectTop;

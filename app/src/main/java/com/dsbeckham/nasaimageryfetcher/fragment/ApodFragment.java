@@ -30,21 +30,23 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class ApodFragment extends Fragment {
+    @BindView(R.id.fragment_apod_progressbar)
+    public View progressBar;
+    @BindView(R.id.fragment_apodrecyclerview)
+    public RecyclerView recyclerView;
+    @BindView(R.id.fragment_apod_swiperefreshlayout)
+    public SwipeRefreshLayout swipeRefreshLayout;
+    private Unbinder unbinder;
+
     public EndlessRecyclerOnScrollListener endlessRecyclerOnScrollListener;
     public FastItemAdapter<RecyclerViewAdapter> fastItemAdapter = new FastItemAdapter<>();
     public FooterAdapter<ProgressItem> footerAdapter = new FooterAdapter<>();
     public LinearLayoutManager linearLayoutManager;
-
-    @Bind(R.id.fragment_apod_progressbar)
-    public View progressBar;
-    @Bind(R.id.fragment_apodrecyclerview)
-    public RecyclerView recyclerView;
-    @Bind(R.id.fragment_apod_swiperefreshlayout)
-    public SwipeRefreshLayout swipeRefreshLayout;
 
     public List<UniversalImageModel> models = new ArrayList<>();
 
@@ -65,7 +67,7 @@ public class ApodFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_apod, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
 
         fastItemAdapter.withSavedInstanceState(savedInstanceState);
         fastItemAdapter.withOnClickListener(new FastAdapter.OnClickListener<RecyclerViewAdapter>() {
@@ -125,7 +127,7 @@ public class ApodFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
+        unbinder.unbind();
     }
 
     @Override

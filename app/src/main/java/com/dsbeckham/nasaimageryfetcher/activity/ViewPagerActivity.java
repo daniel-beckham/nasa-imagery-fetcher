@@ -28,13 +28,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ViewPagerActivity extends AppCompatActivity {
-    @Bind(R.id.viewpager_toolbar)
+    @BindView(R.id.viewpager_toolbar)
     Toolbar toolbar;
-    @Bind(R.id.viewpager)
+    @BindView(R.id.viewpager)
     public ViewPager viewPager;
 
     public ImageFragmentStatePagerAdapter imageFragmentStatePagerAdapter;
