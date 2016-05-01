@@ -7,11 +7,11 @@
         <item
             android:id="@+id/nav_iotd"
             android:checked="true"
-            android:icon="@drawable/ic_drawer_earth"
+            android:icon="@drawable/ic_navigationview_earth"
             android:title="@string/nav_iotd" />
         <item
             android:id="@+id/nav_apod"
-            android:icon="@drawable/ic_drawer_moon"
+            android:icon="@drawable/ic_navigationview_moon"
             android:title="@string/nav_apod" />
     </group>
 
@@ -20,7 +20,7 @@
         android:checkableBehavior="none">
         <item
             android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_drawer_settings"
+            android:icon="@drawable/ic_navigationview_settings"
             android:title="@string/nav_settings" />
     </group>
 
