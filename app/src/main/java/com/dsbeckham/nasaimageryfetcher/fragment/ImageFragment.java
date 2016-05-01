@@ -10,7 +10,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +25,7 @@ import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 import com.dsbeckham.nasaimageryfetcher.util.DateTimeUtils;
 import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
 import com.dsbeckham.nasaimageryfetcher.util.TextUtils;
+import com.dsbeckham.nasaimageryfetcher.util.UiUtils;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -74,9 +74,6 @@ public class ImageFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_image, container, false);
         ButterKnife.bind(this, view);
 
-        final TypedValue typedValue = new TypedValue();
-        getActivity().getTheme().resolveAttribute(android.support.v7.appcompat.R.attr.actionBarSize, typedValue, true);
-
         nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
             public void onScrollChange(NestedScrollView nestedScrollView, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
@@ -84,10 +81,12 @@ public class ImageFragment extends Fragment {
                 ViewCompat.setTranslationY(imageView, scrollY * 0.5f);
 
                 // This makes the ToolBar change from a gradient to a solid color and vice versa.
-                if (scrollY > (headerLayout.getHeight() - getResources().getDimensionPixelSize(typedValue.resourceId))) {
+                if (scrollY > (headerLayout.getHeight() - ((ViewPagerActivity) getActivity()).toolbar.getHeight())) {
                     ((ViewPagerActivity) getActivity()).toolbar.setBackground(new ColorDrawable(ContextCompat.getColor(getActivity(), R.color.colorPrimary)));
+                    UiUtils.resetStatusBarTranslucencyOrTransparency(getActivity());
                 } else {
                     ((ViewPagerActivity) getActivity()).toolbar.setBackgroundResource(R.drawable.gradient_viewpager_toolbar);
+                    UiUtils.makeStatusBarTranslucentOrTransparent(getActivity());
                 }
             }
         });
