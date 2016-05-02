@@ -32,34 +32,34 @@ import com.squareup.picasso.Picasso;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ImageFragment extends Fragment {
-    @BindView(R.id.fragment_image_credit_textview)
+public class ViewPagerFragment extends Fragment {
+    @BindView(R.id.fragment_viewpager_credit_textview)
     TextView credit;
-    @BindView(R.id.fragment_image_date_textview)
+    @BindView(R.id.fragment_viewpager_date_textview)
     TextView date;
-    @BindView(R.id.fragment_image_description_textview)
+    @BindView(R.id.fragment_viewpager_description_textview)
     TextView description;
-    @BindView(R.id.fragment_image_header_layout)
+    @BindView(R.id.fragment_viewpager_header_layout)
     FrameLayout headerLayout;
-    @BindView(R.id.fragment_image_imageview)
+    @BindView(R.id.fragment_viewpager_imageview)
     ImageView imageView;
-    @BindView(R.id.fragment_image_progressbar)
+    @BindView(R.id.fragment_viewpager_progressbar)
     ProgressBar progressBar;
-    @BindView(R.id.fragment_image_scrollview)
+    @BindView(R.id.fragment_viewpager_scrollview)
     NestedScrollView nestedScrollView;
-    @BindView(R.id.fragment_image_subheader_layout)
+    @BindView(R.id.fragment_viewpager_subheader_layout)
     RelativeLayout subHeaderLayout;
-    @BindView(R.id.fragment_image_title_textview)
+    @BindView(R.id.fragment_viewpager_title_textview)
     TextView title;
 
     private int position;
 
-    public static ImageFragment newInstance(int page) {
-        ImageFragment imageFragment = new ImageFragment();
+    public static ViewPagerFragment newInstance(int page) {
+        ViewPagerFragment viewPagerFragment = new ViewPagerFragment();
         Bundle bundle = new Bundle();
         bundle.putInt("position", page);
-        imageFragment.setArguments(bundle);
-        return imageFragment;
+        viewPagerFragment.setArguments(bundle);
+        return viewPagerFragment;
     }
 
     @Override
@@ -71,7 +71,7 @@ public class ImageFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_image, container, false);
+        View view = inflater.inflate(R.layout.fragment_viewpager, container, false);
         ButterKnife.bind(this, view);
 
         nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
@@ -86,7 +86,7 @@ public class ImageFragment extends Fragment {
                     UiUtils.resetStatusBarTranslucencyOrTransparency(getActivity());
                 } else {
                     ((ViewPagerActivity) getActivity()).toolbar.setBackgroundResource(R.drawable.gradient_viewpager_toolbar);
-                    UiUtils.makeStatusBarTranslucentOrTransparent(getActivity());
+                    UiUtils.setStatusBarTranslucencyOrTransparency(getActivity());
                 }
             }
         });

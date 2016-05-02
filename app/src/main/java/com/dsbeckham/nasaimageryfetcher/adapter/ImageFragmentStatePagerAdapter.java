@@ -6,7 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import com.dsbeckham.nasaimageryfetcher.activity.ViewPagerActivity;
-import com.dsbeckham.nasaimageryfetcher.fragment.ImageFragment;
+import com.dsbeckham.nasaimageryfetcher.fragment.ViewPagerFragment;
 import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
 import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
 
@@ -36,6 +36,6 @@ public class ImageFragmentStatePagerAdapter extends SmartFragmentStatePagerAdapt
                 ApodQueryUtils.beginQuery(activity, ApodQueryUtils.QUERY_MODE_VIEWPAGER);
             }
         }
-        return ImageFragment.newInstance(position);
+        return ViewPagerFragment.newInstance(position);
     }
 }

@@ -75,7 +75,7 @@ public class ViewPagerActivity extends AppCompatActivity {
             toolbar.setLayoutParams(layoutParams);
         }
 
-        UiUtils.makeStatusBarTranslucentOrTransparent(this);
+        UiUtils.setStatusBarTranslucencyOrTransparency(this);
 
         switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
             case "iotd":
@@ -110,7 +110,7 @@ public class ViewPagerActivity extends AppCompatActivity {
             }
         });
 
-        viewPager.setPageTransformer(true, new ParallaxPagerTransformer(R.id.fragment_image_imageview));
+        viewPager.setPageTransformer(true, new ParallaxPagerTransformer(R.id.fragment_viewpager_imageview));
     }
 
     @Override
