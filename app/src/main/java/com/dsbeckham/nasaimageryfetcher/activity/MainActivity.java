@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        UiUtils.setStatusBarTranslucencyOrTransparency(this);
+        UiUtils.makeStatusBarTransparent(this);
 
         ApodQueryUtils.setUpIoServices();
         IotdQueryUtils.setUpIoService();

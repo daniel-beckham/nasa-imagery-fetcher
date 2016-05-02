@@ -75,7 +75,6 @@ public class ApodFragment extends Fragment {
             @Override
             public boolean onClick(View view, IAdapter<RecyclerViewAdapter> iAdapter, RecyclerViewAdapter recyclerViewAdapter, int position) {
                 Intent intent = new Intent(getActivity(), ViewPagerActivity.class);
-
                 intent.putExtra(EXTRA_APOD_CALENDAR, calendar);
                 intent.putExtra(EXTRA_APOD_MODELS, Parcels.wrap(models));
                 intent.putExtra(EXTRA_APOD_POSITION, position);

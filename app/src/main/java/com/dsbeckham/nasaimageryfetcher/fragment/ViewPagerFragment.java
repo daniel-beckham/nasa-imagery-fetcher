@@ -1,5 +1,6 @@
 package com.dsbeckham.nasaimageryfetcher.fragment;
 
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dsbeckham.nasaimageryfetcher.R;
+import com.dsbeckham.nasaimageryfetcher.activity.ImageActivity;
 import com.dsbeckham.nasaimageryfetcher.activity.ViewPagerActivity;
 import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 import com.dsbeckham.nasaimageryfetcher.util.DateTimeUtils;
@@ -28,6 +30,8 @@ import com.dsbeckham.nasaimageryfetcher.util.TextUtils;
 import com.dsbeckham.nasaimageryfetcher.util.UiUtils;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+
+import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,6 +57,9 @@ public class ViewPagerFragment extends Fragment {
     TextView title;
 
     private int position;
+    private UniversalImageModel universalImageModel;
+
+    public static String EXTRA_CURRENT_MODEL = "com.dsbeckham.nasaimageryfetcher.extra.CURRENT_MODEL";
 
     public static ViewPagerFragment newInstance(int page) {
         ViewPagerFragment viewPagerFragment = new ViewPagerFragment();
@@ -83,15 +90,13 @@ public class ViewPagerFragment extends Fragment {
                 // This makes the ToolBar change from a gradient to a solid color and vice versa.
                 if (scrollY > (headerLayout.getHeight() - ((ViewPagerActivity) getActivity()).toolbar.getHeight())) {
                     ((ViewPagerActivity) getActivity()).toolbar.setBackground(new ColorDrawable(ContextCompat.getColor(getActivity(), R.color.colorPrimary)));
-                    UiUtils.resetStatusBarTranslucencyOrTransparency(getActivity());
+                    UiUtils.resetStatusBarTransparency(getActivity());
                 } else {
-                    ((ViewPagerActivity) getActivity()).toolbar.setBackgroundResource(R.drawable.gradient_viewpager_toolbar);
-                    UiUtils.setStatusBarTranslucencyOrTransparency(getActivity());
+                    ((ViewPagerActivity) getActivity()).toolbar.setBackgroundResource(R.drawable.gradient_toolbar);
+                    UiUtils.makeStatusBarTransparent(getActivity());
                 }
             }
         });
-
-        UniversalImageModel universalImageModel = null;
 
         switch (PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
             case "iotd":
@@ -102,41 +107,48 @@ public class ViewPagerFragment extends Fragment {
                 break;
         }
 
-        if (universalImageModel != null) {
-            title.setText(universalImageModel.getTitle());
-            date.setText(DateTimeUtils.convertDateToLongDateFormat(getActivity(), universalImageModel.getDate(), "yyyy-MM-dd"));
+        title.setText(universalImageModel.getTitle());
+        date.setText(DateTimeUtils.convertDateToLongDateFormat(getActivity(), universalImageModel.getDate(), "yyyy-MM-dd"));
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                ViewCompat.setElevation(subHeaderLayout, 4.0f / getResources().getDisplayMetrics().density);
-            }
-
-            description.setText(Html.fromHtml(universalImageModel.getDescription()));
-            description.setMovementMethod(LinkMovementMethod.getInstance());
-            TextUtils.stripUnderlines(description);
-
-            if (universalImageModel.getCredit() != null) {
-                credit.setText(Html.fromHtml(universalImageModel.getCredit()));
-                credit.setMovementMethod(LinkMovementMethod.getInstance());
-                credit.setVisibility(View.VISIBLE);
-                TextUtils.stripUnderlines(credit);
-            }
-
-            Picasso.with(getContext())
-                    .load(universalImageModel.getImageThumbnailUrl())
-                    .fit()
-                    .centerCrop()
-                    .into(imageView, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            progressBar.setVisibility(View.GONE);
-                        }
-
-                        @Override
-                        public void onError() {
-                            progressBar.setVisibility(View.GONE);
-                        }
-                    });
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ViewCompat.setElevation(subHeaderLayout, 4.0f / getResources().getDisplayMetrics().density);
         }
+
+        description.setText(Html.fromHtml(universalImageModel.getDescription()));
+        description.setMovementMethod(LinkMovementMethod.getInstance());
+        TextUtils.stripUnderlines(description);
+
+        if (universalImageModel.getCredit() != null) {
+            credit.setText(Html.fromHtml(universalImageModel.getCredit()));
+            credit.setMovementMethod(LinkMovementMethod.getInstance());
+            credit.setVisibility(View.VISIBLE);
+            TextUtils.stripUnderlines(credit);
+        }
+
+        Picasso.with(getContext())
+                .load(universalImageModel.getImageThumbnailUrl())
+                .fit()
+                .centerCrop()
+                .into(imageView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        progressBar.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onError() {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), ImageActivity.class);
+                intent.putExtra(EXTRA_CURRENT_MODEL, Parcels.wrap(universalImageModel));
+                startActivity(intent);
+            }
+        });
 
         return view;
     }

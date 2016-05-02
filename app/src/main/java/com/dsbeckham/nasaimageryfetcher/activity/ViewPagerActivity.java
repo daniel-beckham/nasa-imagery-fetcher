@@ -8,9 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
 import android.view.MenuItem;
-import android.widget.RelativeLayout;
 
 import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.adapter.ImageFragmentStatePagerAdapter;
@@ -32,9 +30,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ViewPagerActivity extends AppCompatActivity {
-    @BindView(R.id.viewpager_toolbar)
+    @BindView(R.id.activity_viewpager_toolbar)
     public Toolbar toolbar;
-    @BindView(R.id.viewpager)
+    @BindView(R.id.activity_viewpager)
     public ViewPager viewPager;
 
     public ImageFragmentStatePagerAdapter imageFragmentStatePagerAdapter;
@@ -47,7 +45,7 @@ public class ViewPagerActivity extends AppCompatActivity {
     public boolean loadingData = false;
     public int nasaGovApiQueries = ApodQueryUtils.NASA_GOV_API_QUERIES;
 
-    static final String VIEW_PAGER_CURRENT_ITEM = "viewPagerCurrentItem";
+    private final String VIEW_PAGER_CURRENT_ITEM = "viewPagerCurrentItem";
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
@@ -56,26 +54,8 @@ public class ViewPagerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_viewpager);
         ButterKnife.bind(this);
 
-        setSupportActionBar(toolbar);
-
-        if (getSupportActionBar() != null){
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
-        }
-
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-
-        if (resourceId > 0) {
-            final TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(android.support.v7.appcompat.R.attr.actionBarSize, typedValue, true);
-
-            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) toolbar.getLayoutParams();
-            layoutParams.height = getResources().getDimensionPixelSize(resourceId) + getResources().getDimensionPixelSize(typedValue.resourceId);
-
-            toolbar.setLayoutParams(layoutParams);
-        }
-
-        UiUtils.setStatusBarTranslucencyOrTransparency(this);
+        UiUtils.makeStatusBarTransparent(this);
+        UiUtils.setUpToolBarForChildActivity(this, toolbar);
 
         switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
             case "iotd":
