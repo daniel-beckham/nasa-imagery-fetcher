@@ -16,10 +16,10 @@
             android:layout_gravity="center"
             android:adjustViewBounds="true" />
 
-        <uk.co.senab.photoview.PhotoView
-            android:id="@+id/activity_image_photoview"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
+        <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+            android:id="@+id/activity_image_subsamplingscaleimageview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
     </FrameLayout>
 

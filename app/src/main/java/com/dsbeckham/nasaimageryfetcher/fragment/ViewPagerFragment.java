@@ -1,6 +1,7 @@
 package com.dsbeckham.nasaimageryfetcher.fragment;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -127,6 +128,7 @@ public class ViewPagerFragment extends Fragment {
 
         Picasso.with(getContext())
                 .load(universalImageModel.getImageThumbnailUrl())
+                .config(Bitmap.Config.RGB_565)
                 .fit()
                 .centerCrop()
                 .into(imageView, new Callback() {

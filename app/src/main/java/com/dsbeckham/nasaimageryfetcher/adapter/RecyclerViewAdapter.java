@@ -1,5 +1,6 @@
 package com.dsbeckham.nasaimageryfetcher.adapter;
 
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -34,6 +35,7 @@ public class RecyclerViewAdapter extends AbstractItem<RecyclerViewAdapter, Recyc
 
         Picasso.with(viewHolder.imageView.getContext())
                 .load(universalImageModel.getImageThumbnailUrl())
+                .config(Bitmap.Config.RGB_565)
                 .fit()
                 .centerCrop()
                 .into(viewHolder.imageView, new Callback() {
