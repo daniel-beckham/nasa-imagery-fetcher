@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.dsbeckham.nasaimageryfetcher.R;
-import com.dsbeckham.nasaimageryfetcher.activity.ViewPagerActivity;
+import com.dsbeckham.nasaimageryfetcher.activity.InformationActivity;
 import com.dsbeckham.nasaimageryfetcher.adapter.RecyclerViewAdapter;
 import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
@@ -74,7 +74,7 @@ public class ApodFragment extends Fragment {
         fastItemAdapter.withOnClickListener(new FastAdapter.OnClickListener<RecyclerViewAdapter>() {
             @Override
             public boolean onClick(View view, IAdapter<RecyclerViewAdapter> iAdapter, RecyclerViewAdapter recyclerViewAdapter, int position) {
-                Intent intent = new Intent(getActivity(), ViewPagerActivity.class);
+                Intent intent = new Intent(getActivity(), InformationActivity.class);
                 intent.putExtra(EXTRA_APOD_CALENDAR, calendar);
                 intent.putExtra(EXTRA_APOD_MODELS, Parcels.wrap(models));
                 intent.putExtra(EXTRA_APOD_POSITION, position);
@@ -93,7 +93,7 @@ public class ApodFragment extends Fragment {
             public void onLoadMore(int currentPage) {
                 footerAdapter.clear();
                 footerAdapter.add(new ProgressItem());
-                ApodQueryUtils.beginQuery(getActivity(), ApodQueryUtils.QUERY_MODE_RECYCLERVIEW);
+                ApodQueryUtils.beginQuery(getActivity());
             }
         };
 
@@ -113,12 +113,12 @@ public class ApodFragment extends Fragment {
             @Override
             public void onRefresh() {
                 ApodQueryUtils.clearData(getActivity());
-                ApodQueryUtils.beginQuery(getActivity(), ApodQueryUtils.QUERY_MODE_RECYCLERVIEW);
+                ApodQueryUtils.beginQuery(getActivity());
             }
         });
 
         if (savedInstanceState == null) {
-            ApodQueryUtils.beginQuery(getActivity(), ApodQueryUtils.QUERY_MODE_RECYCLERVIEW);
+            ApodQueryUtils.beginQuery(getActivity());
         }
 
         return view;

@@ -5,16 +5,17 @@
     android:layout_height="match_parent">
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/activity_viewpager"
+        android:id="@+id/activity_information_viewpager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/activity_viewpager_toolbar"
+        android:id="@+id/activity_information_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/gradient_toolbar"
         android:minHeight="?attr/actionBarSize"
-        app:popupTheme="@style/MainTheme.PopupOverlay" />
+        app:popupTheme="@style/MainTheme.PopupOverlay"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
 </RelativeLayout>

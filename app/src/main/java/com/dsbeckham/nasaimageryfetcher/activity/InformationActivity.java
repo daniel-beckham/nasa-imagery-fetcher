@@ -11,7 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.dsbeckham.nasaimageryfetcher.R;
-import com.dsbeckham.nasaimageryfetcher.adapter.ImageFragmentStatePagerAdapter;
+import com.dsbeckham.nasaimageryfetcher.adapter.InformationFragmentStatePagerAdapter;
 import com.dsbeckham.nasaimageryfetcher.fragment.ApodFragment;
 import com.dsbeckham.nasaimageryfetcher.fragment.IotdFragment;
 import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
@@ -29,29 +29,30 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ViewPagerActivity extends AppCompatActivity {
-    @BindView(R.id.activity_viewpager_toolbar)
+public class InformationActivity extends AppCompatActivity {
+    @BindView(R.id.activity_information_toolbar)
     public Toolbar toolbar;
-    @BindView(R.id.activity_viewpager)
+    @BindView(R.id.activity_information_viewpager)
     public ViewPager viewPager;
 
-    public ImageFragmentStatePagerAdapter imageFragmentStatePagerAdapter;
-    private int viewPagerCurrentItem;
+    public InformationFragmentStatePagerAdapter informationFragmentStatePagerAdapter;
+    private int viewPagerCurrentItem = 0;
+
+    public Calendar apodCalendar = Calendar.getInstance();
 
     public List<UniversalImageModel> apodModels = new ArrayList<>();
     public List<UniversalImageModel> iotdModels = new ArrayList<>();
 
-    public Calendar calendar = Calendar.getInstance();
     public boolean loadingData = false;
     public int nasaGovApiQueries = ApodQueryUtils.NASA_GOV_API_QUERIES;
 
-    private final String VIEW_PAGER_CURRENT_ITEM = "viewPagerCurrentItem";
+    private final String VIEWPAGER_CURRENT_ITEM = "viewPagerCurrentItem";
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_viewpager);
+        setContentView(R.layout.activity_information);
         ButterKnife.bind(this);
 
         UiUtils.makeStatusBarTransparent(this);
@@ -62,8 +63,8 @@ public class ViewPagerActivity extends AppCompatActivity {
                 iotdModels = Parcels.unwrap(getIntent().getParcelableExtra(IotdFragment.EXTRA_IOTD_MODELS));
                 break;
             case "apod":
+                apodCalendar = (Calendar) getIntent().getSerializableExtra(ApodFragment.EXTRA_APOD_CALENDAR);
                 apodModels = Parcels.unwrap(getIntent().getParcelableExtra(ApodFragment.EXTRA_APOD_MODELS));
-                calendar = (Calendar) getIntent().getSerializableExtra(ApodFragment.EXTRA_APOD_CALENDAR);
                 break;
         }
 
@@ -77,11 +78,11 @@ public class ViewPagerActivity extends AppCompatActivity {
                     break;
             }
         } else {
-            viewPagerCurrentItem = savedInstanceState.getInt(VIEW_PAGER_CURRENT_ITEM);
+            viewPagerCurrentItem = savedInstanceState.getInt(VIEWPAGER_CURRENT_ITEM);
         }
 
-        imageFragmentStatePagerAdapter = new ImageFragmentStatePagerAdapter(this, getSupportFragmentManager());
-        viewPager.setAdapter(imageFragmentStatePagerAdapter);
+        informationFragmentStatePagerAdapter = new InformationFragmentStatePagerAdapter(this, getSupportFragmentManager());
+        viewPager.setAdapter(informationFragmentStatePagerAdapter);
 
         viewPager.post(new Runnable() {
             @Override
@@ -90,7 +91,7 @@ public class ViewPagerActivity extends AppCompatActivity {
             }
         });
 
-        viewPager.setPageTransformer(true, new ParallaxPagerTransformer(R.id.fragment_viewpager_imageview));
+        viewPager.setPageTransformer(true, new ParallaxPagerTransformer(R.id.fragment_information_imageview));
     }
 
     @Override
@@ -105,7 +106,7 @@ public class ViewPagerActivity extends AppCompatActivity {
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putInt(VIEW_PAGER_CURRENT_ITEM, viewPager.getCurrentItem());
+        savedInstanceState.putInt(VIEWPAGER_CURRENT_ITEM, viewPager.getCurrentItem());
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -118,7 +119,7 @@ public class ViewPagerActivity extends AppCompatActivity {
                 intent.putExtra(IotdFragment.EXTRA_IOTD_POSITION, viewPager.getCurrentItem());
                 break;
             case "apod":
-                intent.putExtra(ApodFragment.EXTRA_APOD_CALENDAR, calendar);
+                intent.putExtra(ApodFragment.EXTRA_APOD_CALENDAR, apodCalendar);
                 intent.putExtra(ApodFragment.EXTRA_APOD_MODELS, Parcels.wrap(apodModels));
                 intent.putExtra(ApodFragment.EXTRA_APOD_POSITION, viewPager.getCurrentItem());
                 break;

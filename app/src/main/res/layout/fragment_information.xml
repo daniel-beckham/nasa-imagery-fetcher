@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment_viewpager_scrollview"
+    android:id="@+id/fragment_information_scrollview"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,13 +11,13 @@
         android:orientation="vertical">
 
         <FrameLayout
-            android:id="@+id/fragment_viewpager_header_layout"
+            android:id="@+id/fragment_information_header_layout"
             android:layout_width="match_parent"
             android:layout_height="320dp"
             android:background="@drawable/gradient_imageview">
 
             <ProgressBar
-                android:id="@+id/fragment_viewpager_progressbar"
+                android:id="@+id/fragment_information_progressbar"
                 style="@style/Widget.AppCompat.ProgressBar"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
@@ -25,7 +25,7 @@
                 android:adjustViewBounds="true" />
 
             <ImageView
-                android:id="@+id/fragment_viewpager_imageview"
+                android:id="@+id/fragment_information_imageview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
@@ -36,14 +36,14 @@
         </FrameLayout>
 
         <RelativeLayout
-            android:id="@+id/fragment_viewpager_subheader_layout"
+            android:id="@+id/fragment_information_subheader_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
             android:padding="10dp">
 
             <TextView
-                android:id="@+id/fragment_viewpager_title_textview"
+                android:id="@+id/fragment_information_title_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
@@ -51,10 +51,10 @@
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/fragment_viewpager_date_textview"
+                android:id="@+id/fragment_information_date_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/fragment_viewpager_title_textview"
+                android:layout_below="@+id/fragment_information_title_textview"
                 android:fontFamily="sans-serif-light"
                 android:textColor="#ffffffff"
                 android:textSize="16sp" />
@@ -67,7 +67,7 @@
             android:padding="10dp">
 
             <TextView
-                android:id="@+id/fragment_viewpager_description_textview"
+                android:id="@+id/fragment_information_description_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-light"
@@ -75,10 +75,10 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/fragment_viewpager_credit_textview"
+                android:id="@+id/fragment_information_credit_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/fragment_viewpager_description_textview"
+                android:layout_below="@+id/fragment_information_description_textview"
                 android:fontFamily="sans-serif-thin"
                 android:paddingTop="10dp"
                 android:textColor="#ffffffff"

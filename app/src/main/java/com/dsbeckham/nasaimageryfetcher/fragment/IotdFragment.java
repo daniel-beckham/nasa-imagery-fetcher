@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.dsbeckham.nasaimageryfetcher.R;
-import com.dsbeckham.nasaimageryfetcher.activity.ViewPagerActivity;
+import com.dsbeckham.nasaimageryfetcher.activity.InformationActivity;
 import com.dsbeckham.nasaimageryfetcher.adapter.RecyclerViewAdapter;
 import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 import com.dsbeckham.nasaimageryfetcher.util.IotdQueryUtils;
@@ -68,7 +68,7 @@ public class IotdFragment extends Fragment {
         fastItemAdapter.withOnClickListener(new FastAdapter.OnClickListener<RecyclerViewAdapter>() {
             @Override
             public boolean onClick(View view, IAdapter<RecyclerViewAdapter> iAdapter, RecyclerViewAdapter recyclerViewAdapter, int position) {
-                Intent intent = new Intent(getActivity(), ViewPagerActivity.class);
+                Intent intent = new Intent(getActivity(), InformationActivity.class);
                 intent.putExtra(EXTRA_IOTD_MODELS, Parcels.wrap(models));
                 intent.putExtra(EXTRA_IOTD_POSITION, position);
                 startActivityForResult(intent, 0);

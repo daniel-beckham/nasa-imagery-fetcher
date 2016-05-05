@@ -23,7 +23,7 @@ import android.widget.TextView;
 
 import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.activity.ImageActivity;
-import com.dsbeckham.nasaimageryfetcher.activity.ViewPagerActivity;
+import com.dsbeckham.nasaimageryfetcher.activity.InformationActivity;
 import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 import com.dsbeckham.nasaimageryfetcher.util.DateTimeUtils;
 import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
@@ -34,40 +34,40 @@ import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
 
+import java.util.Calendar;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ViewPagerFragment extends Fragment {
-    @BindView(R.id.fragment_viewpager_credit_textview)
+public class InformationFragment extends Fragment {
+    @BindView(R.id.fragment_information_credit_textview)
     TextView credit;
-    @BindView(R.id.fragment_viewpager_date_textview)
+    @BindView(R.id.fragment_information_date_textview)
     TextView date;
-    @BindView(R.id.fragment_viewpager_description_textview)
+    @BindView(R.id.fragment_information_description_textview)
     TextView description;
-    @BindView(R.id.fragment_viewpager_header_layout)
+    @BindView(R.id.fragment_information_header_layout)
     FrameLayout headerLayout;
-    @BindView(R.id.fragment_viewpager_imageview)
+    @BindView(R.id.fragment_information_imageview)
     ImageView imageView;
-    @BindView(R.id.fragment_viewpager_progressbar)
+    @BindView(R.id.fragment_information_progressbar)
     ProgressBar progressBar;
-    @BindView(R.id.fragment_viewpager_scrollview)
+    @BindView(R.id.fragment_information_scrollview)
     NestedScrollView nestedScrollView;
-    @BindView(R.id.fragment_viewpager_subheader_layout)
+    @BindView(R.id.fragment_information_subheader_layout)
     RelativeLayout subHeaderLayout;
-    @BindView(R.id.fragment_viewpager_title_textview)
+    @BindView(R.id.fragment_information_title_textview)
     TextView title;
 
     private int position;
     private UniversalImageModel universalImageModel;
 
-    public static String EXTRA_CURRENT_MODEL = "com.dsbeckham.nasaimageryfetcher.extra.CURRENT_MODEL";
-
-    public static ViewPagerFragment newInstance(int page) {
-        ViewPagerFragment viewPagerFragment = new ViewPagerFragment();
+    public static InformationFragment newInstance(int page) {
+        InformationFragment InformationFragment = new InformationFragment();
         Bundle bundle = new Bundle();
         bundle.putInt("position", page);
-        viewPagerFragment.setArguments(bundle);
-        return viewPagerFragment;
+        InformationFragment.setArguments(bundle);
+        return InformationFragment;
     }
 
     @Override
@@ -79,21 +79,20 @@ public class ViewPagerFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_viewpager, container, false);
+        View view = inflater.inflate(R.layout.fragment_information, container, false);
         ButterKnife.bind(this, view);
 
+        // This controls the parallax effec
         nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
             public void onScrollChange(NestedScrollView nestedScrollView, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                // This creates a parallax effect for the image.
                 ViewCompat.setTranslationY(imageView, scrollY * 0.5f);
 
-                // This makes the ToolBar change from a gradient to a solid color and vice versa.
-                if (scrollY > (headerLayout.getHeight() - ((ViewPagerActivity) getActivity()).toolbar.getHeight())) {
-                    ((ViewPagerActivity) getActivity()).toolbar.setBackground(new ColorDrawable(ContextCompat.getColor(getActivity(), R.color.colorPrimary)));
+                if (scrollY > (headerLayout.getHeight() - ((InformationActivity) getActivity()).toolbar.getHeight())) {
+                    ((InformationActivity) getActivity()).toolbar.setBackground(new ColorDrawable(ContextCompat.getColor(getActivity(), R.color.colorPrimary)));
                     UiUtils.resetStatusBarTransparency(getActivity());
                 } else {
-                    ((ViewPagerActivity) getActivity()).toolbar.setBackgroundResource(R.drawable.gradient_toolbar);
+                    ((InformationActivity) getActivity()).toolbar.setBackgroundResource(R.drawable.gradient_toolbar);
                     UiUtils.makeStatusBarTransparent(getActivity());
                 }
             }
@@ -101,10 +100,10 @@ public class ViewPagerFragment extends Fragment {
 
         switch (PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
             case "iotd":
-                universalImageModel = ((ViewPagerActivity) getActivity()).iotdModels.get(position);
+                universalImageModel = ((InformationActivity) getActivity()).iotdModels.get(position);
                 break;
             case "apod":
-                universalImageModel = ((ViewPagerActivity) getActivity()).apodModels.get(position);
+                universalImageModel = ((InformationActivity) getActivity()).apodModels.get(position);
                 break;
         }
 
@@ -147,11 +146,49 @@ public class ViewPagerFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), ImageActivity.class);
-                intent.putExtra(EXTRA_CURRENT_MODEL, Parcels.wrap(universalImageModel));
-                startActivity(intent);
+
+                switch (PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
+                    case "iotd":
+                        intent.putExtra(IotdFragment.EXTRA_IOTD_MODELS, Parcels.wrap(((InformationActivity) getActivity()).iotdModels));
+                        intent.putExtra(IotdFragment.EXTRA_IOTD_POSITION, position);
+                        break;
+                    case "apod":
+                        intent.putExtra(ApodFragment.EXTRA_APOD_CALENDAR, ((InformationActivity) getActivity()).apodCalendar);
+                        intent.putExtra(ApodFragment.EXTRA_APOD_MODELS, Parcels.wrap(((InformationActivity) getActivity()).apodModels));
+                        intent.putExtra(ApodFragment.EXTRA_APOD_POSITION, position);
+                        break;
+                }
+
+                startActivityForResult(intent, 0);
             }
         });
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        switch (PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
+            case "iotd":
+                ((InformationActivity) getActivity()).viewPager.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((InformationActivity) getActivity()).viewPager.setCurrentItem(data.getIntExtra(IotdFragment.EXTRA_IOTD_POSITION, 0), false);
+                    }
+                });
+                break;
+            case "apod":
+                ((InformationActivity) getActivity()).apodCalendar = (Calendar) data.getSerializableExtra(ApodFragment.EXTRA_APOD_CALENDAR);
+                ((InformationActivity) getActivity()).apodModels = Parcels.unwrap(data.getParcelableExtra(ApodFragment.EXTRA_APOD_MODELS));
+                ((InformationActivity) getActivity()).informationFragmentStatePagerAdapter.notifyDataSetChanged();
+
+                ((InformationActivity) getActivity()).viewPager.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((InformationActivity) getActivity()).viewPager.setCurrentItem(data.getIntExtra(ApodFragment.EXTRA_APOD_POSITION, 0), false);
+                    }
+                });
+                break;
+        }
     }
 }

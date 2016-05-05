@@ -18,7 +18,7 @@ import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 import retrofit2.http.GET;
 
 public class IotdQueryUtils {
-    public static final String RSS_BASE_URL = "https://www.nasa.gov/";
+    private static final String RSS_BASE_URL = "https://www.nasa.gov/";
 
     public interface RssService {
         @GET("rss/dyn/lg_image_of_the_day.rss")
@@ -35,6 +35,33 @@ public class IotdQueryUtils {
         rssService = retrofit.create(RssService.class);
     }
 
+    public static void clearData(Activity activity) {
+        IotdFragment iotdFragment = (IotdFragment) activity.getFragmentManager().findFragmentByTag("iotd");
+
+        if (iotdFragment == null) {
+            return;
+        }
+
+        if (!iotdFragment.loadingData) {
+            iotdFragment.fastItemAdapter.clear();
+            iotdFragment.footerAdapter.clear();
+            iotdFragment.models.clear();
+        }
+    }
+
+    public static void updateData(Activity activity, Intent intent) {
+        final IotdFragment iotdFragment = (IotdFragment) activity.getFragmentManager().findFragmentByTag("iotd");
+
+        if (iotdFragment == null) {
+            return;
+        }
+
+        TypedValue typedValue = new TypedValue();
+        activity.getTheme().resolveAttribute(android.support.v7.appcompat.R.attr.actionBarSize, typedValue, true);
+
+        iotdFragment.linearLayoutManager.scrollToPositionWithOffset(intent.getIntExtra(IotdFragment.EXTRA_IOTD_POSITION, 0), activity.getResources().getDimensionPixelSize(typedValue.resourceId));
+    }
+
     public static void beginFetch(Activity activity) {
         IotdFragment iotdFragment = (IotdFragment) activity.getFragmentManager().findFragmentByTag("iotd");
 
@@ -48,20 +75,6 @@ public class IotdQueryUtils {
             }
 
             fetchRssFeed(activity);
-        }
-    }
-
-    public static void clearData(Activity activity) {
-        IotdFragment iotdFragment = (IotdFragment) activity.getFragmentManager().findFragmentByTag("iotd");
-
-        if (iotdFragment == null) {
-            return;
-        }
-
-        if (!iotdFragment.loadingData) {
-            iotdFragment.fastItemAdapter.clear();
-            iotdFragment.footerAdapter.clear();
-            iotdFragment.models.clear();
         }
     }
 
@@ -104,18 +117,5 @@ public class IotdQueryUtils {
                 iotdFragment.swipeRefreshLayout.setRefreshing(false);
             }
         });
-    }
-
-    public static void updateData(Activity activity, Intent intent) {
-        final IotdFragment iotdFragment = (IotdFragment) activity.getFragmentManager().findFragmentByTag("iotd");
-
-        if (iotdFragment == null) {
-            return;
-        }
-
-        TypedValue typedValue = new TypedValue();
-        activity.getTheme().resolveAttribute(android.support.v7.appcompat.R.attr.actionBarSize, typedValue, true);
-
-        iotdFragment.linearLayoutManager.scrollToPositionWithOffset(intent.getIntExtra(IotdFragment.EXTRA_IOTD_POSITION, 0), activity.getResources().getDimensionPixelSize(typedValue.resourceId));
     }
 }

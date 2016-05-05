@@ -16,7 +16,17 @@
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.ViewPagerActivity" />
+                android:value=".activity.InformationActivity" />
+
+        </activity>
+
+        <activity
+            android:name=".activity.InformationActivity"
+            android:theme="@style/MainTheme.NoActionBar">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.MainActivity" />
 
         </activity>
 
@@ -36,16 +46,6 @@
             android:name=".activity.SettingsActivity"
             android:label="@string/nav_settings"
             android:theme="@style/MainTheme">
-
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.MainActivity" />
-
-        </activity>
-
-        <activity
-            android:name=".activity.ViewPagerActivity"
-            android:theme="@style/MainTheme.NoActionBar">
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

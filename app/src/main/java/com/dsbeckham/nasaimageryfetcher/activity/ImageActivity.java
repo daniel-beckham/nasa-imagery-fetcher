@@ -1,56 +1,58 @@
 package com.dsbeckham.nasaimageryfetcher.activity;
 
-import android.graphics.Bitmap;
+import android.annotation.TargetApi;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.GestureDetector;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
-import android.widget.ProgressBar;
 
-import com.davemorrissey.labs.subscaleview.ImageSource;
-import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.dsbeckham.nasaimageryfetcher.R;
-import com.dsbeckham.nasaimageryfetcher.fragment.ViewPagerFragment;
+import com.dsbeckham.nasaimageryfetcher.adapter.ImageFragmentStatePagerAdapter;
+import com.dsbeckham.nasaimageryfetcher.fragment.ApodFragment;
+import com.dsbeckham.nasaimageryfetcher.fragment.IotdFragment;
 import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
+import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
+import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
 import com.dsbeckham.nasaimageryfetcher.util.UiUtils;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import org.parceler.Parcels;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ImageActivity extends AppCompatActivity {
-    @BindView(R.id.activity_image_subsamplingscaleimageview)
-    SubsamplingScaleImageView subsamplingScaleImageView;
-    @BindView(R.id.activity_image_progressbar)
-    ProgressBar progressBar;
     @BindView(R.id.activity_image_toolbar)
     public Toolbar toolbar;
+    @BindView(R.id.activity_image_viewpager)
+    public ViewPager viewPager;
 
-    private boolean systemUiHidden;
+    public ImageFragmentStatePagerAdapter imageFragmentStatePagerAdapter;
+    public GestureDetector gestureDetector;
+    private boolean systemUiHidden = false;
+    private int viewPagerCurrentItem = 0;
 
-    private Target target = new Target() {
-        @Override
-        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom loadedFrom) {
-            subsamplingScaleImageView.setImage(ImageSource.bitmap(bitmap).tilingDisabled());
-            progressBar.setVisibility(View.GONE);
-        }
+    public Calendar apodCalendar = Calendar.getInstance();
 
-        @Override
-        public void onBitmapFailed(android.graphics.drawable.Drawable errorDrawable) {
-            progressBar.setVisibility(View.GONE);
-        }
+    public List<UniversalImageModel> apodModels = new ArrayList<>();
+    public List<UniversalImageModel> iotdModels = new ArrayList<>();
 
-        @Override
-        public void onPrepareLoad(android.graphics.drawable.Drawable placeHolderDrawable) {}
-    };
+    public boolean loadingData = false;
+    public int nasaGovApiQueries = ApodQueryUtils.NASA_GOV_API_QUERIES;
 
+    private final String VIEWPAGER_CURRENT_ITEM = "viewPagerCurrentItem";
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,45 +61,72 @@ public class ImageActivity extends AppCompatActivity {
 
         UiUtils.makeStatusBarTransparent(this);
         UiUtils.setUpToolBarForChildActivity(this, toolbar);
+        UiUtils.showSystemUI(this);
 
-        UniversalImageModel universalImageModel = Parcels.unwrap(getIntent().getParcelableExtra(ViewPagerFragment.EXTRA_CURRENT_MODEL));
+        switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
+            case "iotd":
+                iotdModels = Parcels.unwrap(getIntent().getParcelableExtra(IotdFragment.EXTRA_IOTD_MODELS));
+                break;
+            case "apod":
+                apodCalendar = (Calendar) getIntent().getSerializableExtra(ApodFragment.EXTRA_APOD_CALENDAR);
+                apodModels = Parcels.unwrap(getIntent().getParcelableExtra(ApodFragment.EXTRA_APOD_MODELS));
+                break;
+        }
 
-        Picasso.with(this)
-                .load(universalImageModel.getImageThumbnailUrl())
-                .resize(2048, 2048)
-                .centerInside()
-                .config(Bitmap.Config.RGB_565)
-                .into(target);
+        if (savedInstanceState == null) {
+            switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
+                case "iotd":
+                    viewPagerCurrentItem = getIntent().getIntExtra(IotdFragment.EXTRA_IOTD_POSITION, 0);
+                    break;
+                case "apod":
+                    viewPagerCurrentItem = getIntent().getIntExtra(ApodFragment.EXTRA_APOD_POSITION, 0);
+                    break;
+            }
+        } else {
+            viewPagerCurrentItem = savedInstanceState.getInt(VIEWPAGER_CURRENT_ITEM);
+        }
 
-        UiUtils.showSystemUI(ImageActivity.this);
-        systemUiHidden = false;
+        imageFragmentStatePagerAdapter = new ImageFragmentStatePagerAdapter(this, getSupportFragmentManager());
+        viewPager.setAdapter(imageFragmentStatePagerAdapter);
 
-        final GestureDetector gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+        viewPager.post(new Runnable() {
+            @Override
+            public void run() {
+                viewPager.setCurrentItem(viewPagerCurrentItem, false);
+            }
+        });
+
+        viewPager.setPageTransformer(true, new UiUtils.DepthPageTransformer());
+
+        gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapConfirmed(MotionEvent motionEvent) {
                 if (systemUiHidden) {
+                    UiUtils.showSystemUI(ImageActivity.this);
+                } else {
+                    UiUtils.hideSystemUI(ImageActivity.this);
+                }
+                return true;
+            }
+        });
+
+        View decorView = getWindow().getDecorView();
+        decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+            @Override
+            public void onSystemUiVisibilityChange(int visibility) {
+                if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
                     if (getSupportActionBar() != null) {
                         getSupportActionBar().show();
                     }
 
-                    UiUtils.showSystemUI(ImageActivity.this);
                     systemUiHidden = false;
                 } else {
                     if (getSupportActionBar() != null) {
                         getSupportActionBar().hide();
                     }
 
-                    UiUtils.hideSystemUI(ImageActivity.this);
                     systemUiHidden = true;
                 }
-                return true;
-            }
-        });
-
-        subsamplingScaleImageView.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch (View view, MotionEvent motionEvent){
-                return gestureDetector.onTouchEvent(motionEvent);
             }
         });
     }
@@ -110,5 +139,30 @@ public class ImageActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt(VIEWPAGER_CURRENT_ITEM, viewPager.getCurrentItem());
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void finish() {
+        Intent intent = new Intent();
+
+        switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
+            case "iotd":
+                intent.putExtra(IotdFragment.EXTRA_IOTD_POSITION, viewPager.getCurrentItem());
+                break;
+            case "apod":
+                intent.putExtra(ApodFragment.EXTRA_APOD_CALENDAR, apodCalendar);
+                intent.putExtra(ApodFragment.EXTRA_APOD_MODELS, Parcels.wrap(apodModels));
+                intent.putExtra(ApodFragment.EXTRA_APOD_POSITION, viewPager.getCurrentItem());
+                break;
+        }
+
+        setResult(RESULT_OK, intent);
+        super.finish();
     }
 }
