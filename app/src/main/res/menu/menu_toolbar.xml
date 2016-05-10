@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_toolbar_share"
+        android:icon="@drawable/ic_share"
+        android:title="@string/menu_share"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_toolbar_wallpaper"
+        android:title="@string/menu_wallpaper" />
+    <item
+        android:id="@+id/menu_toolbar_download"
+        android:title="@string/menu_download" />
+
+</menu>

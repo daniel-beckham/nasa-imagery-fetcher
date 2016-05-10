@@ -133,7 +133,7 @@ public class ImageActivity extends AppCompatActivity {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_image, menu);
+        getMenuInflater().inflate(R.menu.menu_toolbar, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -143,6 +143,21 @@ public class ImageActivity extends AppCompatActivity {
             case android.R.id.home:
                 this.finish();
                 return true;
+            case R.id.menu_toolbar_share:
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+
+                switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
+                    case "iotd":
+                        intent.putExtra(Intent.EXTRA_TEXT, iotdModels.get(viewPagerCurrentItem).getImageUrl());
+                        break;
+                    case "apod":
+                        intent.putExtra(Intent.EXTRA_TEXT, apodModels.get(viewPagerCurrentItem).getImageUrl());
+                        break;
+                }
+
+                startActivity(Intent.createChooser(intent, null));
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
