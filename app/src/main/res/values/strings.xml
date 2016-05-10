@@ -10,6 +10,10 @@
     <string name="nav_apod">Astronomy Picture of the Day</string>
     <string name="nav_settings">Settings</string>
 
+    <string name="menu_wallpaper">Set as wallpaper</string>
+    <string name="menu_download">Download</string>
+    <string name="menu_share">Share</string>
+
     <string name="pref_general_category">General</string>
     <string name="pref_fetch_mode_title">Fetch mode</string>
     <string name="pref_automatic_updates_title">Automatic updates</string>

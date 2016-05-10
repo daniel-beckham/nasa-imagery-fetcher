@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.dsbeckham.nasaimageryfetcher.R;
@@ -93,6 +94,11 @@ public class InformationActivity extends AppCompatActivity {
         });
 
         viewPager.setPageTransformer(true, new ParallaxPagerTransformer(R.id.fragment_information_imageview));
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_information, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
