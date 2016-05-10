@@ -58,7 +58,7 @@ public class InformationActivity extends AppCompatActivity {
 
         UiUtils.makeStatusBarTransparent(this);
         UiUtils.setUpToolBarForChildActivity(this, toolbar);
-        UiUtils.showSystemUI(this);
+        UiUtils.showFullscreen(this);
 
         switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
             case "iotd":
