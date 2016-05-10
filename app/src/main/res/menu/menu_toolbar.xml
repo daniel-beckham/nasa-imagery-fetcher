@@ -8,10 +8,10 @@
         android:title="@string/menu_share"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/menu_toolbar_wallpaper"
-        android:title="@string/menu_wallpaper" />
-    <item
         android:id="@+id/menu_toolbar_download"
         android:title="@string/menu_download" />
+    <item
+        android:id="@+id/menu_toolbar_wallpaper"
+        android:title="@string/menu_wallpaper" />
 
 </menu>
