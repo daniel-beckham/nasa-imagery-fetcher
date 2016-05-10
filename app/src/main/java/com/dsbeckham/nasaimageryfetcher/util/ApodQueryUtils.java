@@ -3,6 +3,7 @@ package com.dsbeckham.nasaimageryfetcher.util;
 import android.app.Activity;
 import android.content.Intent;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -72,7 +73,7 @@ public class ApodQueryUtils {
     }
 
     public static void clearData(Activity activity) {
-        ApodFragment apodFragment = (ApodFragment) activity.getFragmentManager().findFragmentByTag("apod");
+        ApodFragment apodFragment = (ApodFragment) ((AppCompatActivity) activity).getSupportFragmentManager().findFragmentByTag("apod");
 
         if (apodFragment == null) {
             return;
@@ -88,7 +89,7 @@ public class ApodQueryUtils {
     }
 
     public static void updateData(Activity activity, Intent intent) {
-        ApodFragment apodFragment = (ApodFragment) activity.getFragmentManager().findFragmentByTag("apod");
+        ApodFragment apodFragment = (ApodFragment) ((AppCompatActivity) activity).getSupportFragmentManager().findFragmentByTag("apod");
 
         if (apodFragment == null) {
             return;
@@ -110,7 +111,7 @@ public class ApodQueryUtils {
     }
 
     public static void beginQuery(Activity activity) {
-        ApodFragment apodFragment = (ApodFragment) activity.getFragmentManager().findFragmentByTag("apod");
+        ApodFragment apodFragment = (ApodFragment) ((AppCompatActivity) activity).getSupportFragmentManager().findFragmentByTag("apod");
 
         if (apodFragment == null) {
             return;
@@ -168,7 +169,7 @@ public class ApodQueryUtils {
     }
 
     public static void queryMorphIoApi(final Activity activity) {
-        final ApodFragment apodFragment = (ApodFragment) activity.getFragmentManager().findFragmentByTag("apod");
+        final ApodFragment apodFragment = (ApodFragment) ((AppCompatActivity) activity).getSupportFragmentManager().findFragmentByTag("apod");
 
         if (apodFragment == null) {
             return;
@@ -267,7 +268,7 @@ public class ApodQueryUtils {
     }
 
     public static void queryNasaGovApi(final Activity activity) {
-        final ApodFragment apodFragment = (ApodFragment) activity.getFragmentManager().findFragmentByTag("apod");
+        final ApodFragment apodFragment = (ApodFragment) ((AppCompatActivity) activity).getSupportFragmentManager().findFragmentByTag("apod");
 
         if (apodFragment == null) {
             return;

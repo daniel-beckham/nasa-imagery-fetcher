@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     DrawerLayout drawerLayout;
     @BindView(R.id.navigationview)
     NavigationView navigationView;
-    @BindView(R.id.main_toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         PreferenceUtils.setDefaultValuesForPreferences(this);
 
         if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction()
+            getSupportFragmentManager().beginTransaction()
                     .replace(R.id.coordinatorlayout, new IotdFragment(), "iotd")
                     .commit();
 
@@ -87,19 +87,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.nav_iotd:
-                if (getFragmentManager().findFragmentByTag("iotd") != null) {
-                    getFragmentManager().beginTransaction()
-                            .show(getFragmentManager().findFragmentByTag("iotd"))
+                if (getSupportFragmentManager().findFragmentByTag("iotd") != null) {
+                    getSupportFragmentManager().beginTransaction()
+                            .show(getSupportFragmentManager().findFragmentByTag("iotd"))
                             .commit();
                 } else {
-                    getFragmentManager().beginTransaction()
+                    getSupportFragmentManager().beginTransaction()
                             .add(R.id.coordinatorlayout, new IotdFragment(), "iotd")
                             .commit();
                 }
 
-                if (getFragmentManager().findFragmentByTag("apod") != null) {
-                    getFragmentManager().beginTransaction()
-                            .hide(getFragmentManager().findFragmentByTag("apod"))
+                if (getSupportFragmentManager().findFragmentByTag("apod") != null) {
+                    getSupportFragmentManager().beginTransaction()
+                            .hide(getSupportFragmentManager().findFragmentByTag("apod"))
                             .commit();
                 }
 
@@ -108,19 +108,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 PreferenceManager.getDefaultSharedPreferences(this).edit().putString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "iotd").apply();
                 break;
             case R.id.nav_apod:
-                if (getFragmentManager().findFragmentByTag("apod") != null) {
-                    getFragmentManager().beginTransaction()
-                            .show(getFragmentManager().findFragmentByTag("apod"))
+                if (getSupportFragmentManager().findFragmentByTag("apod") != null) {
+                    getSupportFragmentManager().beginTransaction()
+                            .show(getSupportFragmentManager().findFragmentByTag("apod"))
                             .commit();
                 } else {
-                    getFragmentManager().beginTransaction()
+                    getSupportFragmentManager().beginTransaction()
                             .add(R.id.coordinatorlayout, new ApodFragment(), "apod")
                             .commit();
                 }
 
-                if (getFragmentManager().findFragmentByTag("iotd") != null) {
-                    getFragmentManager().beginTransaction()
-                            .hide(getFragmentManager().findFragmentByTag("iotd"))
+                if (getSupportFragmentManager().findFragmentByTag("iotd") != null) {
+                    getSupportFragmentManager().beginTransaction()
+                            .hide(getSupportFragmentManager().findFragmentByTag("iotd"))
                             .commit();
                 }
 

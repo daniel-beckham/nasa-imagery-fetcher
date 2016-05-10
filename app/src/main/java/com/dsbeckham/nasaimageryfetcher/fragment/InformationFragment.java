@@ -82,7 +82,7 @@ public class InformationFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_information, container, false);
         ButterKnife.bind(this, view);
 
-        // This controls the parallax effec
+        // This controls the image parallax effect as well as the toolbar and status bar transparency.
         nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
             public void onScrollChange(NestedScrollView nestedScrollView, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {

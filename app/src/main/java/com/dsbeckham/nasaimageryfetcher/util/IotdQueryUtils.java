@@ -2,6 +2,7 @@ package com.dsbeckham.nasaimageryfetcher.util;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -36,7 +37,7 @@ public class IotdQueryUtils {
     }
 
     public static void clearData(Activity activity) {
-        IotdFragment iotdFragment = (IotdFragment) activity.getFragmentManager().findFragmentByTag("iotd");
+        IotdFragment iotdFragment = (IotdFragment) ((AppCompatActivity) activity).getSupportFragmentManager().findFragmentByTag("iotd");
 
         if (iotdFragment == null) {
             return;
@@ -50,7 +51,7 @@ public class IotdQueryUtils {
     }
 
     public static void updateData(Activity activity, Intent intent) {
-        final IotdFragment iotdFragment = (IotdFragment) activity.getFragmentManager().findFragmentByTag("iotd");
+        final IotdFragment iotdFragment = (IotdFragment) ((AppCompatActivity) activity).getSupportFragmentManager().findFragmentByTag("iotd");
 
         if (iotdFragment == null) {
             return;
@@ -63,7 +64,7 @@ public class IotdQueryUtils {
     }
 
     public static void beginFetch(Activity activity) {
-        IotdFragment iotdFragment = (IotdFragment) activity.getFragmentManager().findFragmentByTag("iotd");
+        IotdFragment iotdFragment = (IotdFragment) ((AppCompatActivity) activity).getSupportFragmentManager().findFragmentByTag("iotd");
 
         if (iotdFragment == null) {
             return;
@@ -79,7 +80,7 @@ public class IotdQueryUtils {
     }
 
     public static void fetchRssFeed(final Activity activity) {
-        final IotdFragment iotdFragment = (IotdFragment) activity.getFragmentManager().findFragmentByTag("iotd");
+        final IotdFragment iotdFragment = (IotdFragment) ((AppCompatActivity) activity).getSupportFragmentManager().findFragmentByTag("iotd");
 
         if (iotdFragment == null) {
             return;
