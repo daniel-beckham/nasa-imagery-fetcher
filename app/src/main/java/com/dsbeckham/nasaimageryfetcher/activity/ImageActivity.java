@@ -1,10 +1,15 @@
 package com.dsbeckham.nasaimageryfetcher.activity;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,6 +25,7 @@ import com.dsbeckham.nasaimageryfetcher.fragment.ApodFragment;
 import com.dsbeckham.nasaimageryfetcher.fragment.IotdFragment;
 import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
+import com.dsbeckham.nasaimageryfetcher.util.PermissionUtils;
 import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
 import com.dsbeckham.nasaimageryfetcher.util.UiUtils;
 
@@ -158,8 +164,42 @@ public class ImageActivity extends AppCompatActivity {
 
                 startActivity(Intent.createChooser(intent, null));
                 break;
+            case R.id.menu_toolbar_download:
+                if (PermissionUtils.isStoragePermissionGranted(this)) {
+                    switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
+                        case "iotd":
+                            UiUtils.downloadFile(this, Uri.parse(iotdModels.get(viewPagerCurrentItem).getImageUrl()));
+                            break;
+                        case "apod":
+                            UiUtils.downloadFile(this, Uri.parse(apodModels.get(viewPagerCurrentItem).getImageUrl()));
+                            break;
+                    }
+                    break;
+                } else {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PermissionUtils.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                }
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PermissionUtils.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
+                        case "iotd":
+                            UiUtils.downloadFile(this, Uri.parse(iotdModels.get(viewPagerCurrentItem).getImageUrl()));
+                            break;
+                        case "apod":
+                            UiUtils.downloadFile(this, Uri.parse(apodModels.get(viewPagerCurrentItem).getImageUrl()));
+                            break;
+                    }
+                    break;
+                }
+            }
+        }
     }
 
     @Override
