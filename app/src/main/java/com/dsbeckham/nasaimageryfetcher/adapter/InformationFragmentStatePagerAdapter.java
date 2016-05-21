@@ -33,7 +33,7 @@ public class InformationFragmentStatePagerAdapter extends SmartFragmentStatePage
     public Fragment getItem(int position) {
         if (PreferenceManager.getDefaultSharedPreferences(activity).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "").equals("apod")) {
             if (position == getCount() - 1) {
-                ApodQueryUtils.beginQuery(activity, ApodQueryUtils.VIEWPAGER_INFORMATION);
+                ApodQueryUtils.beginQuery(activity, ApodQueryUtils.VIEWPAGER_INFORMATION, false);
             }
         }
         return InformationFragment.newInstance(position);

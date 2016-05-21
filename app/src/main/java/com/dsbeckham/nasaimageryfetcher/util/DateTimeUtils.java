@@ -11,6 +11,25 @@ import java.util.Date;
 import java.util.Locale;
 
 public class DateTimeUtils {
+    public static Calendar convertDateToCalendar(String input, String inputFormat) {
+        Date date = null;
+
+        try {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(inputFormat, Locale.US);
+            date = simpleDateFormat.parse(input);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        Calendar calendar = Calendar.getInstance();
+
+        if (date != null) {
+            calendar.setTime(date);
+        }
+
+        return calendar;
+    }
+
     public static String convertDateToCustomDateFormat(String input, String inputFormat, String outputFormat) {
         Date date = null;
 

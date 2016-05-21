@@ -22,6 +22,7 @@ import com.dsbeckham.nasaimageryfetcher.fragment.ApodFragment;
 import com.dsbeckham.nasaimageryfetcher.fragment.IotdFragment;
 import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
+import com.dsbeckham.nasaimageryfetcher.util.DownloadUtils;
 import com.dsbeckham.nasaimageryfetcher.util.PermissionUtils;
 import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
 import com.dsbeckham.nasaimageryfetcher.util.UiUtils;
@@ -109,41 +110,40 @@ public class InformationActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        UniversalImageModel universalImageModel = null;
+
+        switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
+            case "iotd":
+                universalImageModel = iotdModels.get(viewPagerCurrentItem);
+                break;
+            case "apod":
+                universalImageModel = apodModels.get(viewPagerCurrentItem);
+                break;
+        }
+
+        if (universalImageModel == null) {
+            return super.onOptionsItemSelected(item);
+        }
+
         switch (item.getItemId()) {
             case android.R.id.home:
                 this.finish();
                 return true;
             case R.id.menu_toolbar_share:
                 Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.putExtra(Intent.EXTRA_TEXT, universalImageModel.getImageUrl());
                 intent.setType("text/plain");
-
-                switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
-                    case "iotd":
-                        intent.putExtra(Intent.EXTRA_TEXT, iotdModels.get(viewPagerCurrentItem).getImageUrl());
-                        break;
-                    case "apod":
-                        intent.putExtra(Intent.EXTRA_TEXT, apodModels.get(viewPagerCurrentItem).getImageUrl());
-                        break;
-                }
-
                 startActivity(Intent.createChooser(intent, null));
                 break;
             case R.id.menu_toolbar_download:
                 if (PermissionUtils.isStoragePermissionGranted(this)) {
-                    switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
-                        case "iotd":
-                            UiUtils.downloadFile(this, Uri.parse(iotdModels.get(viewPagerCurrentItem).getImageUrl()));
-                            break;
-                        case "apod":
-                            UiUtils.downloadFile(this, Uri.parse(apodModels.get(viewPagerCurrentItem).getImageUrl()));
-                            break;
-                    }
-                    break;
+                    DownloadUtils.validateUriAndDownloadFile(this, Uri.parse(universalImageModel.getImageUrl()), Uri.parse(universalImageModel.getImageThumbnailUrl()), false);
                 } else {
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PermissionUtils.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
                 }
                 break;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -152,15 +152,20 @@ public class InformationActivity extends AppCompatActivity {
         switch (requestCode) {
             case PermissionUtils.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    UniversalImageModel universalImageModel = null;
+
                     switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
                         case "iotd":
-                            UiUtils.downloadFile(this, Uri.parse(iotdModels.get(viewPagerCurrentItem).getImageUrl()));
+                            universalImageModel = iotdModels.get(viewPagerCurrentItem);
                             break;
                         case "apod":
-                            UiUtils.downloadFile(this, Uri.parse(apodModels.get(viewPagerCurrentItem).getImageUrl()));
+                            universalImageModel = apodModels.get(viewPagerCurrentItem);
                             break;
                     }
-                    break;
+
+                    if (universalImageModel != null) {
+                        DownloadUtils.validateUriAndDownloadFile(this, Uri.parse(universalImageModel.getImageUrl()), Uri.parse(universalImageModel.getImageThumbnailUrl()), false);
+                    }
                 }
             }
         }

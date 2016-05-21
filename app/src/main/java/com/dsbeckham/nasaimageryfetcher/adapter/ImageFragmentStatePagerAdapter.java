@@ -33,7 +33,7 @@ public class ImageFragmentStatePagerAdapter extends SmartFragmentStatePagerAdapt
     public Fragment getItem(int position) {
         if (PreferenceManager.getDefaultSharedPreferences(activity).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "").equals("apod")) {
             if (position == getCount() - 1) {
-                ApodQueryUtils.beginQuery(activity, ApodQueryUtils.VIEWPAGER_IMAGE);
+                ApodQueryUtils.beginQuery(activity, ApodQueryUtils.VIEWPAGER_IMAGE, false);
             }
         }
         return ImageFragment.newInstance(position);

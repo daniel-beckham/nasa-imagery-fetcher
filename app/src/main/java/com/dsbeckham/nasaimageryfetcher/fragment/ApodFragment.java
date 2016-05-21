@@ -93,7 +93,7 @@ public class ApodFragment extends Fragment {
             public void onLoadMore(int currentPage) {
                 footerAdapter.clear();
                 footerAdapter.add(new ProgressItem());
-                ApodQueryUtils.beginQuery(getActivity());
+                ApodQueryUtils.beginQuery(getActivity(), false);
             }
         };
 
@@ -113,12 +113,12 @@ public class ApodFragment extends Fragment {
             @Override
             public void onRefresh() {
                 ApodQueryUtils.clearData(getActivity());
-                ApodQueryUtils.beginQuery(getActivity());
+                ApodQueryUtils.beginQuery(getActivity(), false);
             }
         });
 
         if (savedInstanceState == null) {
-            ApodQueryUtils.beginQuery(getActivity());
+            ApodQueryUtils.beginQuery(getActivity(), false);
         }
 
         return view;

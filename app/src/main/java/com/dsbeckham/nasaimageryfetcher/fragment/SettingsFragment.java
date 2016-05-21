@@ -16,7 +16,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         setRetainInstance(true);
 
         addPreferencesFromResource(R.xml.preferences);
-        PreferenceUtils.configureUpdateTimePreference(getActivity());
+        PreferenceUtils.configureFetchTimePreference(getActivity());
         PreferenceUtils.togglePreferencesBasedOnAllCurrentKeyValues(getActivity());
     }
 

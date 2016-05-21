@@ -13,34 +13,32 @@ import java.util.Calendar;
 import java.util.Map;
 
 public class PreferenceUtils {
-    public static final String PREF_FETCH_MODE = "pref_fetch_mode";
-    public static final String PREF_AUTOMATIC_UPDATES = "pref_automatic_updates";
-    public static final String PREF_WIFI_UPDATES_ONLY = "pref_wifi_updates_only";
-    public static final String PREF_FETCH_CATEGORIES = "pref_fetch_categories";
     public static final String PREF_NOTIFICATIONS = "pref_notifications";
-    public static final String PREF_UPDATE_TIME = "pref_update_time";
-    public static final String PREF_RANDOM_IMAGES_UPDATE_FREQUENCY = "pref_update_frequency";
+    public static final String PREF_AUTOMATIC_DOWNLOADS = "pref_automatic_downloads";
+    public static final String PREF_WIFI_DOWNLOADS_ONLY = "pref_wifi_downloads_only";
+    public static final String PREF_FETCH_CATEGORIES = "pref_fetch_categories";
+    public static final String PREF_FETCH_TIME = "pref_fetch_time";
+    public static final String PREF_AUTOMATIC_UPDATES = "pref_automatic_updates";
+    public static final String PREF_DOWNLOADED_IMAGE_CYCLE_INTERVAL = "pref_downloaded_image_cycle_interval";
     public static final String PREF_DISPLAY_CATEGORIES = "pref_display_categories";
+    public static final String PREF_CATEGORY_PRIORITY = "pref_category_priority";
     public static final String PREF_CATEGORY_CYCLE_INTERVAL = "pref_category_cycle_interval";
-    public static final String PREF_DOWNLOADED_IMAGES_ONLY = "pref_downloaded_images_only";
-    public static final String PREF_DOWNLOADED_IMAGES_CYCLE_INTERVAL = "pref_downloaded_images_cycle_interval";
-    public static final String PREF_APOD_FETCH_SERVICE = "pref_apod_fetch_service";
     public static final String PREF_CURRENT_FRAGMENT = "pref_current_fragment";
 
-    public static void configureUpdateTimePreference(final Activity activity) {
+    public static void configureFetchTimePreference(final Activity activity) {
         final SettingsFragment settingsFragment = (SettingsFragment) activity.getFragmentManager().findFragmentByTag("settings");
 
         if (settingsFragment == null) {
             return;
         }
 
-        final Preference updateTimePreference = settingsFragment.findPreference(PREF_UPDATE_TIME);
+        final Preference fetchTimePreference = settingsFragment.findPreference(PREF_FETCH_TIME);
 
-        if (updateTimePreference != null) {
-            updateTimePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        if (fetchTimePreference != null) {
+            fetchTimePreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    if (preference.getKey().equals(PREF_UPDATE_TIME)) {
+                    if (preference.getKey().equals(PREF_FETCH_TIME)) {
                         TimePickerFragment timePickerFragment = new TimePickerFragment();
                         timePickerFragment.setPreference(preference);
                         timePickerFragment.setOnSharedPreferenceChangeListener(settingsFragment);
@@ -50,19 +48,19 @@ public class PreferenceUtils {
                 }
             });
 
-            Calendar calendar = DateTimeUtils.getAssociatedPreferenceCalendar(activity, updateTimePreference);
+            Calendar calendar = DateTimeUtils.getAssociatedPreferenceCalendar(activity, fetchTimePreference);
             int hour = calendar.get(Calendar.HOUR_OF_DAY), minute = calendar.get(Calendar.MINUTE);
             String time = DateTimeUtils.formatTime(activity, hour, minute);
 
-            updateTimePreference.setSummary(time);
+            fetchTimePreference.setSummary(time);
         }
     }
 
     public static void setDefaultValuesForPreferences(Activity activity) {
-        String time = PreferenceManager.getDefaultSharedPreferences(activity).getString(PREF_UPDATE_TIME, "");
+        String time = PreferenceManager.getDefaultSharedPreferences(activity).getString(PREF_FETCH_TIME, "");
 
         if (time.isEmpty()) {
-            PreferenceManager.getDefaultSharedPreferences(activity).edit().putString(PREF_UPDATE_TIME, "12:00").apply();
+            PreferenceManager.getDefaultSharedPreferences(activity).edit().putString(PREF_FETCH_TIME, "12:00").apply();
         }
 
         PreferenceManager.setDefaultValues(activity, R.xml.preferences, false);
@@ -83,41 +81,24 @@ public class PreferenceUtils {
         }
 
         switch (key) {
-            case PREF_FETCH_MODE:
-                switch (sharedPreferences.getString(key, "")) {
-                    case "daily_images":
-                        settingsFragment.findPreference(PREF_UPDATE_TIME).setEnabled(true);
-                        settingsFragment.findPreference(PREF_RANDOM_IMAGES_UPDATE_FREQUENCY).setEnabled(false);
-                        break;
-                    case "random_images":
-                        settingsFragment.findPreference(PREF_UPDATE_TIME).setEnabled(false);
-                        settingsFragment.findPreference(PREF_RANDOM_IMAGES_UPDATE_FREQUENCY).setEnabled(true);
-                        break;
-                }
-                break;
-            case PREF_AUTOMATIC_UPDATES:
+            case PREF_AUTOMATIC_DOWNLOADS:
                 if (sharedPreferences.getBoolean(key, false)) {
-                    settingsFragment.findPreference(PREF_WIFI_UPDATES_ONLY).setEnabled(true);
+                    settingsFragment.findPreference(PREF_WIFI_DOWNLOADS_ONLY).setEnabled(true);
                 } else {
-                    settingsFragment.findPreference(PREF_WIFI_UPDATES_ONLY).setEnabled(false);
+                    settingsFragment.findPreference(PREF_WIFI_DOWNLOADS_ONLY).setEnabled(false);
                 }
                 break;
             case PREF_DISPLAY_CATEGORIES:
                 switch (sharedPreferences.getString(key, "")) {
                     case "iotd":
                     case "apod":
+                        settingsFragment.findPreference(PREF_CATEGORY_PRIORITY).setEnabled(false);
                         settingsFragment.findPreference(PREF_CATEGORY_CYCLE_INTERVAL).setEnabled(false);
                         break;
                     case "iotd_apod":
+                        settingsFragment.findPreference(PREF_CATEGORY_PRIORITY).setEnabled(true);
                         settingsFragment.findPreference(PREF_CATEGORY_CYCLE_INTERVAL).setEnabled(true);
                         break;
-                }
-                break;
-            case PREF_DOWNLOADED_IMAGES_ONLY:
-                if (sharedPreferences.getBoolean(key, false)) {
-                    settingsFragment.findPreference(PREF_DOWNLOADED_IMAGES_CYCLE_INTERVAL).setEnabled(true);
-                } else {
-                    settingsFragment.findPreference(PREF_DOWNLOADED_IMAGES_CYCLE_INTERVAL).setEnabled(false);
                 }
                 break;
         }
