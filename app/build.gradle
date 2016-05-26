@@ -33,8 +33,8 @@ dependencies {
     compile "com.davemorrissey.labs:subsampling-scale-image-view:3.5.0"
     compile 'com.jakewharton:butterknife:8.0.1'
     apt 'com.jakewharton:butterknife-compiler:8.0.1'
-    compile('com.mikepenz:fastadapter:1.4.5@aar') { transitive = true }
-    compile('com.mikepenz:fastadapter-extensions:1.4.5@aar')
+    compile('com.mikepenz:fastadapter:1.5.1@aar') { transitive = true }
+    compile('com.mikepenz:fastadapter-extensions:1.5.1@aar')
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'

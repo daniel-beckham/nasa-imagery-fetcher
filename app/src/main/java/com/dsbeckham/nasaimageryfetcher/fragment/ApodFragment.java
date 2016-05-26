@@ -52,12 +52,8 @@ public class ApodFragment extends Fragment {
     public List<UniversalImageModel> models = new ArrayList<>();
 
     public Calendar calendar = Calendar.getInstance();
-    public boolean loadingData = false;
+    public boolean loadingData;
     public int nasaGovApiQueries = ApodQueryUtils.NASA_GOV_API_QUERIES;
-
-    public static String EXTRA_APOD_CALENDAR = "com.dsbeckham.nasaimageryfetcher.extra.APOD_CALENDAR";
-    public static String EXTRA_APOD_MODELS = "com.dsbeckham.nasaimageryfetcher.extra.APOD_MODELS";
-    public static String EXTRA_APOD_POSITION = "com.dsbeckham.nasaimageryfetcher.extra.APOD_POSITION";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,9 +71,10 @@ public class ApodFragment extends Fragment {
             @Override
             public boolean onClick(View view, IAdapter<RecyclerViewAdapter> iAdapter, RecyclerViewAdapter recyclerViewAdapter, int position) {
                 Intent intent = new Intent(getActivity(), InformationActivity.class);
-                intent.putExtra(EXTRA_APOD_CALENDAR, calendar);
-                intent.putExtra(EXTRA_APOD_MODELS, Parcels.wrap(models));
-                intent.putExtra(EXTRA_APOD_POSITION, position);
+                intent.putExtra(InformationActivity.EXTRA_CALENDAR, calendar);
+                intent.putExtra(InformationActivity.EXTRA_MODELS, Parcels.wrap(models));
+                intent.putExtra(InformationActivity.EXTRA_POSITION, position);
+                intent.putExtra(InformationActivity.EXTRA_TYPE, InformationActivity.EXTRA_TYPE_APOD);
                 startActivityForResult(intent, 0);
                 return false;
             }

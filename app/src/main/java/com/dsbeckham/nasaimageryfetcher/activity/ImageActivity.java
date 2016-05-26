@@ -4,10 +4,8 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
@@ -21,13 +19,10 @@ import android.view.View;
 
 import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.adapter.ImageFragmentStatePagerAdapter;
-import com.dsbeckham.nasaimageryfetcher.fragment.ApodFragment;
-import com.dsbeckham.nasaimageryfetcher.fragment.IotdFragment;
 import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
 import com.dsbeckham.nasaimageryfetcher.util.DownloadUtils;
 import com.dsbeckham.nasaimageryfetcher.util.PermissionUtils;
-import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
 import com.dsbeckham.nasaimageryfetcher.util.UiUtils;
 
 import org.parceler.Parcels;
@@ -50,13 +45,12 @@ public class ImageActivity extends AppCompatActivity {
     private boolean systemUiHidden = false;
     private int viewPagerCurrentItem = 0;
 
-    public Calendar apodCalendar = Calendar.getInstance();
+    public List<UniversalImageModel> models = new ArrayList<>();
 
-    public List<UniversalImageModel> apodModels = new ArrayList<>();
-    public List<UniversalImageModel> iotdModels = new ArrayList<>();
-
-    public boolean loadingData = false;
+    public Calendar calendar = Calendar.getInstance();
+    public boolean loadingData;
     public int nasaGovApiQueries = ApodQueryUtils.NASA_GOV_API_QUERIES;
+    public int type;
 
     private final String VIEWPAGER_CURRENT_ITEM = "viewPagerCurrentItem";
 
@@ -71,27 +65,20 @@ public class ImageActivity extends AppCompatActivity {
         UiUtils.setUpToolBarForChildActivity(this, toolbar);
         UiUtils.showSystemUI(this);
 
-        switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
-            case "iotd":
-                iotdModels = Parcels.unwrap(getIntent().getParcelableExtra(IotdFragment.EXTRA_IOTD_MODELS));
-                break;
-            case "apod":
-                apodCalendar = (Calendar) getIntent().getSerializableExtra(ApodFragment.EXTRA_APOD_CALENDAR);
-                apodModels = Parcels.unwrap(getIntent().getParcelableExtra(ApodFragment.EXTRA_APOD_MODELS));
-                break;
-        }
+        if (getIntent().getExtras() != null) {
+            models = Parcels.unwrap(getIntent().getParcelableExtra(InformationActivity.EXTRA_MODELS));
 
-        if (savedInstanceState == null) {
-            switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
-                case "iotd":
-                    viewPagerCurrentItem = getIntent().getIntExtra(IotdFragment.EXTRA_IOTD_POSITION, 0);
-                    break;
-                case "apod":
-                    viewPagerCurrentItem = getIntent().getIntExtra(ApodFragment.EXTRA_APOD_POSITION, 0);
-                    break;
+            if (getIntent().getExtras().containsKey(InformationActivity.EXTRA_CALENDAR)) {
+                calendar = (Calendar) getIntent().getSerializableExtra(InformationActivity.EXTRA_CALENDAR);
             }
-        } else {
-            viewPagerCurrentItem = savedInstanceState.getInt(VIEWPAGER_CURRENT_ITEM);
+
+            if (savedInstanceState == null) {
+                viewPagerCurrentItem = getIntent().getIntExtra(InformationActivity.EXTRA_POSITION, 0);
+            } else {
+                viewPagerCurrentItem = savedInstanceState.getInt(VIEWPAGER_CURRENT_ITEM);
+            }
+
+            type = getIntent().getIntExtra(InformationActivity.EXTRA_TYPE, InformationActivity.EXTRA_TYPE_MIXED);
         }
 
         imageFragmentStatePagerAdapter = new ImageFragmentStatePagerAdapter(this, getSupportFragmentManager());
@@ -146,36 +133,25 @@ public class ImageActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        UniversalImageModel universalImageModel = null;
-
-        switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
-            case "iotd":
-               universalImageModel = iotdModels.get(viewPagerCurrentItem);
-                break;
-            case "apod":
-                universalImageModel = apodModels.get(viewPagerCurrentItem);
-                break;
-        }
-
-        if (universalImageModel == null) {
-            return super.onOptionsItemSelected(item);
-        }
-
         switch (item.getItemId()) {
             case android.R.id.home:
                 this.finish();
                 return true;
             case R.id.menu_toolbar_share:
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.putExtra(Intent.EXTRA_TEXT, universalImageModel.getImageUrl());
-                intent.setType("text/plain");
-                startActivity(Intent.createChooser(intent, null));
+                if (!models.isEmpty()) {
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.putExtra(Intent.EXTRA_TEXT, models.get(viewPager.getCurrentItem()).getImageUrl());
+                    intent.setType("text/plain");
+                    startActivity(Intent.createChooser(intent, null));
+                }
                 break;
             case R.id.menu_toolbar_download:
-                if (PermissionUtils.isStoragePermissionGranted(this)) {
-                    DownloadUtils.validateUriAndDownloadFile(this, Uri.parse(universalImageModel.getImageUrl()), Uri.parse(universalImageModel.getImageThumbnailUrl()), false);
-                } else {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PermissionUtils.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                if (!models.isEmpty()) {
+                    if (PermissionUtils.isStoragePermissionGranted(this)) {
+                        DownloadUtils.validateAndDownloadImage(this, models.get(viewPager.getCurrentItem()), false, false);
+                    } else {
+                        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PermissionUtils.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                    }
                 }
                 break;
         }
@@ -186,24 +162,13 @@ public class ImageActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
-            case PermissionUtils.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE: {
+            case PermissionUtils.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    UniversalImageModel universalImageModel = null;
-
-                    switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
-                        case "iotd":
-                            universalImageModel = iotdModels.get(viewPagerCurrentItem);
-                            break;
-                        case "apod":
-                            universalImageModel = apodModels.get(viewPagerCurrentItem);
-                            break;
-                    }
-
-                    if (universalImageModel != null) {
-                        DownloadUtils.validateUriAndDownloadFile(this, Uri.parse(universalImageModel.getImageUrl()), Uri.parse(universalImageModel.getImageThumbnailUrl()), false);
+                    if (!models.isEmpty()) {
+                        DownloadUtils.validateAndDownloadImage(this, models.get(viewPager.getCurrentItem()), false, false);
                     }
                 }
-            }
+                break;
         }
     }
 
@@ -217,17 +182,12 @@ public class ImageActivity extends AppCompatActivity {
     public void finish() {
         Intent intent = new Intent();
 
-        switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
-            case "iotd":
-                intent.putExtra(IotdFragment.EXTRA_IOTD_POSITION, viewPager.getCurrentItem());
-                break;
-            case "apod":
-                intent.putExtra(ApodFragment.EXTRA_APOD_CALENDAR, apodCalendar);
-                intent.putExtra(ApodFragment.EXTRA_APOD_MODELS, Parcels.wrap(apodModels));
-                intent.putExtra(ApodFragment.EXTRA_APOD_POSITION, viewPager.getCurrentItem());
-                break;
+        if (type == InformationActivity.EXTRA_TYPE_APOD) {
+            intent.putExtra(InformationActivity.EXTRA_CALENDAR, calendar);
+            intent.putExtra(InformationActivity.EXTRA_MODELS, Parcels.wrap(models));
         }
 
+        intent.putExtra(InformationActivity.EXTRA_POSITION, viewPager.getCurrentItem());
         setResult(RESULT_OK, intent);
         super.finish();
     }

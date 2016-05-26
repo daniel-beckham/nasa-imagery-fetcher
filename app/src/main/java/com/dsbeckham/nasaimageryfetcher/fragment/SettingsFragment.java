@@ -2,11 +2,15 @@ package com.dsbeckham.nasaimageryfetcher.fragment;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.preference.SwitchPreference;
+import android.support.annotation.NonNull;
 
 import com.dsbeckham.nasaimageryfetcher.R;
+import com.dsbeckham.nasaimageryfetcher.util.PermissionUtils;
 import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
 
 public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
@@ -16,7 +20,6 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         setRetainInstance(true);
 
         addPreferencesFromResource(R.xml.preferences);
-        PreferenceUtils.configureFetchTimePreference(getActivity());
         PreferenceUtils.togglePreferencesBasedOnAllCurrentKeyValues(getActivity());
     }
 
@@ -35,5 +38,18 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         PreferenceUtils.togglePreferencesBasedOnCurrentKeyValue(getActivity(), sharedPreferences, key);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PermissionUtils.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    PreferenceUtils.togglePreferencesBasedOnCurrentKeyValue(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity()), PreferenceUtils.PREF_AUTOMATIC_DOWNLOADS);
+                } else {
+                    ((SwitchPreference) findPreference(PreferenceUtils.PREF_AUTOMATIC_DOWNLOADS)).setChecked(false);
+                }
+                break;
+        }
     }
 }

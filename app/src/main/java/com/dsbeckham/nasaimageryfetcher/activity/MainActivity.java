@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.fragment.ApodFragment;
 import com.dsbeckham.nasaimageryfetcher.fragment.IotdFragment;
+import com.dsbeckham.nasaimageryfetcher.receiver.BootReceiver;
 import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
 import com.dsbeckham.nasaimageryfetcher.util.IotdQueryUtils;
 import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
@@ -46,19 +47,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        UiUtils.makeStatusBarTransparent(this);
-
         ApodQueryUtils.setUpIoServices();
         IotdQueryUtils.setUpIoService();
-        PreferenceUtils.setDefaultValuesForPreferences(this);
+
+        UiUtils.makeStatusBarTransparent(this);
+
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.coordinatorlayout, new IotdFragment(), "iotd")
+                    .replace(R.id.coordinatorlayout, new IotdFragment(), PreferenceUtils.FRAGMENT_IOTD)
                     .commit();
 
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "iotd").apply();
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putString(PreferenceUtils.PREF_CURRENT_FRAGMENT, PreferenceUtils.FRAGMENT_IOTD).apply();
         }
+
+        BootReceiver.scheduleAlarm(this);
     }
 
     @Override
@@ -74,11 +78,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onResume() {
         super.onResume();
         switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
-            case "iotd":
-                setTitle(getString(R.string.nav_iotd));
+            case PreferenceUtils.FRAGMENT_IOTD:
+                setTitle(getString(R.string.app_iotd));
                 break;
-            case "apod":
-                setTitle(getString(R.string.nav_apod));
+            case PreferenceUtils.FRAGMENT_APOD:
+                setTitle(getString(R.string.app_apod));
                 break;
         }
     }
@@ -87,46 +91,46 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.nav_iotd:
-                if (getSupportFragmentManager().findFragmentByTag("iotd") != null) {
+                if (getSupportFragmentManager().findFragmentByTag(PreferenceUtils.FRAGMENT_IOTD) != null) {
                     getSupportFragmentManager().beginTransaction()
-                            .show(getSupportFragmentManager().findFragmentByTag("iotd"))
+                            .show(getSupportFragmentManager().findFragmentByTag(PreferenceUtils.FRAGMENT_IOTD))
                             .commit();
                 } else {
                     getSupportFragmentManager().beginTransaction()
-                            .add(R.id.coordinatorlayout, new IotdFragment(), "iotd")
+                            .add(R.id.coordinatorlayout, new IotdFragment(), PreferenceUtils.FRAGMENT_IOTD)
                             .commit();
                 }
 
-                if (getSupportFragmentManager().findFragmentByTag("apod") != null) {
+                if (getSupportFragmentManager().findFragmentByTag(PreferenceUtils.FRAGMENT_APOD) != null) {
                     getSupportFragmentManager().beginTransaction()
-                            .hide(getSupportFragmentManager().findFragmentByTag("apod"))
+                            .hide(getSupportFragmentManager().findFragmentByTag(PreferenceUtils.FRAGMENT_APOD))
                             .commit();
                 }
 
                 navigationView.setCheckedItem(R.id.nav_iotd);
-                setTitle(getString(R.string.nav_iotd));
-                PreferenceManager.getDefaultSharedPreferences(this).edit().putString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "iotd").apply();
+                setTitle(getString(R.string.app_iotd));
+                PreferenceManager.getDefaultSharedPreferences(this).edit().putString(PreferenceUtils.PREF_CURRENT_FRAGMENT, PreferenceUtils.FRAGMENT_IOTD).apply();
                 break;
             case R.id.nav_apod:
-                if (getSupportFragmentManager().findFragmentByTag("apod") != null) {
+                if (getSupportFragmentManager().findFragmentByTag(PreferenceUtils.FRAGMENT_APOD) != null) {
                     getSupportFragmentManager().beginTransaction()
-                            .show(getSupportFragmentManager().findFragmentByTag("apod"))
+                            .show(getSupportFragmentManager().findFragmentByTag(PreferenceUtils.FRAGMENT_APOD))
                             .commit();
                 } else {
                     getSupportFragmentManager().beginTransaction()
-                            .add(R.id.coordinatorlayout, new ApodFragment(), "apod")
+                            .add(R.id.coordinatorlayout, new ApodFragment(), PreferenceUtils.FRAGMENT_APOD)
                             .commit();
                 }
 
-                if (getSupportFragmentManager().findFragmentByTag("iotd") != null) {
+                if (getSupportFragmentManager().findFragmentByTag(PreferenceUtils.FRAGMENT_IOTD) != null) {
                     getSupportFragmentManager().beginTransaction()
-                            .hide(getSupportFragmentManager().findFragmentByTag("iotd"))
+                            .hide(getSupportFragmentManager().findFragmentByTag(PreferenceUtils.FRAGMENT_IOTD))
                             .commit();
                 }
 
                 navigationView.setCheckedItem(R.id.nav_apod);
-                setTitle(getString(R.string.nav_apod));
-                PreferenceManager.getDefaultSharedPreferences(this).edit().putString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "apod").apply();
+                setTitle(getString(R.string.app_apod));
+                PreferenceManager.getDefaultSharedPreferences(this).edit().putString(PreferenceUtils.PREF_CURRENT_FRAGMENT, PreferenceUtils.FRAGMENT_APOD).apply();
                 break;
             case R.id.nav_settings:
                 Intent intent = new Intent(this, SettingsActivity.class);

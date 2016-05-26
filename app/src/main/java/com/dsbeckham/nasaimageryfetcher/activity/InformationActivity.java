@@ -4,10 +4,8 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
@@ -18,13 +16,10 @@ import android.view.MenuItem;
 
 import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.adapter.InformationFragmentStatePagerAdapter;
-import com.dsbeckham.nasaimageryfetcher.fragment.ApodFragment;
-import com.dsbeckham.nasaimageryfetcher.fragment.IotdFragment;
 import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
 import com.dsbeckham.nasaimageryfetcher.util.DownloadUtils;
 import com.dsbeckham.nasaimageryfetcher.util.PermissionUtils;
-import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
 import com.dsbeckham.nasaimageryfetcher.util.UiUtils;
 import com.xgc1986.parallaxPagerTransformer.ParallaxPagerTransformer;
 
@@ -38,21 +33,29 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class InformationActivity extends AppCompatActivity {
+    public static String EXTRA_CALENDAR = "com.dsbeckham.nasaimageryfetcher.extra.CALENDAR";
+    public static String EXTRA_MODELS = "com.dsbeckham.nasaimageryfetcher.extra.MODELS";
+    public static String EXTRA_POSITION = "com.dsbeckham.nasaimageryfetcher.extra.POSITION";
+    public static String EXTRA_TYPE = "com.dsbeckham.nasaimageryfetcher.extra.TYPE";
+
+    public static int EXTRA_TYPE_IOTD = 0;
+    public static int EXTRA_TYPE_APOD = 1;
+    public static int EXTRA_TYPE_MIXED = 2;
+
     @BindView(R.id.activity_information_toolbar)
     public Toolbar toolbar;
     @BindView(R.id.activity_information_viewpager)
     public ViewPager viewPager;
 
     public InformationFragmentStatePagerAdapter informationFragmentStatePagerAdapter;
-    private int viewPagerCurrentItem = 0;
+    private int viewPagerCurrentItem;
 
-    public Calendar apodCalendar = Calendar.getInstance();
+    public List<UniversalImageModel> models = new ArrayList<>();
 
-    public List<UniversalImageModel> apodModels = new ArrayList<>();
-    public List<UniversalImageModel> iotdModels = new ArrayList<>();
-
-    public boolean loadingData = false;
+    public Calendar calendar = Calendar.getInstance();
+    public boolean loadingData;
     public int nasaGovApiQueries = ApodQueryUtils.NASA_GOV_API_QUERIES;
+    public int type;
 
     private final String VIEWPAGER_CURRENT_ITEM = "viewPagerCurrentItem";
 
@@ -67,27 +70,20 @@ public class InformationActivity extends AppCompatActivity {
         UiUtils.setUpToolBarForChildActivity(this, toolbar);
         UiUtils.showFullscreen(this);
 
-        switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
-            case "iotd":
-                iotdModels = Parcels.unwrap(getIntent().getParcelableExtra(IotdFragment.EXTRA_IOTD_MODELS));
-                break;
-            case "apod":
-                apodCalendar = (Calendar) getIntent().getSerializableExtra(ApodFragment.EXTRA_APOD_CALENDAR);
-                apodModels = Parcels.unwrap(getIntent().getParcelableExtra(ApodFragment.EXTRA_APOD_MODELS));
-                break;
-        }
+        if (getIntent().getExtras() != null) {
+            models = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_MODELS));
 
-        if (savedInstanceState == null) {
-            switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
-                case "iotd":
-                    viewPagerCurrentItem = getIntent().getIntExtra(IotdFragment.EXTRA_IOTD_POSITION, 0);
-                    break;
-                case "apod":
-                    viewPagerCurrentItem = getIntent().getIntExtra(ApodFragment.EXTRA_APOD_POSITION, 0);
-                    break;
+            if (getIntent().getExtras().containsKey(EXTRA_CALENDAR)) {
+                calendar = (Calendar) getIntent().getSerializableExtra(EXTRA_CALENDAR);
             }
-        } else {
-            viewPagerCurrentItem = savedInstanceState.getInt(VIEWPAGER_CURRENT_ITEM);
+
+            if (savedInstanceState == null) {
+                viewPagerCurrentItem = getIntent().getIntExtra(EXTRA_POSITION, 0);
+            } else {
+                viewPagerCurrentItem = savedInstanceState.getInt(VIEWPAGER_CURRENT_ITEM);
+            }
+
+            type = getIntent().getIntExtra(EXTRA_TYPE, EXTRA_TYPE_MIXED);
         }
 
         informationFragmentStatePagerAdapter = new InformationFragmentStatePagerAdapter(this, getSupportFragmentManager());
@@ -110,36 +106,25 @@ public class InformationActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        UniversalImageModel universalImageModel = null;
-
-        switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
-            case "iotd":
-                universalImageModel = iotdModels.get(viewPagerCurrentItem);
-                break;
-            case "apod":
-                universalImageModel = apodModels.get(viewPagerCurrentItem);
-                break;
-        }
-
-        if (universalImageModel == null) {
-            return super.onOptionsItemSelected(item);
-        }
-
         switch (item.getItemId()) {
             case android.R.id.home:
                 this.finish();
                 return true;
             case R.id.menu_toolbar_share:
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.putExtra(Intent.EXTRA_TEXT, universalImageModel.getImageUrl());
-                intent.setType("text/plain");
-                startActivity(Intent.createChooser(intent, null));
+                if (!models.isEmpty()) {
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.putExtra(Intent.EXTRA_TEXT, models.get(viewPager.getCurrentItem()).getImageUrl());
+                    intent.setType("text/plain");
+                    startActivity(Intent.createChooser(intent, null));
+                }
                 break;
             case R.id.menu_toolbar_download:
-                if (PermissionUtils.isStoragePermissionGranted(this)) {
-                    DownloadUtils.validateUriAndDownloadFile(this, Uri.parse(universalImageModel.getImageUrl()), Uri.parse(universalImageModel.getImageThumbnailUrl()), false);
-                } else {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PermissionUtils.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                if (!models.isEmpty()) {
+                    if (PermissionUtils.isStoragePermissionGranted(this)) {
+                        DownloadUtils.validateAndDownloadImage(this, models.get(viewPager.getCurrentItem()), false, false);
+                    } else {
+                        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PermissionUtils.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                    }
                 }
                 break;
         }
@@ -150,24 +135,13 @@ public class InformationActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
-            case PermissionUtils.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE: {
+            case PermissionUtils.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    UniversalImageModel universalImageModel = null;
-
-                    switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
-                        case "iotd":
-                            universalImageModel = iotdModels.get(viewPagerCurrentItem);
-                            break;
-                        case "apod":
-                            universalImageModel = apodModels.get(viewPagerCurrentItem);
-                            break;
-                    }
-
-                    if (universalImageModel != null) {
-                        DownloadUtils.validateUriAndDownloadFile(this, Uri.parse(universalImageModel.getImageUrl()), Uri.parse(universalImageModel.getImageThumbnailUrl()), false);
+                    if (!models.isEmpty()) {
+                        DownloadUtils.validateAndDownloadImage(this, models.get(viewPager.getCurrentItem()), false, false);
                     }
                 }
-            }
+                break;
         }
     }
 
@@ -181,17 +155,12 @@ public class InformationActivity extends AppCompatActivity {
     public void finish() {
         Intent intent = new Intent();
 
-        switch (PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
-            case "iotd":
-                intent.putExtra(IotdFragment.EXTRA_IOTD_POSITION, viewPager.getCurrentItem());
-                break;
-            case "apod":
-                intent.putExtra(ApodFragment.EXTRA_APOD_CALENDAR, apodCalendar);
-                intent.putExtra(ApodFragment.EXTRA_APOD_MODELS, Parcels.wrap(apodModels));
-                intent.putExtra(ApodFragment.EXTRA_APOD_POSITION, viewPager.getCurrentItem());
-                break;
+        if (type == EXTRA_TYPE_APOD) {
+            intent.putExtra(EXTRA_CALENDAR, calendar);
+            intent.putExtra(EXTRA_MODELS, Parcels.wrap(models));
         }
 
+        intent.putExtra(EXTRA_POSITION, viewPager.getCurrentItem());
         setResult(RESULT_OK, intent);
         super.finish();
     }

@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
-import com.dsbeckham.nasaimageryfetcher.util.DateTimeUtils;
+import com.dsbeckham.nasaimageryfetcher.util.DateUtils;
 import com.mikepenz.fastadapter.items.AbstractItem;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -30,7 +30,7 @@ public class RecyclerViewAdapter extends AbstractItem<RecyclerViewAdapter, Recyc
 
         viewHolder.progressBar.setVisibility(View.VISIBLE);
 
-        viewHolder.date.setText(DateTimeUtils.convertDateToLongDateFormat(viewHolder.date.getContext(), universalImageModel.getDate(), "yyyy-MM-dd"));
+        viewHolder.date.setText(DateUtils.convertDateToLongDateFormat(viewHolder.date.getContext(), universalImageModel.getDate(), "yyyy-MM-dd"));
         viewHolder.title.setText(universalImageModel.getTitle());
 
         Picasso.with(viewHolder.imageView.getContext())

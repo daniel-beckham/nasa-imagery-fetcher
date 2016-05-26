@@ -11,6 +11,7 @@ public class UniversalImageModel {
     private String imageUrl;
     private String pageUrl;
     private String title;
+    private String type;
 
     public String getCredit() {
         return credit;
@@ -66,6 +67,14 @@ public class UniversalImageModel {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.dsbeckham.nasaimageryfetcher.fragment;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -16,7 +15,6 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.activity.ImageActivity;
 import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
-import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -30,7 +28,6 @@ public class ImageFragment extends Fragment {
     ProgressBar progressBar;
 
     private int position;
-    private UniversalImageModel universalImageModel;
 
     private Target target = new Target() {
         @Override
@@ -49,11 +46,13 @@ public class ImageFragment extends Fragment {
     };
 
     public static ImageFragment newInstance(int page) {
-        ImageFragment ImageFragment = new ImageFragment();
         Bundle bundle = new Bundle();
         bundle.putInt("position", page);
-        ImageFragment.setArguments(bundle);
-        return ImageFragment;
+
+        ImageFragment imageFragment = new ImageFragment();
+        imageFragment.setArguments(bundle);
+
+        return imageFragment;
     }
 
     @Override
@@ -68,28 +67,23 @@ public class ImageFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_image, container, false);
         ButterKnife.bind(this, view);
 
-        switch (PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
-            case "iotd":
-                universalImageModel = ((ImageActivity) getActivity()).iotdModels.get(position);
-                break;
-            case "apod":
-                universalImageModel = ((ImageActivity) getActivity()).apodModels.get(position);
-                break;
+        if (!((ImageActivity) getActivity()).models.isEmpty()) {
+            UniversalImageModel universalImageModel = ((ImageActivity) getActivity()).models.get(position);
+
+            Picasso.with(getContext())
+                    .load(universalImageModel.getImageThumbnailUrl())
+                    .resize(2048, 2048)
+                    .centerInside()
+                    .config(Bitmap.Config.RGB_565)
+                    .into(target);
+
+            subsamplingScaleImageView.setOnTouchListener(new OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    return ((ImageActivity) getActivity()).gestureDetector.onTouchEvent(motionEvent);
+                }
+            });
         }
-
-        Picasso.with(getContext())
-                .load(universalImageModel.getImageThumbnailUrl())
-                .resize(2048, 2048)
-                .centerInside()
-                .config(Bitmap.Config.RGB_565)
-                .into(target);
-
-        subsamplingScaleImageView.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch (View view, MotionEvent motionEvent){
-                return ((ImageActivity) getActivity()).gestureDetector.onTouchEvent(motionEvent);
-            }
-        });
 
         return view;
     }

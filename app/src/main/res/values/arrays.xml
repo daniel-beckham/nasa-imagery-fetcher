@@ -8,22 +8,13 @@
     </string-array>
 
     <string-array name="categories_values">
-        <item>iotd</item>
-        <item>apod</item>
-        <item>iotd_apod</item>
-    </string-array>
-
-    <string-array name="categories_alternate_options">
-        <item>Image of the Day</item>
-        <item>Astronomy Picture of the Day</item>
-    </string-array>
-
-    <string-array name="categories_alternate_values">
-        <item>iotd</item>
-        <item>apod</item>
+        <item>category_iotd</item>
+        <item>category_apod</item>
+        <item>category_both</item>
     </string-array>
 
     <string-array name="frequency_options">
+        <item>Off</item>
         <item>1 minute</item>
         <item>2 minutes</item>
         <item>5 minutes</item>
@@ -40,39 +31,6 @@
     </string-array>
 
     <string-array name="frequency_values">
-        <item>60</item>
-        <item>120</item>
-        <item>300</item>
-        <item>600</item>
-        <item>1800</item>
-        <item>3600</item>
-        <item>10800</item>
-        <item>21600</item>
-        <item>43200</item>
-        <item>86400</item>
-        <item>172800</item>
-        <item>345600</item>
-        <item>604800</item>
-    </string-array>
-
-    <string-array name="frequency_alternate_options">
-        <item>Never</item>
-        <item>1 minute</item>
-        <item>2 minutes</item>
-        <item>5 minutes</item>
-        <item>10 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
-        <item>12 hours</item>
-        <item>1 day</item>
-        <item>2 days</item>
-        <item>4 days</item>
-        <item>7 days</item>
-    </string-array>
-
-    <string-array name="frequency_alternate_values">
         <item>0</item>
         <item>60</item>
         <item>120</item>

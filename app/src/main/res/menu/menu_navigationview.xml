@@ -8,11 +8,11 @@
             android:id="@+id/nav_iotd"
             android:checked="true"
             android:icon="@drawable/ic_earth"
-            android:title="@string/nav_iotd" />
+            android:title="@string/app_iotd" />
         <item
             android:id="@+id/nav_apod"
             android:icon="@drawable/ic_moon"
-            android:title="@string/nav_apod" />
+            android:title="@string/app_apod" />
     </group>
 
     <group
@@ -21,7 +21,7 @@
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings"
-            android:title="@string/nav_settings" />
+            android:title="@string/app_settings" />
     </group>
 
 </menu>

@@ -1,13 +1,13 @@
 package com.dsbeckham.nasaimageryfetcher.util;
 
-import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
+
+import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -17,44 +17,46 @@ public class DownloadUtils {
     private static final int DOWNLOAD_URI_ALTERNATE = 1;
     private static final int VALIDATE_URI_ALTERNATE = 2;
 
-    private static void downloadFile(Activity activity, Uri uri) {
-        String subPath = "/NASAImageryFetcher/" + PreferenceManager.getDefaultSharedPreferences(activity).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "") + "/" + uri.getLastPathSegment();
-        DownloadManager downloadManager = (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
-        DownloadManager.Request request = new DownloadManager.Request(uri).setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, subPath)
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_ONLY_COMPLETION)
-                .setVisibleInDownloadsUi(false);
-        downloadManager.enqueue(request);
-    }
-
     private static class MessageHandler extends Handler {
-        private Activity activity;
-        private Uri uri;
-        private Uri uriAlternate;
+        private Context context;
+        private UniversalImageModel universalImageModel;
+        private boolean hidden;
 
-        private MessageHandler(Activity activity, Uri uri, Uri alternateUri) {
-            this.activity = activity;
-            this.uri = uri;
-            this.uriAlternate = alternateUri;
+        private MessageHandler(Context context, UniversalImageModel universalImageModel, boolean hidden) {
+            this.context = context;
+            this.universalImageModel = universalImageModel;
+            this.hidden = hidden;
         }
 
         @Override
         public void handleMessage(Message message) {
             switch (message.what) {
                 case DOWNLOAD_URI:
-                    downloadFile(activity, uri);
+                    downloadImage(context, universalImageModel, hidden, false);
                     break;
                 case DOWNLOAD_URI_ALTERNATE:
-                    downloadFile(activity, uriAlternate);
+                    downloadImage(context, universalImageModel, hidden, true);
                     break;
                 case VALIDATE_URI_ALTERNATE:
-                    validateUriAndDownloadFile(activity, uri, uriAlternate, true);
+                    validateAndDownloadImage(context, universalImageModel, hidden, true);
                     break;
             }
         }
     }
 
-    public static void validateUriAndDownloadFile(final Activity activity, final Uri uri, final Uri uriAlternate, final boolean fallback) {
-        final MessageHandler messageHandler = new MessageHandler(activity, uri, uriAlternate);
+    private static void downloadImage(Context context, UniversalImageModel universalImageModel, boolean hidden, boolean alternate) {
+        Uri uri = alternate ? Uri.parse(universalImageModel.getImageThumbnailUrl()) : Uri.parse(universalImageModel.getImageUrl());
+        String subPath = "/NASAImageryFetcher/" + universalImageModel.getType() + "/" + uri.getLastPathSegment();
+        DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        DownloadManager.Request request = new DownloadManager.Request(uri).setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, subPath)
+                .setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, subPath)
+                .setNotificationVisibility(hidden ? DownloadManager.Request.VISIBILITY_HIDDEN : DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_ONLY_COMPLETION)
+                .setVisibleInDownloadsUi(false);
+        downloadManager.enqueue(request);
+    }
+
+    public static void validateAndDownloadImage(final Context context, final UniversalImageModel universalImageModel, boolean hidden, final boolean fallback) {
+        final MessageHandler messageHandler = new MessageHandler(context, universalImageModel, hidden);
 
         new Thread() {
             @Override
@@ -62,7 +64,7 @@ public class DownloadUtils {
                 try {
                     HttpURLConnection.setFollowRedirects(false);
 
-                    HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(!fallback ? uri.toString() : uriAlternate.toString()).openConnection();
+                    HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(!fallback ? universalImageModel.getImageUrl() : universalImageModel.getImageThumbnailUrl()).openConnection();
                     httpURLConnection.setRequestMethod("HEAD");
 
                     if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {

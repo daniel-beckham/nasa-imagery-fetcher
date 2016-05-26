@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
@@ -25,8 +24,7 @@ import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.activity.ImageActivity;
 import com.dsbeckham.nasaimageryfetcher.activity.InformationActivity;
 import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
-import com.dsbeckham.nasaimageryfetcher.util.DateTimeUtils;
-import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
+import com.dsbeckham.nasaimageryfetcher.util.DateUtils;
 import com.dsbeckham.nasaimageryfetcher.util.TextUtils;
 import com.dsbeckham.nasaimageryfetcher.util.UiUtils;
 import com.squareup.picasso.Callback;
@@ -60,14 +58,15 @@ public class InformationFragment extends Fragment {
     TextView title;
 
     private int position;
-    private UniversalImageModel universalImageModel;
 
     public static InformationFragment newInstance(int page) {
-        InformationFragment InformationFragment = new InformationFragment();
         Bundle bundle = new Bundle();
         bundle.putInt("position", page);
-        InformationFragment.setArguments(bundle);
-        return InformationFragment;
+
+        InformationFragment informationFragment = new InformationFragment();
+        informationFragment.setArguments(bundle);
+
+        return informationFragment;
     }
 
     @Override
@@ -82,113 +81,93 @@ public class InformationFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_information, container, false);
         ButterKnife.bind(this, view);
 
-        // This controls the image parallax effect as well as the toolbar and status bar transparency.
-        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(NestedScrollView nestedScrollView, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                ViewCompat.setTranslationY(imageView, scrollY * 0.5f);
+        if (!((InformationActivity) getActivity()).models.isEmpty()) {
+            UniversalImageModel universalImageModel = ((InformationActivity) getActivity()).models.get(position);
 
-                if (scrollY > (headerLayout.getHeight() - ((InformationActivity) getActivity()).toolbar.getHeight())) {
-                    ((InformationActivity) getActivity()).toolbar.setBackground(new ColorDrawable(ContextCompat.getColor(getActivity(), R.color.colorPrimary)));
-                    UiUtils.resetStatusBarTransparency(getActivity());
-                } else {
-                    ((InformationActivity) getActivity()).toolbar.setBackgroundResource(R.drawable.gradient_toolbar);
-                    UiUtils.makeStatusBarTransparent(getActivity());
-                }
+            title.setText(universalImageModel.getTitle());
+            date.setText(DateUtils.convertDateToLongDateFormat(getActivity(), universalImageModel.getDate(), "yyyy-MM-dd"));
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                ViewCompat.setElevation(subHeaderLayout, 4.0f / getResources().getDisplayMetrics().density);
             }
-        });
 
-        switch (PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
-            case "iotd":
-                universalImageModel = ((InformationActivity) getActivity()).iotdModels.get(position);
-                break;
-            case "apod":
-                universalImageModel = ((InformationActivity) getActivity()).apodModels.get(position);
-                break;
-        }
+            description.setText(Html.fromHtml(universalImageModel.getDescription()));
+            description.setMovementMethod(LinkMovementMethod.getInstance());
+            TextUtils.stripUnderlines(description);
 
-        title.setText(universalImageModel.getTitle());
-        date.setText(DateTimeUtils.convertDateToLongDateFormat(getActivity(), universalImageModel.getDate(), "yyyy-MM-dd"));
+            if (universalImageModel.getCredit() != null) {
+                credit.setText(Html.fromHtml(universalImageModel.getCredit()));
+                credit.setMovementMethod(LinkMovementMethod.getInstance());
+                credit.setVisibility(View.VISIBLE);
+                TextUtils.stripUnderlines(credit);
+            }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ViewCompat.setElevation(subHeaderLayout, 4.0f / getResources().getDisplayMetrics().density);
-        }
+            Picasso.with(getContext())
+                    .load(universalImageModel.getImageThumbnailUrl())
+                    .config(Bitmap.Config.RGB_565)
+                    .fit()
+                    .centerCrop()
+                    .into(imageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            progressBar.setVisibility(View.GONE);
+                        }
 
-        description.setText(Html.fromHtml(universalImageModel.getDescription()));
-        description.setMovementMethod(LinkMovementMethod.getInstance());
-        TextUtils.stripUnderlines(description);
+                        @Override
+                        public void onError() {
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    });
 
-        if (universalImageModel.getCredit() != null) {
-            credit.setText(Html.fromHtml(universalImageModel.getCredit()));
-            credit.setMovementMethod(LinkMovementMethod.getInstance());
-            credit.setVisibility(View.VISIBLE);
-            TextUtils.stripUnderlines(credit);
-        }
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getActivity(), ImageActivity.class);
 
-        Picasso.with(getContext())
-                .load(universalImageModel.getImageThumbnailUrl())
-                .config(Bitmap.Config.RGB_565)
-                .fit()
-                .centerCrop()
-                .into(imageView, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        progressBar.setVisibility(View.GONE);
+                    if (((InformationActivity) getActivity()).type == InformationActivity.EXTRA_TYPE_APOD) {
+                        intent.putExtra(InformationActivity.EXTRA_CALENDAR, ((InformationActivity) getActivity()).calendar);
                     }
 
-                    @Override
-                    public void onError() {
-                        progressBar.setVisibility(View.GONE);
-                    }
-                });
-
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), ImageActivity.class);
-
-                switch (PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
-                    case "iotd":
-                        intent.putExtra(IotdFragment.EXTRA_IOTD_MODELS, Parcels.wrap(((InformationActivity) getActivity()).iotdModels));
-                        intent.putExtra(IotdFragment.EXTRA_IOTD_POSITION, position);
-                        break;
-                    case "apod":
-                        intent.putExtra(ApodFragment.EXTRA_APOD_CALENDAR, ((InformationActivity) getActivity()).apodCalendar);
-                        intent.putExtra(ApodFragment.EXTRA_APOD_MODELS, Parcels.wrap(((InformationActivity) getActivity()).apodModels));
-                        intent.putExtra(ApodFragment.EXTRA_APOD_POSITION, position);
-                        break;
+                    intent.putExtra(InformationActivity.EXTRA_MODELS, Parcels.wrap(((InformationActivity) getActivity()).models));
+                    intent.putExtra(InformationActivity.EXTRA_POSITION, position);
+                    intent.putExtra(InformationActivity.EXTRA_TYPE, ((InformationActivity) getActivity()).type);
+                    startActivityForResult(intent, 0);
                 }
+            });
 
-                startActivityForResult(intent, 0);
-            }
-        });
+            // This controls the image parallax effect as well as the toolbar and status bar transparency.
+            nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+                @Override
+                public void onScrollChange(NestedScrollView nestedScrollView, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                    ViewCompat.setTranslationY(imageView, scrollY * 0.5f);
+
+                    if (scrollY > (headerLayout.getHeight() - ((InformationActivity) getActivity()).toolbar.getHeight())) {
+                        ((InformationActivity) getActivity()).toolbar.setBackground(new ColorDrawable(ContextCompat.getColor(getActivity(), R.color.colorPrimary)));
+                        UiUtils.resetStatusBarTransparency(getActivity());
+                    } else {
+                        ((InformationActivity) getActivity()).toolbar.setBackgroundResource(R.drawable.gradient_toolbar);
+                        UiUtils.makeStatusBarTransparent(getActivity());
+                    }
+                }
+            });
+        }
 
         return view;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        switch (PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(PreferenceUtils.PREF_CURRENT_FRAGMENT, "")) {
-            case "iotd":
-                ((InformationActivity) getActivity()).viewPager.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((InformationActivity) getActivity()).viewPager.setCurrentItem(data.getIntExtra(IotdFragment.EXTRA_IOTD_POSITION, 0), false);
-                    }
-                });
-                break;
-            case "apod":
-                ((InformationActivity) getActivity()).apodCalendar = (Calendar) data.getSerializableExtra(ApodFragment.EXTRA_APOD_CALENDAR);
-                ((InformationActivity) getActivity()).apodModels = Parcels.unwrap(data.getParcelableExtra(ApodFragment.EXTRA_APOD_MODELS));
-                ((InformationActivity) getActivity()).informationFragmentStatePagerAdapter.notifyDataSetChanged();
-
-                ((InformationActivity) getActivity()).viewPager.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((InformationActivity) getActivity()).viewPager.setCurrentItem(data.getIntExtra(ApodFragment.EXTRA_APOD_POSITION, 0), false);
-                    }
-                });
-                break;
+        if (((InformationActivity) getActivity()).type == InformationActivity.EXTRA_TYPE_APOD) {
+            ((InformationActivity) getActivity()).calendar = (Calendar) data.getSerializableExtra(InformationActivity.EXTRA_CALENDAR);
+            ((InformationActivity) getActivity()).models = Parcels.unwrap(data.getParcelableExtra(InformationActivity.EXTRA_MODELS));
+            ((InformationActivity) getActivity()).informationFragmentStatePagerAdapter.notifyDataSetChanged();
         }
+
+        ((InformationActivity) getActivity()).viewPager.post(new Runnable() {
+            @Override
+            public void run() {
+                ((InformationActivity) getActivity()).viewPager.setCurrentItem(data.getIntExtra(InformationActivity.EXTRA_POSITION, 0), false);
+            }
+        });
     }
 }

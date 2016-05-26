@@ -48,10 +48,7 @@ public class IotdFragment extends Fragment {
 
     public List<UniversalImageModel> models = new ArrayList<>();
 
-    public boolean loadingData = false;
-
-    public static String EXTRA_IOTD_MODELS = "com.dsbeckham.nasaimageryfetcher.extra.IOTD_MODELS";
-    public static String EXTRA_IOTD_POSITION = "com.dsbeckham.nasaimageryfetcher.extra.IOTD_POSITION";
+    public boolean loadingData;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,8 +66,9 @@ public class IotdFragment extends Fragment {
             @Override
             public boolean onClick(View view, IAdapter<RecyclerViewAdapter> iAdapter, RecyclerViewAdapter recyclerViewAdapter, int position) {
                 Intent intent = new Intent(getActivity(), InformationActivity.class);
-                intent.putExtra(EXTRA_IOTD_MODELS, Parcels.wrap(models));
-                intent.putExtra(EXTRA_IOTD_POSITION, position);
+                intent.putExtra(InformationActivity.EXTRA_MODELS, Parcels.wrap(models));
+                intent.putExtra(InformationActivity.EXTRA_POSITION, position);
+                intent.putExtra(InformationActivity.EXTRA_TYPE, InformationActivity.EXTRA_TYPE_IOTD);
                 startActivityForResult(intent, 0);
                 return false;
             }
