@@ -27,17 +27,17 @@
 
     <PreferenceCategory android:title="@string/pref_live_wallpaper_category">
         <com.dsbeckham.nasaimageryfetcher.util.ListPreferenceHelper
-            android:defaultValue="43200"
-            android:entries="@array/frequency_options"
-            android:entryValues="@array/frequency_values"
-            android:key="pref_category_cycle_interval"
-            android:title="@string/pref_category_cycle_interval_title" />
-        <com.dsbeckham.nasaimageryfetcher.util.ListPreferenceHelper
             android:defaultValue="21600"
             android:entries="@array/frequency_options"
             android:entryValues="@array/frequency_values"
             android:key="pref_downloaded_image_cycle_interval"
             android:title="@string/pref_downloaded_image_cycle_interval_title" />
+        <com.dsbeckham.nasaimageryfetcher.util.ListPreferenceHelper
+            android:defaultValue="43200"
+            android:entries="@array/frequency_options"
+            android:entryValues="@array/frequency_values"
+            android:key="pref_category_cycle_interval"
+            android:title="@string/pref_category_cycle_interval_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

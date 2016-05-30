@@ -14,4 +14,8 @@
         android:id="@+id/menu_toolbar_wallpaper"
         android:title="@string/menu_wallpaper" />
 
+    <item
+        android:id="@+id/menu_toolbar_website"
+        android:title="@string/menu_website" />
+
 </menu>

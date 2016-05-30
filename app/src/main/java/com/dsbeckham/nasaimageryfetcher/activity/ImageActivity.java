@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -152,6 +153,12 @@ public class ImageActivity extends AppCompatActivity {
                     } else {
                         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PermissionUtils.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
                     }
+                }
+                break;
+            case R.id.menu_toolbar_website:
+                if (!models.isEmpty()) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(models.get(viewPager.getCurrentItem()).getPageUrl()));
+                    startActivity(intent);
                 }
                 break;
         }

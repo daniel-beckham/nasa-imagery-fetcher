@@ -10,6 +10,7 @@ import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
 
 import com.dsbeckham.nasaimageryfetcher.R;
@@ -70,6 +71,7 @@ public class BackgroundService extends IntentService {
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                     .setAutoCancel(true)
+                    .setColor(ContextCompat.getColor(this, R.color.colorAccent))
                     .setContentIntent(pendingIntent)
                     .setSmallIcon(R.drawable.ic_notification)
                     .setWhen(System.currentTimeMillis());
@@ -100,7 +102,9 @@ public class BackgroundService extends IntentService {
                         .replaceAll("(<br/>)+$", "");
                 bigTextStyle.bigText(Html.fromHtml(bigText));
 
-                builder.setNumber(models.size())
+                builder.setContentText(getString(R.string.app_name))
+                        .setContentTitle(getString(R.string.notification_title, models.size()))
+                        .setNumber(models.size())
                         .setStyle(bigTextStyle);
             } else {
                 String category = getString(R.string.app_name);
@@ -114,8 +118,9 @@ public class BackgroundService extends IntentService {
                         break;
                 }
 
-                builder.setContentTitle(category)
-                        .setContentText(universalImageModel.getTitle());
+                builder.setContentText(universalImageModel.getTitle())
+                        .setContentTitle(category);
+
             }
 
             NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);

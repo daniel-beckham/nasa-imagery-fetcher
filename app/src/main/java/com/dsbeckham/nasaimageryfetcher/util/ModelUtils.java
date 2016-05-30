@@ -40,8 +40,8 @@ public class ModelUtils {
         universalImageModel.setCredit(apodNasaGovModel.getCopyright());
         universalImageModel.setDate(apodNasaGovModel.getDate());
         universalImageModel.setDescription(apodNasaGovModel.getExplanation());
-        universalImageModel.setImageThumbnailUrl(apodNasaGovModel.getUrl());
-        universalImageModel.setImageUrl(apodNasaGovModel.getHdUrl());
+        universalImageModel.setImageThumbnailUrl(apodNasaGovModel.getMediaType().equals("image") ? apodNasaGovModel.getUrl(): "");
+        universalImageModel.setImageUrl(apodNasaGovModel.getMediaType().equals("image") ? apodNasaGovModel.getHdUrl() : "");
         // The NASA API doesn't include the page URL, but it can be obtained from the date of the image.
         universalImageModel.setPageUrl(String.format("http://apod.nasa.gov/apod/ap%1$s.html", DateUtils.convertDateToCustomDateFormat(apodNasaGovModel.getDate(), "yyyy-MM-dd", "yyMMdd")));
         universalImageModel.setTitle(apodNasaGovModel.getTitle());

@@ -186,8 +186,8 @@ public class ApodQueryUtils {
                     boolean getLatestImage = false;
 
                     for (ApodMorphIoModel apodMorphIoModel : response.body()) {
-                        Calendar calendar = DateUtils.convertDateToCalendar(apodMorphIoModel.getDate(), "yyyy-MM-dd");
                         UniversalImageModel universalImageModel = ModelUtils.convertApodMorphIoModel(apodMorphIoModel);
+                        Calendar calendar = DateUtils.convertDateToCalendar(universalImageModel.getDate(), "yyyy-MM-dd");
 
                         if (apodFragment.models.isEmpty()) {
                             if (apodFragment.calendar.get(Calendar.DAY_OF_YEAR) > calendar.get(Calendar.DAY_OF_YEAR)) {
@@ -195,7 +195,7 @@ public class ApodQueryUtils {
                             }
                         }
 
-                        if (!apodFragment.models.contains(universalImageModel) && !apodMorphIoModel.getPictureThumbnailUrl().isEmpty()) {
+                        if (!apodFragment.models.contains(universalImageModel) && !universalImageModel.getImageThumbnailUrl().isEmpty()) {
                             apodFragment.models.add(universalImageModel);
 
                             if (!getLatestImage) {
@@ -233,8 +233,10 @@ public class ApodQueryUtils {
 
         if (viewPager == VIEWPAGER_IMAGE) {
             calendar = ((ImageActivity) activity).calendar;
+            ((ImageActivity) activity).loadingData = true;
         } else if (viewPager == VIEWPAGER_INFORMATION) {
             calendar = ((InformationActivity) activity).calendar;
+            ((InformationActivity) activity).loadingData = true;
         }
 
         String query = String.format(Locale.US, "SELECT * FROM data WHERE date <= date('%d-%02d-%02d') ORDER BY date DESC LIMIT 30", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
@@ -244,18 +246,18 @@ public class ApodQueryUtils {
             public void onResponse(Call<List<ApodMorphIoModel>> call, Response<List<ApodMorphIoModel>> response) {
                 if (response.isSuccessful()) {
                     for (ApodMorphIoModel apodMorphIoModel : response.body()) {
-                        Calendar calendar = DateUtils.convertDateToCalendar(apodMorphIoModel.getDate(), "yyyy-MM-dd");
                         UniversalImageModel universalImageModel = ModelUtils.convertApodMorphIoModel(apodMorphIoModel);
+                        Calendar calendar = DateUtils.convertDateToCalendar(universalImageModel.getDate(), "yyyy-MM-dd");
 
                         if (viewPager == VIEWPAGER_IMAGE) {
-                            if (!((ImageActivity) activity).models.contains(universalImageModel) && !apodMorphIoModel.getPictureThumbnailUrl().isEmpty()) {
+                            if (!((ImageActivity) activity).models.contains(universalImageModel) && !universalImageModel.getImageThumbnailUrl().isEmpty()) {
                                 ((ImageActivity) activity).models.add(universalImageModel);
                             }
 
                             ((ImageActivity) activity).calendar = calendar;
                             ((ImageActivity) activity).calendar.add(Calendar.DAY_OF_YEAR, -1);
                         } else if (viewPager == VIEWPAGER_INFORMATION) {
-                            if (!((InformationActivity) activity).models.contains(universalImageModel) && !apodMorphIoModel.getPictureThumbnailUrl().isEmpty()) {
+                            if (!((InformationActivity) activity).models.contains(universalImageModel) && !universalImageModel.getImageThumbnailUrl().isEmpty()) {
                                 ((InformationActivity) activity).models.add(universalImageModel);
                             }
 
@@ -306,7 +308,7 @@ public class ApodQueryUtils {
 
                     UniversalImageModel universalImageModel = ModelUtils.convertApodNasaGovModel(response.body());
 
-                    if (!apodFragment.models.contains(universalImageModel) && response.body().getMediaType().equals("image")) {
+                    if (!apodFragment.models.contains(universalImageModel) && !universalImageModel.getImageThumbnailUrl().isEmpty()) {
                         apodFragment.models.add(universalImageModel);
                         apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new RecyclerViewAdapter(universalImageModel));
                     }
@@ -347,8 +349,10 @@ public class ApodQueryUtils {
 
         if (viewPager == VIEWPAGER_IMAGE) {
             calendar = ((ImageActivity) activity).calendar;
+            ((ImageActivity) activity).loadingData = true;
         } else if (viewPager == VIEWPAGER_INFORMATION) {
             calendar = ((InformationActivity) activity).calendar;
+            ((InformationActivity) activity).loadingData = true;
         }
 
         String date = String.format(Locale.US, "%d-%02d-%02d", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
@@ -360,7 +364,7 @@ public class ApodQueryUtils {
                     UniversalImageModel universalImageModel = ModelUtils.convertApodNasaGovModel(response.body());
 
                     if (viewPager == VIEWPAGER_IMAGE) {
-                        if (!((ImageActivity) activity).models.contains(universalImageModel) && !response.body().getUrl().isEmpty()) {
+                        if (!((ImageActivity) activity).models.contains(universalImageModel) && !universalImageModel.getImageThumbnailUrl().isEmpty()) {
                             ((ImageActivity) activity).models.add(universalImageModel);
                         }
 
@@ -376,7 +380,7 @@ public class ApodQueryUtils {
 
                         ((ImageActivity) activity).imageFragmentStatePagerAdapter.notifyDataSetChanged();
                      } else if (viewPager == VIEWPAGER_INFORMATION) {
-                        if (!((InformationActivity) activity).models.contains(universalImageModel) && !response.body().getUrl().isEmpty()) {
+                        if (!((InformationActivity) activity).models.contains(universalImageModel) && !universalImageModel.getImageThumbnailUrl().isEmpty()) {
                             ((InformationActivity) activity).models.add(universalImageModel);
                         }
 
@@ -417,27 +421,30 @@ public class ApodQueryUtils {
     }
 
     public static void getLatestImage(final Activity activity) {
-        final Calendar calendar = Calendar.getInstance();
-
         final ApodFragment apodFragment = (ApodFragment) ((AppCompatActivity) activity).getSupportFragmentManager().findFragmentByTag(PreferenceUtils.FRAGMENT_APOD);
 
         if (apodFragment == null) {
             return;
         }
 
+        final Calendar calendar = Calendar.getInstance();
         String date = String.format(Locale.US, "%d-%02d-%02d", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
         Call<ApodNasaGovModel> call = nasaGovService.get(NASA_GOV_API_KEY, date);
         call.enqueue(new Callback<ApodNasaGovModel>() {
             @Override
             public void onResponse(Call<ApodNasaGovModel> call, Response<ApodNasaGovModel> response) {
                 if (response.isSuccessful()) {
-                    if (DateUtils.convertDateToCalendar(response.body().getDate(), "yyyy-MM-dd").get(Calendar.DAY_OF_YEAR) == calendar.get(Calendar.DAY_OF_YEAR)) {
-                        apodFragment.models.add(0, ModelUtils.convertApodNasaGovModel(response.body()));
+                    UniversalImageModel universalImageModel = ModelUtils.convertApodNasaGovModel(response.body());
 
-                        for (UniversalImageModel universalImageModel : apodFragment.models) {
-                            apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new RecyclerViewAdapter(universalImageModel));
+                    if (DateUtils.convertDateToCalendar(universalImageModel.getDate(), "yyyy-MM-dd").get(Calendar.DAY_OF_YEAR) == calendar.get(Calendar.DAY_OF_YEAR)) {
+                        if (apodFragment.models.contains(universalImageModel) && !universalImageModel.getImageThumbnailUrl().isEmpty()) {
+                            apodFragment.models.add(0, ModelUtils.convertApodNasaGovModel(response.body()));
                         }
                     }
+                }
+
+                for (UniversalImageModel universalImageModel : apodFragment.models) {
+                    apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new RecyclerViewAdapter(universalImageModel));
                 }
 
                 apodFragment.loadingData = false;
@@ -446,6 +453,10 @@ public class ApodQueryUtils {
 
             @Override
             public void onFailure(Call<ApodNasaGovModel> call, Throwable t) {
+                for (UniversalImageModel universalImageModel : apodFragment.models) {
+                    apodFragment.fastItemAdapter.add(apodFragment.fastItemAdapter.getAdapterItemCount(), new RecyclerViewAdapter(universalImageModel));
+                }
+
                 apodFragment.loadingData = false;
                 apodFragment.swipeRefreshLayout.setRefreshing(false);
             }
@@ -464,7 +475,7 @@ public class ApodQueryUtils {
                     if (response.isSuccessful()) {
                         UniversalImageModel universalImageModel = ModelUtils.convertApodNasaGovModel(response.body());
 
-                        if (universalImageModel != null) {
+                        if (!universalImageModel.getImageThumbnailUrl().isEmpty()) {
                             Calendar imageCalendar = DateUtils.convertDateToCalendar(universalImageModel.getDate(), "yyyy-MM-dd");
                             Calendar preferenceCalendar = DateUtils.convertDateToCalendar(PreferenceManager.getDefaultSharedPreferences(intentService).getString(PreferenceUtils.PREF_LAST_APOD_DATE, "1970-01-01"), "yyyy-MM-dd");
 
@@ -498,7 +509,7 @@ public class ApodQueryUtils {
                             universalImageModel = ModelUtils.convertApodMorphIoModel(response.body().get(0));
                         }
 
-                        if (universalImageModel != null) {
+                        if (universalImageModel != null && !universalImageModel.getImageThumbnailUrl().isEmpty()) {
                             Calendar imageCalendar = DateUtils.convertDateToCalendar(universalImageModel.getDate(), "yyyy-MM-dd");
                             Calendar preferenceCalendar = DateUtils.convertDateToCalendar(PreferenceManager.getDefaultSharedPreferences(intentService).getString(PreferenceUtils.PREF_LAST_APOD_DATE, "1970-01-01"), "yyyy-MM-dd");
 

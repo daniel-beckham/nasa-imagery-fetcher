@@ -16,7 +16,7 @@ import android.view.MenuItem;
 import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.fragment.ApodFragment;
 import com.dsbeckham.nasaimageryfetcher.fragment.IotdFragment;
-import com.dsbeckham.nasaimageryfetcher.receiver.BootReceiver;
+import com.dsbeckham.nasaimageryfetcher.util.AlarmUtils;
 import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
 import com.dsbeckham.nasaimageryfetcher.util.IotdQueryUtils;
 import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
@@ -47,12 +47,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView.setNavigationItemSelectedListener(this);
 
+        UiUtils.makeStatusBarTransparent(this);
+
         ApodQueryUtils.setUpIoServices();
         IotdQueryUtils.setUpIoService();
 
-        UiUtils.makeStatusBarTransparent(this);
-
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferenceUtils.PREF_NOTIFICATIONS, false)
+            || PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferenceUtils.PREF_AUTOMATIC_DOWNLOADS, false)) {
+                AlarmUtils.scheduleAlarm(this);
+        }
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -61,8 +66,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             PreferenceManager.getDefaultSharedPreferences(this).edit().putString(PreferenceUtils.PREF_CURRENT_FRAGMENT, PreferenceUtils.FRAGMENT_IOTD).apply();
         }
-
-        BootReceiver.scheduleAlarm(this);
     }
 
     @Override

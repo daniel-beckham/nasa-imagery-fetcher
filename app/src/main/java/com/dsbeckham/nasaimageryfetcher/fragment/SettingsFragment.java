@@ -20,7 +20,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         setRetainInstance(true);
 
         addPreferencesFromResource(R.xml.preferences);
-        PreferenceUtils.togglePreferencesBasedOnAllCurrentKeyValues(getActivity());
+        PreferenceUtils.togglePreferencesBasedOnAllCurrentKeyValues(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity()));
     }
 
     @Override
@@ -37,7 +37,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        PreferenceUtils.togglePreferencesBasedOnCurrentKeyValue(getActivity(), sharedPreferences, key);
+        PreferenceUtils.processPreference(getActivity(), sharedPreferences, key);
     }
 
     @Override
