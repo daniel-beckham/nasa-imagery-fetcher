@@ -9,10 +9,13 @@ import android.os.Message;
 
 import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 
+import java.io.File;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class DownloadUtils {
+    public static final String IMAGE_DIRECTORY = "NASAImageryFetcher";
+
     private static final int DOWNLOAD_URI = 0;
     private static final int DOWNLOAD_URI_ALTERNATE = 1;
     private static final int VALIDATE_URI_ALTERNATE = 2;
@@ -45,13 +48,16 @@ public class DownloadUtils {
     }
 
     private static void downloadImage(Context context, UniversalImageModel universalImageModel, boolean hidden, boolean alternate) {
+        String subDirectories = "/" + IMAGE_DIRECTORY + "/" + universalImageModel.getType();
+        FileUtils.createDirectoryIfNotExists(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + subDirectories));
+
         Uri uri = alternate ? Uri.parse(universalImageModel.getImageThumbnailUrl()) : Uri.parse(universalImageModel.getImageUrl());
-        String subPath = "/NASAImageryFetcher/" + universalImageModel.getType() + "/" + uri.getLastPathSegment();
-        DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-        DownloadManager.Request request = new DownloadManager.Request(uri).setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, subPath)
-                .setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, subPath)
+
+        DownloadManager.Request request = new DownloadManager.Request(uri).setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, subDirectories + "/" + uri.getLastPathSegment())
                 .setNotificationVisibility(hidden ? DownloadManager.Request.VISIBILITY_HIDDEN : DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_ONLY_COMPLETION)
                 .setVisibleInDownloadsUi(false);
+
+        DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         downloadManager.enqueue(request);
     }
 
@@ -78,8 +84,7 @@ public class DownloadUtils {
                             messageHandler.sendEmptyMessage(VALIDATE_URI_ALTERNATE);
                         }
                     }
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     if (!fallback) {
                         messageHandler.sendEmptyMessage(VALIDATE_URI_ALTERNATE);
                     }

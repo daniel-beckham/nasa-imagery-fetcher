@@ -30,10 +30,6 @@ import com.dsbeckham.nasaimageryfetcher.util.UiUtils;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import org.parceler.Parcels;
-
-import java.util.Calendar;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -81,9 +77,9 @@ public class InformationFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_information, container, false);
         ButterKnife.bind(this, view);
 
-        if (!((InformationActivity) getActivity()).models.isEmpty()) {
-            UniversalImageModel universalImageModel = ((InformationActivity) getActivity()).models.get(position);
+        UniversalImageModel universalImageModel = ((InformationActivity) getActivity()).getModel(position);
 
+        if (universalImageModel != null) {
             title.setText(universalImageModel.getTitle());
             date.setText(DateUtils.convertDateToLongDateFormat(getActivity(), universalImageModel.getDate(), "yyyy-MM-dd"));
 
@@ -123,12 +119,10 @@ public class InformationFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getActivity(), ImageActivity.class);
-
-                    if (((InformationActivity) getActivity()).type == InformationActivity.EXTRA_TYPE_APOD) {
-                        intent.putExtra(InformationActivity.EXTRA_CALENDAR, ((InformationActivity) getActivity()).calendar);
+                    if (!((InformationActivity) getActivity()).models.isEmpty()) {
+                        intent.putParcelableArrayListExtra(InformationActivity.EXTRA_MODELS, ((InformationActivity) getActivity()).models);
                     }
 
-                    intent.putExtra(InformationActivity.EXTRA_MODELS, Parcels.wrap(((InformationActivity) getActivity()).models));
                     intent.putExtra(InformationActivity.EXTRA_POSITION, position);
                     intent.putExtra(InformationActivity.EXTRA_TYPE, ((InformationActivity) getActivity()).type);
                     startActivityForResult(intent, 0);
@@ -143,10 +137,10 @@ public class InformationFragment extends Fragment {
 
                     if (scrollY > (headerLayout.getHeight() - ((InformationActivity) getActivity()).toolbar.getHeight())) {
                         ((InformationActivity) getActivity()).toolbar.setBackground(new ColorDrawable(ContextCompat.getColor(getActivity(), R.color.colorPrimary)));
-                        UiUtils.resetStatusBarTransparency(getActivity());
+                        UiUtils.resetStatusBarTransparency(getActivity(), true);
                     } else {
                         ((InformationActivity) getActivity()).toolbar.setBackgroundResource(R.drawable.gradient_toolbar);
-                        UiUtils.makeStatusBarTransparent(getActivity());
+                        UiUtils.makeStatusBarTransparent(getActivity(), true);
                     }
                 }
             });
@@ -157,9 +151,7 @@ public class InformationFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        if (((InformationActivity) getActivity()).type == InformationActivity.EXTRA_TYPE_APOD) {
-            ((InformationActivity) getActivity()).calendar = (Calendar) data.getSerializableExtra(InformationActivity.EXTRA_CALENDAR);
-            ((InformationActivity) getActivity()).models = Parcels.unwrap(data.getParcelableExtra(InformationActivity.EXTRA_MODELS));
+        if (((InformationActivity) getActivity()).type != InformationActivity.EXTRA_TYPE_MIXED) {
             ((InformationActivity) getActivity()).informationFragmentStatePagerAdapter.notifyDataSetChanged();
         }
 

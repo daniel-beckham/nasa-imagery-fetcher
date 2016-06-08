@@ -22,14 +22,12 @@ import com.dsbeckham.nasaimageryfetcher.util.IotdQueryUtils;
 import com.dsbeckham.nasaimageryfetcher.util.ModelUtils;
 import com.dsbeckham.nasaimageryfetcher.util.PermissionUtils;
 import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
-
-import org.parceler.Parcels;
+import com.dsbeckham.nasaimageryfetcher.util.WallpaperUtils;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class BackgroundService extends IntentService {
-    private List<UniversalImageModel> models = new ArrayList<>();
+    private ArrayList<UniversalImageModel> models = new ArrayList<>();
 
     public BackgroundService() {
         super("BackgroundService");
@@ -38,18 +36,21 @@ public class BackgroundService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferenceUtils.PREF_NOTIFICATIONS, false)
-                || PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferenceUtils.PREF_AUTOMATIC_DOWNLOADS, false)) {
+                || PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferenceUtils.PREF_SAVE_TO_EXTERNAL_STORAGE, false)
+                || PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferenceUtils.PREF_SET_AS_WALLPAPER, false)) {
             models.clear();
 
             String fetchCategories = PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_FETCH_CATEGORIES, "");
 
-            if (fetchCategories.equals(PreferenceUtils.CATEGORY_IOTD) || fetchCategories.equals(PreferenceUtils.CATEGORY_BOTH)) {
-                IotdQueryUtils.setUpIoService();
+            if (fetchCategories.equals(PreferenceUtils.CATEGORY_IOTD)
+                    || fetchCategories.equals(PreferenceUtils.CATEGORY_BOTH)) {
+                IotdQueryUtils.setUpIoService(this);
                 IotdQueryUtils.getLatestImage(this);
             }
 
-            if (fetchCategories.equals(PreferenceUtils.CATEGORY_APOD) || fetchCategories.equals(PreferenceUtils.CATEGORY_BOTH)) {
-                ApodQueryUtils.setUpIoServices();
+            if (fetchCategories.equals(PreferenceUtils.CATEGORY_APOD)
+                    || fetchCategories.equals(PreferenceUtils.CATEGORY_BOTH)) {
+                ApodQueryUtils.setUpIoServices(this);
                 ApodQueryUtils.getLatestImage(this, false);
             }
         }
@@ -60,7 +61,7 @@ public class BackgroundService extends IntentService {
             models.add(universalImageModel);
 
             Intent intent = new Intent(this, InformationActivity.class);
-            intent.putExtra(InformationActivity.EXTRA_MODELS, Parcels.wrap(models));
+            intent.putParcelableArrayListExtra(InformationActivity.EXTRA_MODELS, models);
             intent.putExtra(InformationActivity.EXTRA_POSITION, 0);
             intent.putExtra(InformationActivity.EXTRA_TYPE, InformationActivity.EXTRA_TYPE_MIXED);
             intent.setAction(Long.toString(System.currentTimeMillis()));
@@ -73,7 +74,7 @@ public class BackgroundService extends IntentService {
                     .setAutoCancel(true)
                     .setColor(ContextCompat.getColor(this, R.color.colorAccent))
                     .setContentIntent(pendingIntent)
-                    .setSmallIcon(R.drawable.ic_notification)
+                    .setSmallIcon(R.mipmap.ic_notification)
                     .setWhen(System.currentTimeMillis());
 
             if (models.size() > 1) {
@@ -120,33 +121,41 @@ public class BackgroundService extends IntentService {
 
                 builder.setContentText(universalImageModel.getTitle())
                         .setContentTitle(category);
-
             }
 
             NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             notificationManager.notify(0, builder.build());
         }
 
-        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferenceUtils.PREF_AUTOMATIC_DOWNLOADS, false)) {
-            if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferenceUtils.PREF_WIFI_DOWNLOADS_ONLY, false)) {
-                boolean wifiConnected = false;
-                ConnectivityManager connectivityManager = ((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE));
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferenceUtils.PREF_WIFI_DOWNLOADS_ONLY, false)) {
+            boolean wifiConnected = false;
+            ConnectivityManager connectivityManager = ((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE));
 
-                if (connectivityManager != null) {
-                    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            if (connectivityManager != null) {
+                NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
-                    if (networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI && networkInfo.isConnected()) {
-                        wifiConnected = true;
-                    }
-                }
-
-                if (!wifiConnected) {
-                    return;
+                if (networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI && networkInfo.isConnected()) {
+                    wifiConnected = true;
                 }
             }
 
+            if (!wifiConnected) {
+                return;
+            }
+        }
+
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferenceUtils.PREF_SAVE_TO_EXTERNAL_STORAGE, false)) {
             if (PermissionUtils.isStoragePermissionGranted(this)) {
                 DownloadUtils.validateAndDownloadImage(this, universalImageModel, true, false);
+            }
+        }
+
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferenceUtils.PREF_SET_AS_WALLPAPER, false)) {
+            String wallpaperCategory = PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceUtils.PREF_WALLPAPER_CATEGORY, "");
+
+            if ((wallpaperCategory.equals(PreferenceUtils.CATEGORY_IOTD) && universalImageModel.getType().equals(ModelUtils.MODEL_TYPE_IOTD))
+                    || (wallpaperCategory.equals(PreferenceUtils.CATEGORY_APOD) && universalImageModel.getType().equals(ModelUtils.MODEL_TYPE_APOD))) {
+                WallpaperUtils.setWallpaper(this, universalImageModel.getImageUrl());
             }
         }
     }

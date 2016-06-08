@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import com.dsbeckham.nasaimageryfetcher.activity.ImageActivity;
-import com.dsbeckham.nasaimageryfetcher.activity.InformationActivity;
+import com.dsbeckham.nasaimageryfetcher.application.MainApplication;
 import com.dsbeckham.nasaimageryfetcher.fragment.ImageFragment;
 import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
 
@@ -19,15 +19,23 @@ public class ImageFragmentStatePagerAdapter extends SmartFragmentStatePagerAdapt
 
     @Override
     public int getCount() {
-       return ((ImageActivity) activity).models.size();
+        switch (((ImageActivity) activity).type) {
+            case ImageActivity.EXTRA_TYPE_IOTD:
+                return ((MainApplication) activity.getApplication()).getIotdModels().size();
+            case ImageActivity.EXTRA_TYPE_APOD:
+                return ((MainApplication) activity.getApplication()).getApodModels().size();
+            case ImageActivity.EXTRA_TYPE_MIXED:
+                return ((ImageActivity) activity).models.size();
+        }
+
+        return 0;
     }
 
     @Override
     public Fragment getItem(int position) {
-        if (((ImageActivity) activity).type == InformationActivity.EXTRA_TYPE_APOD) {
-            if (position == getCount() - 1) {
-                ApodQueryUtils.beginQuery(activity, ApodQueryUtils.VIEWPAGER_IMAGE, false);
-            }
+        if (((ImageActivity) activity).type == ImageActivity.EXTRA_TYPE_APOD
+                && position == (getCount() - 1)) {
+            ApodQueryUtils.beginQuery(activity, ApodQueryUtils.TYPE_VIEWPAGER_IMAGE, false);
         }
 
         return ImageFragment.newInstance(position);

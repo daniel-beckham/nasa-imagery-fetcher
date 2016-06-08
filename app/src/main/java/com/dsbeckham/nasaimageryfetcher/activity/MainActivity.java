@@ -1,8 +1,6 @@
 package com.dsbeckham.nasaimageryfetcher.activity;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
@@ -33,7 +31,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,21 +44,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        UiUtils.makeStatusBarTransparent(this);
+        UiUtils.makeStatusBarTransparent(this, false);
 
-        ApodQueryUtils.setUpIoServices();
-        IotdQueryUtils.setUpIoService();
+        ApodQueryUtils.setUpIoServices(this);
+        IotdQueryUtils.setUpIoService(this);
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferenceUtils.PREF_NOTIFICATIONS, false)
-            || PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferenceUtils.PREF_AUTOMATIC_DOWNLOADS, false)) {
-                AlarmUtils.scheduleAlarm(this);
+                || PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferenceUtils.PREF_SAVE_TO_EXTERNAL_STORAGE, false)
+                || PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferenceUtils.PREF_SET_AS_WALLPAPER, false)) {
+            AlarmUtils.scheduleAlarm(this);
         }
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.coordinatorlayout, new IotdFragment(), PreferenceUtils.FRAGMENT_IOTD)
+                    .replace(R.id.content, new IotdFragment(), PreferenceUtils.FRAGMENT_IOTD)
                     .commit();
 
             PreferenceManager.getDefaultSharedPreferences(this).edit().putString(PreferenceUtils.PREF_CURRENT_FRAGMENT, PreferenceUtils.FRAGMENT_IOTD).apply();
@@ -100,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             .commit();
                 } else {
                     getSupportFragmentManager().beginTransaction()
-                            .add(R.id.coordinatorlayout, new IotdFragment(), PreferenceUtils.FRAGMENT_IOTD)
+                            .add(R.id.content, new IotdFragment(), PreferenceUtils.FRAGMENT_IOTD)
                             .commit();
                 }
 
@@ -121,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             .commit();
                 } else {
                     getSupportFragmentManager().beginTransaction()
-                            .add(R.id.coordinatorlayout, new ApodFragment(), PreferenceUtils.FRAGMENT_APOD)
+                            .add(R.id.content, new ApodFragment(), PreferenceUtils.FRAGMENT_APOD)
                             .commit();
                 }
 

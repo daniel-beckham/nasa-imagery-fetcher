@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">NASA Imagery Fetcher</string>
+    <string name="app_name">Imagery Fetcher</string>
 
     <string name="app_iotd">Image of the Day</string>
     <string name="app_apod">Astronomy Picture of the Day</string>
@@ -17,16 +17,24 @@
 
     <string name="pref_general_category">General</string>
     <string name="pref_notifications_title">Notifications</string>
-    <string name="pref_notifications_summary">Notify whenever a new image has been fetched</string>
+    <string name="pref_notifications_summary">Notify whenever new images are available</string>
     <string name="pref_fetch_categories_title">Fetch categories</string>
-    <string name="pref_automatic_downloads_title">Automatic downloads</string>
-    <string name="pref_automatic_downloads_summary">Download new images automatically</string>
+    <string name="pref_save_to_external_storage_title">Save to external storage</string>
+    <string name="pref_save_to_external_storage_summary">Automatically download latest images and save to external storage</string>
+    <string name="pref_set_as_wallpaper_title">Set as wallpaper</string>
+    <string name="pref_set_as_wallpaper_summary">Automatically download latest image from chosen category and set as current wallpaper</string>
+    <string name="pref_wallpaper_category_title">Wallpaper category</string>
     <string name="pref_wifi_downloads_only_title">Wi-Fi downloads only</string>
-    <string name="pref_wifi_downloads_only_summary">Only download images when connected to Wi-Fi</string>
+    <string name="pref_wifi_downloads_only_summary">Only download images in background when connected to Wi-Fi</string>
 
-    <string name="pref_live_wallpaper_category">Live wallpaper</string>
-    <string name="pref_downloaded_image_cycle_interval_title">Downloaded image cycle interval</string>
-    <string name="pref_category_cycle_interval_title">Category cycle interval</string>
+    <string name="pref_storage_category">Storage</string>
+    <string name="pref_clear_cached_images_title">Clear cached images</string>
+    <string name="pref_clear_cached_images_summary">Delete all images stored in cache</string>
+    <string name="pref_clear_saved_images_title">Clear saved images</string>
+    <string name="pref_clear_saved_images_summary">Delete all images saved to external storage</string>
+
+    <string name="cached_images_cleared">Cached images cleared</string>
+    <string name="saved_images_cleared">Saved images cleared</string>
 
     <string name="notification_title">%1$s new images</string>
     <string name="notification_content"><![CDATA[<b>%1$s</b> %2$s<br/>]]></string>

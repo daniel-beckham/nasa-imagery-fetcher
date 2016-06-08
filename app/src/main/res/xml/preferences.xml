@@ -9,15 +9,26 @@
             android:title="@string/pref_notifications_title" />
         <com.dsbeckham.nasaimageryfetcher.util.ListPreferenceHelper
             android:defaultValue="category_both"
-            android:entries="@array/categories_options"
-            android:entryValues="@array/categories_values"
+            android:entries="@array/fetch_categories_options"
+            android:entryValues="@array/fetch_categories_values"
             android:key="pref_fetch_categories"
             android:title="@string/pref_fetch_categories_title" />
         <SwitchPreference
             android:defaultValue="false"
-            android:key="pref_automatic_downloads"
-            android:summary="@string/pref_automatic_downloads_summary"
-            android:title="@string/pref_automatic_downloads_title" />
+            android:key="pref_save_to_external_storage"
+            android:summary="@string/pref_save_to_external_storage_summary"
+            android:title="@string/pref_save_to_external_storage_title" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="pref_set_as_wallpaper"
+            android:summary="@string/pref_set_as_wallpaper_summary"
+            android:title="@string/pref_set_as_wallpaper_title" />
+        <com.dsbeckham.nasaimageryfetcher.util.ListPreferenceHelper
+            android:defaultValue="category_apod"
+            android:entries="@array/wallpaper_category_options"
+            android:entryValues="@array/wallpaper_category_values"
+            android:key="pref_wallpaper_category"
+            android:title="@string/pref_wallpaper_category_title" />
         <SwitchPreference
             android:defaultValue="false"
             android:key="pref_wifi_downloads_only"
@@ -25,19 +36,15 @@
             android:title="@string/pref_wifi_downloads_only_title" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_live_wallpaper_category">
-        <com.dsbeckham.nasaimageryfetcher.util.ListPreferenceHelper
-            android:defaultValue="21600"
-            android:entries="@array/frequency_options"
-            android:entryValues="@array/frequency_values"
-            android:key="pref_downloaded_image_cycle_interval"
-            android:title="@string/pref_downloaded_image_cycle_interval_title" />
-        <com.dsbeckham.nasaimageryfetcher.util.ListPreferenceHelper
-            android:defaultValue="43200"
-            android:entries="@array/frequency_options"
-            android:entryValues="@array/frequency_values"
-            android:key="pref_category_cycle_interval"
-            android:title="@string/pref_category_cycle_interval_title" />
+    <PreferenceCategory android:title="@string/pref_storage_category">
+        <Preference
+            android:key="pref_clear_cached_images"
+            android:summary="@string/pref_clear_cached_images_summary"
+            android:title="@string/pref_clear_cached_images_title" />
+        <Preference
+            android:key="pref_clear_saved_images"
+            android:summary="@string/pref_clear_saved_images_summary"
+            android:title="@string/pref_clear_saved_images_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

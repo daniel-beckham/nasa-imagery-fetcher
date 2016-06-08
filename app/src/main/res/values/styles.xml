@@ -13,8 +13,8 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="MainTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar" />
 
-    <style name="MainTheme.PopupOverlay" parent="ThemeOverlay.AppCompat" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat" />
 
 </resources>

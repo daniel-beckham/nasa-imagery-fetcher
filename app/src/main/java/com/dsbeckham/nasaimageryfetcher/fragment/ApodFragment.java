@@ -16,7 +16,6 @@ import android.widget.FrameLayout;
 import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.activity.InformationActivity;
 import com.dsbeckham.nasaimageryfetcher.adapter.RecyclerViewAdapter;
-import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
@@ -24,12 +23,6 @@ import com.mikepenz.fastadapter.adapters.FastItemAdapter;
 import com.mikepenz.fastadapter.adapters.FooterAdapter;
 import com.mikepenz.fastadapter_extensions.items.ProgressItem;
 import com.mikepenz.fastadapter_extensions.scroll.EndlessRecyclerOnScrollListener;
-
-import org.parceler.Parcels;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,12 +42,6 @@ public class ApodFragment extends Fragment {
     public FooterAdapter<ProgressItem> footerAdapter = new FooterAdapter<>();
     public LinearLayoutManager linearLayoutManager;
 
-    public List<UniversalImageModel> models = new ArrayList<>();
-
-    public Calendar calendar = Calendar.getInstance();
-    public boolean loadingData;
-    public int nasaGovApiQueries = ApodQueryUtils.NASA_GOV_API_QUERIES;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,8 +58,6 @@ public class ApodFragment extends Fragment {
             @Override
             public boolean onClick(View view, IAdapter<RecyclerViewAdapter> iAdapter, RecyclerViewAdapter recyclerViewAdapter, int position) {
                 Intent intent = new Intent(getActivity(), InformationActivity.class);
-                intent.putExtra(InformationActivity.EXTRA_CALENDAR, calendar);
-                intent.putExtra(InformationActivity.EXTRA_MODELS, Parcels.wrap(models));
                 intent.putExtra(InformationActivity.EXTRA_POSITION, position);
                 intent.putExtra(InformationActivity.EXTRA_TYPE, InformationActivity.EXTRA_TYPE_APOD);
                 startActivityForResult(intent, 0);
@@ -90,7 +75,7 @@ public class ApodFragment extends Fragment {
             public void onLoadMore(int currentPage) {
                 footerAdapter.clear();
                 footerAdapter.add(new ProgressItem());
-                ApodQueryUtils.beginQuery(getActivity(), false);
+                ApodQueryUtils.beginQuery(getActivity(), ApodQueryUtils.TYPE_RECYCLERVIEW, false);
             }
         };
 
@@ -110,12 +95,13 @@ public class ApodFragment extends Fragment {
             @Override
             public void onRefresh() {
                 ApodQueryUtils.clearData(getActivity());
-                ApodQueryUtils.beginQuery(getActivity(), false);
+                ApodQueryUtils.beginQuery(getActivity(), ApodQueryUtils.TYPE_RECYCLERVIEW, false);
             }
         });
 
         if (savedInstanceState == null) {
-            ApodQueryUtils.beginQuery(getActivity(), false);
+            ApodQueryUtils.clearData(getActivity());
+            ApodQueryUtils.beginQuery(getActivity(), ApodQueryUtils.TYPE_RECYCLERVIEW, false);
         }
 
         return view;

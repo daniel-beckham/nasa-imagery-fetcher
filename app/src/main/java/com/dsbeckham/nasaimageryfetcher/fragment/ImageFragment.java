@@ -67,9 +67,9 @@ public class ImageFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_image, container, false);
         ButterKnife.bind(this, view);
 
-        if (!((ImageActivity) getActivity()).models.isEmpty()) {
-            UniversalImageModel universalImageModel = ((ImageActivity) getActivity()).models.get(position);
+        UniversalImageModel universalImageModel = ((ImageActivity) getActivity()).getModel(position);
 
+        if (universalImageModel != null) {
             Picasso.with(getContext())
                     .load(universalImageModel.getImageThumbnailUrl())
                     .resize(2048, 2048)

@@ -20,7 +20,7 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
         setRetainInstance(true);
 
         addPreferencesFromResource(R.xml.preferences);
-        PreferenceUtils.togglePreferencesBasedOnAllCurrentKeyValues(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity()));
+        PreferenceUtils.setUpPreferences(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity()));
     }
 
     @Override
@@ -37,17 +37,17 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        PreferenceUtils.processPreference(getActivity(), sharedPreferences, key);
+        PreferenceUtils.processChangedPreference(getActivity(), sharedPreferences, key);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
         switch (requestCode) {
             case PermissionUtils.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    PreferenceUtils.togglePreferencesBasedOnCurrentKeyValue(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity()), PreferenceUtils.PREF_AUTOMATIC_DOWNLOADS);
-                } else {
-                    ((SwitchPreference) findPreference(PreferenceUtils.PREF_AUTOMATIC_DOWNLOADS)).setChecked(false);
+                if (grantResults.length == 0 || (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED)) {
+                    ((SwitchPreference) findPreference(PreferenceUtils.PREF_SAVE_TO_EXTERNAL_STORAGE)).setChecked(false);
                 }
                 break;
         }

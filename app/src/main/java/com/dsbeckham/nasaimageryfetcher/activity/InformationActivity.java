@@ -1,11 +1,9 @@
 package com.dsbeckham.nasaimageryfetcher.activity;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -17,32 +15,22 @@ import android.view.MenuItem;
 
 import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.adapter.InformationFragmentStatePagerAdapter;
+import com.dsbeckham.nasaimageryfetcher.application.MainApplication;
 import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
 import com.dsbeckham.nasaimageryfetcher.util.DownloadUtils;
+import com.dsbeckham.nasaimageryfetcher.util.IotdQueryUtils;
 import com.dsbeckham.nasaimageryfetcher.util.PermissionUtils;
 import com.dsbeckham.nasaimageryfetcher.util.UiUtils;
+import com.dsbeckham.nasaimageryfetcher.util.WallpaperUtils;
 import com.xgc1986.parallaxPagerTransformer.ParallaxPagerTransformer;
 
-import org.parceler.Parcels;
-
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class InformationActivity extends AppCompatActivity {
-    public static String EXTRA_CALENDAR = "com.dsbeckham.nasaimageryfetcher.extra.CALENDAR";
-    public static String EXTRA_MODELS = "com.dsbeckham.nasaimageryfetcher.extra.MODELS";
-    public static String EXTRA_POSITION = "com.dsbeckham.nasaimageryfetcher.extra.POSITION";
-    public static String EXTRA_TYPE = "com.dsbeckham.nasaimageryfetcher.extra.TYPE";
-
-    public static int EXTRA_TYPE_IOTD = 0;
-    public static int EXTRA_TYPE_APOD = 1;
-    public static int EXTRA_TYPE_MIXED = 2;
-
     @BindView(R.id.activity_information_toolbar)
     public Toolbar toolbar;
     @BindView(R.id.activity_information_viewpager)
@@ -51,31 +39,32 @@ public class InformationActivity extends AppCompatActivity {
     public InformationFragmentStatePagerAdapter informationFragmentStatePagerAdapter;
     private int viewPagerCurrentItem;
 
-    public List<UniversalImageModel> models = new ArrayList<>();
-
-    public Calendar calendar = Calendar.getInstance();
-    public boolean loadingData;
-    public int nasaGovApiQueries = ApodQueryUtils.NASA_GOV_API_QUERIES;
+    public ArrayList<UniversalImageModel> models = new ArrayList<>();
     public int type;
+
+    public static final String EXTRA_MODELS = "com.dsbeckham.nasaimageryfetcher.extra.MODELS";
+    public static final String EXTRA_POSITION = "com.dsbeckham.nasaimageryfetcher.extra.POSITION";
+    public static final String EXTRA_TYPE = "com.dsbeckham.nasaimageryfetcher.extra.TYPE";
+
+    public static final int EXTRA_TYPE_IOTD = 0;
+    public static final int EXTRA_TYPE_APOD = 1;
+    public static final int EXTRA_TYPE_MIXED = 2;
 
     private final String VIEWPAGER_CURRENT_ITEM = "viewPagerCurrentItem";
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_information);
         ButterKnife.bind(this);
 
-        UiUtils.makeStatusBarTransparent(this);
+        UiUtils.makeStatusBarTransparent(this, true);
         UiUtils.setUpToolBarForChildActivity(this, toolbar);
         UiUtils.showFullscreen(this);
 
         if (getIntent().getExtras() != null) {
-            models = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_MODELS));
-
-            if (getIntent().getExtras().containsKey(EXTRA_CALENDAR)) {
-                calendar = (Calendar) getIntent().getSerializableExtra(EXTRA_CALENDAR);
+            if (getIntent().getExtras().containsKey(EXTRA_MODELS)) {
+                models = getIntent().getParcelableArrayListExtra(EXTRA_MODELS);
             }
 
             if (savedInstanceState == null) {
@@ -93,7 +82,31 @@ public class InformationActivity extends AppCompatActivity {
         viewPager.post(new Runnable() {
             @Override
             public void run() {
-                viewPager.setCurrentItem(viewPagerCurrentItem, false);
+                int size = 0;
+
+                switch (type) {
+                    case ImageActivity.EXTRA_TYPE_IOTD:
+                        size = ((MainApplication) getApplication()).getIotdModels().size();
+
+                        if (size == 0) {
+                            IotdQueryUtils.beginFetch(InformationActivity.this, IotdQueryUtils.TYPE_VIEWPAGER_INFORMATION);
+                        }
+                        break;
+                    case ImageActivity.EXTRA_TYPE_APOD:
+                        size = ((MainApplication) getApplication()).getApodModels().size();
+
+                        if (size == 0) {
+                            ApodQueryUtils.beginQuery(InformationActivity.this, ApodQueryUtils.TYPE_VIEWPAGER_INFORMATION, false);
+                        }
+                        break;
+                    case ImageActivity.EXTRA_TYPE_MIXED:
+                        size = models.size();
+                        break;
+                }
+
+                if (viewPagerCurrentItem < size) {
+                    viewPager.setCurrentItem(viewPagerCurrentItem, false);
+                }
             }
         });
 
@@ -107,30 +120,37 @@ public class InformationActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        UniversalImageModel universalImageModel = getModel(viewPager.getCurrentItem());
+
         switch (item.getItemId()) {
             case android.R.id.home:
                 this.finish();
                 return true;
             case R.id.menu_toolbar_share:
-                if (!models.isEmpty()) {
+                if (universalImageModel !=  null) {
                     Intent intent = new Intent(Intent.ACTION_SEND);
-                    intent.putExtra(Intent.EXTRA_TEXT, models.get(viewPager.getCurrentItem()).getImageUrl());
+                    intent.putExtra(Intent.EXTRA_TEXT, universalImageModel.getImageUrl());
                     intent.setType("text/plain");
                     startActivity(Intent.createChooser(intent, null));
                 }
                 break;
             case R.id.menu_toolbar_download:
-                if (!models.isEmpty()) {
+                if (universalImageModel !=  null) {
                     if (PermissionUtils.isStoragePermissionGranted(this)) {
-                        DownloadUtils.validateAndDownloadImage(this, models.get(viewPager.getCurrentItem()), false, false);
+                        DownloadUtils.validateAndDownloadImage(this, universalImageModel, false, false);
                     } else {
                         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PermissionUtils.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
                     }
                 }
                 break;
+            case R.id.menu_toolbar_wallpaper:
+                if (universalImageModel !=  null) {
+                    WallpaperUtils.setWallpaper(this, universalImageModel.getImageUrl());
+                }
+                break;
             case R.id.menu_toolbar_website:
-                if (!models.isEmpty()) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(models.get(viewPager.getCurrentItem()).getPageUrl()));
+                if (universalImageModel !=  null) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(universalImageModel.getPageUrl()));
                     startActivity(intent);
                 }
                 break;
@@ -141,11 +161,15 @@ public class InformationActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
         switch (requestCode) {
             case PermissionUtils.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (!models.isEmpty()) {
-                        DownloadUtils.validateAndDownloadImage(this, models.get(viewPager.getCurrentItem()), false, false);
+                    UniversalImageModel universalImageModel = getModel(viewPager.getCurrentItem());
+
+                    if (universalImageModel != null) {
+                        DownloadUtils.validateAndDownloadImage(this, universalImageModel, false, false);
                     }
                 }
                 break;
@@ -161,14 +185,32 @@ public class InformationActivity extends AppCompatActivity {
     @Override
     public void finish() {
         Intent intent = new Intent();
-
-        if (type == EXTRA_TYPE_APOD) {
-            intent.putExtra(EXTRA_CALENDAR, calendar);
-            intent.putExtra(EXTRA_MODELS, Parcels.wrap(models));
-        }
-
         intent.putExtra(EXTRA_POSITION, viewPager.getCurrentItem());
         setResult(RESULT_OK, intent);
         super.finish();
+    }
+
+    public UniversalImageModel getModel(int position) {
+        UniversalImageModel universalImageModel = null;
+
+        switch (type) {
+            case EXTRA_TYPE_IOTD:
+                if (!((MainApplication) getApplication()).getIotdModels().isEmpty()) {
+                    universalImageModel = ((MainApplication) getApplication()).getIotdModels().get(position);
+                }
+                break;
+            case EXTRA_TYPE_APOD:
+                if (!((MainApplication) getApplication()).getApodModels().isEmpty()) {
+                    universalImageModel = ((MainApplication) getApplication()).getApodModels().get(position);
+                }
+                break;
+            case EXTRA_TYPE_MIXED:
+                if (!models.isEmpty()) {
+                    universalImageModel = models.get(position);
+                }
+                break;
+        }
+
+        return universalImageModel;
     }
 }

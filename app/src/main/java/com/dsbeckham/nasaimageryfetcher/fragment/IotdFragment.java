@@ -7,6 +7,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,18 +17,12 @@ import android.widget.FrameLayout;
 import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.activity.InformationActivity;
 import com.dsbeckham.nasaimageryfetcher.adapter.RecyclerViewAdapter;
-import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 import com.dsbeckham.nasaimageryfetcher.util.IotdQueryUtils;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.adapters.FastItemAdapter;
 import com.mikepenz.fastadapter.adapters.FooterAdapter;
 import com.mikepenz.fastadapter_extensions.items.ProgressItem;
-
-import org.parceler.Parcels;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,10 +41,6 @@ public class IotdFragment extends Fragment {
     public FooterAdapter<ProgressItem> footerAdapter = new FooterAdapter<>();
     public LinearLayoutManager linearLayoutManager;
 
-    public List<UniversalImageModel> models = new ArrayList<>();
-
-    public boolean loadingData;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +57,6 @@ public class IotdFragment extends Fragment {
             @Override
             public boolean onClick(View view, IAdapter<RecyclerViewAdapter> iAdapter, RecyclerViewAdapter recyclerViewAdapter, int position) {
                 Intent intent = new Intent(getActivity(), InformationActivity.class);
-                intent.putExtra(InformationActivity.EXTRA_MODELS, Parcels.wrap(models));
                 intent.putExtra(InformationActivity.EXTRA_POSITION, position);
                 intent.putExtra(InformationActivity.EXTRA_TYPE, InformationActivity.EXTRA_TYPE_IOTD);
                 startActivityForResult(intent, 0);
@@ -93,12 +83,13 @@ public class IotdFragment extends Fragment {
             @Override
             public void onRefresh() {
                 IotdQueryUtils.clearData(getActivity());
-                IotdQueryUtils.beginFetch(getActivity());
+                IotdQueryUtils.beginFetch(getActivity(), IotdQueryUtils.TYPE_RECYCLERVIEW);
             }
         });
 
         if (savedInstanceState == null) {
-            IotdQueryUtils.beginFetch(getActivity());
+            IotdQueryUtils.clearData(getActivity());
+            IotdQueryUtils.beginFetch(getActivity(), IotdQueryUtils.TYPE_RECYCLERVIEW);
         }
 
         return view;
@@ -124,6 +115,7 @@ public class IotdFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("NIF", "onActivityResult");
         IotdQueryUtils.updateData(getActivity(), data);
     }
 }

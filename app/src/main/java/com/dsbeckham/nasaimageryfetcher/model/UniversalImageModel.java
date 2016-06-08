@@ -1,9 +1,9 @@
 package com.dsbeckham.nasaimageryfetcher.model;
 
-import org.parceler.Parcel;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-@Parcel(Parcel.Serialization.BEAN)
-public class UniversalImageModel {
+public class UniversalImageModel implements Parcelable {
     private String credit;
     private String date;
     private String description;
@@ -80,5 +80,47 @@ public class UniversalImageModel {
     @Override
     public boolean equals(Object object) {
         return this == object || ((!(object == null || getClass() != object.getClass()) && date.equals(((UniversalImageModel) object).date)));
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.credit);
+        dest.writeString(this.date);
+        dest.writeString(this.description);
+        dest.writeString(this.imageThumbnailUrl);
+        dest.writeString(this.imageUrl);
+        dest.writeString(this.pageUrl);
+        dest.writeString(this.title);
+        dest.writeString(this.type);
+    }
+
+    public static final Parcelable.Creator<UniversalImageModel> CREATOR = new Parcelable.Creator<UniversalImageModel>() {
+        @Override
+        public UniversalImageModel createFromParcel(Parcel source) {
+            return new UniversalImageModel(source);
+        }
+
+        @Override
+        public UniversalImageModel[] newArray(int size) {
+            return new UniversalImageModel[size];
+        }
+    };
+
+    public UniversalImageModel() {}
+
+    protected UniversalImageModel(Parcel in) {
+        this.credit = in.readString();
+        this.date = in.readString();
+        this.description = in.readString();
+        this.imageThumbnailUrl = in.readString();
+        this.imageUrl = in.readString();
+        this.pageUrl = in.readString();
+        this.title = in.readString();
+        this.type = in.readString();
     }
 }
