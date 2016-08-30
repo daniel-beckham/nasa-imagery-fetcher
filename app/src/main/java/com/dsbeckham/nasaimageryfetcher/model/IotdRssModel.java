@@ -34,18 +34,18 @@ public class IotdRssModel
         }
 
         public static class Item {
-            @Element(name = "title")
-            private String title;
-            @Element(name = "link")
-            private String link;
-            @Element(name = "description")
-            private String description;
+            @Element(name = "title", required = false)
+            private String title = "";
+            @Element(name = "link", required = false)
+            private String link = "";
+            @Element(name = "description", required = false)
+            private String description = "";
             @Element(name = "enclosure")
             private Enclosure enclosure;
 
             public static class Enclosure {
-                @Attribute(name = "url")
-                private String url;
+                @Attribute(name = "url", required = false)
+                private String url = "";
 
                 public String getUrl() {
                     return url;
@@ -56,8 +56,8 @@ public class IotdRssModel
                 }
             }
 
-            @Element(name = "pubDate")
-            private String pubDate;
+            @Element(name = "pubDate", required = false)
+            private String pubDate = "";
 
             public String getTitle()
             {

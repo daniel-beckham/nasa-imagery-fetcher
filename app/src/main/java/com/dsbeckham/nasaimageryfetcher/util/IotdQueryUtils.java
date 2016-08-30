@@ -124,7 +124,8 @@ public class IotdQueryUtils {
                         UniversalImageModel universalImageModel = ModelUtils.convertIotdRssModelChannelItem(iotdRssModelChannelItem);
 
                         if (!((MainApplication) activity.getApplication()).getIotdModels().contains(universalImageModel)
-                                && !iotdRssModelChannelItem.getEnclosure().getUrl().isEmpty()) {
+                                && !iotdRssModelChannelItem.getEnclosure().getUrl().isEmpty()
+                                && !iotdRssModelChannelItem.getPubDate().isEmpty()) {
                             ((MainApplication) activity.getApplication()).getIotdModels().add(universalImageModel);
 
                             switch (type) {
