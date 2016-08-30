@@ -14,6 +14,8 @@ import com.mikepenz.fastadapter.items.AbstractItem;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -25,8 +27,8 @@ public class RecyclerViewAdapter extends AbstractItem<RecyclerViewAdapter, Recyc
     }
 
     @Override
-    public void bindView(final ViewHolder viewHolder) {
-        super.bindView(viewHolder);
+    public void bindView(final ViewHolder viewHolder, List payloads) {
+        super.bindView(viewHolder, payloads);
 
         viewHolder.progressBar.setVisibility(View.VISIBLE);
 

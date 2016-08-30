@@ -2,15 +2,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 24
+    buildToolsVersion "24.0.2"
 
     defaultConfig {
         applicationId "com.dsbeckham.nasaimageryfetcher"
         buildConfigField("String", "NASA_GOV_API_KEY", "\"" + APOD_NASA_API_KEY + "\"")
         buildConfigField("String", "MORPH_IO_API_KEY", "\"" + APOD_MORPH_IO_API_KEY + "\"")
         minSdkVersion 16
-        targetSdkVersion 23
+        targetSdkVersion 24
         vectorDrawables.useSupportLibrary = true
         versionCode 2
         versionName "1.0"
@@ -21,7 +21,7 @@ android {
 }
 
 ext {
-    supportLibVersion = '23.4.0'
+    supportLibVersion = '24.2.0'
 }
 
 dependencies {
@@ -31,14 +31,14 @@ dependencies {
     compile "com.android.support:recyclerview-v7:${supportLibVersion}"
     compile "com.android.support:support-vector-drawable:${supportLibVersion}"
     compile "com.davemorrissey.labs:subsampling-scale-image-view:3.5.0"
-    compile 'com.jakewharton:butterknife:8.0.1'
-    apt 'com.jakewharton:butterknife-compiler:8.0.1'
-    compile('com.mikepenz:fastadapter:1.5.2@aar') { transitive = true }
-    compile('com.mikepenz:fastadapter-extensions:1.5.1@aar')
+    compile 'com.jakewharton:butterknife:8.4.0'
+    apt 'com.jakewharton:butterknife-compiler:8.4.0'
+    compile('com.mikepenz:fastadapter:1.8.0@aar') { transitive = true }
+    compile('com.mikepenz:fastadapter-extensions:1.8.0@aar')
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.squareup.retrofit2:retrofit:2.0.2'
-    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
-    compile('com.squareup.retrofit2:converter-simplexml:2.0.2') {
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    compile('com.squareup.retrofit2:converter-simplexml:2.1.0') {
         exclude module: 'stax'
         exclude module: 'stax-api'
         exclude module: 'xpp3'
