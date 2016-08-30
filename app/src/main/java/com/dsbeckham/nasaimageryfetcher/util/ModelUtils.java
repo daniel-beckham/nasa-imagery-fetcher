@@ -13,9 +13,9 @@ public class ModelUtils {
         UniversalImageModel universalImageModel = new UniversalImageModel();
         universalImageModel.setDate(DateUtils.convertDateToCustomDateFormat(iotdRssModelChannelItem.getPubDate(), "EEE, dd MMM yyyy HH:mm zzz", "yyyy-MM-dd"));
         universalImageModel.setDescription(iotdRssModelChannelItem.getDescription());
-        universalImageModel.setImageThumbnailUrl(iotdRssModelChannelItem.getEnclosure().getUrl());
-        // The RSS feed always links to the image thumbnail URL. The full image URL is a few directories down.
-        universalImageModel.setImageUrl(iotdRssModelChannelItem.getEnclosure().getUrl().replace("styles/full_width_feature/public/", ""));
+        universalImageModel.setImageUrl(iotdRssModelChannelItem.getEnclosure().getUrl());
+        // The RSS feed always links to the full URL. The thumbnail URL is a different directory.
+        universalImageModel.setImageThumbnailUrl(iotdRssModelChannelItem.getEnclosure().getUrl().replace("files/thumbnails/", "files/styles/full_width_feature/public/thumbnails/"));
         universalImageModel.setPageUrl(iotdRssModelChannelItem.getLink());
         universalImageModel.setTitle(iotdRssModelChannelItem.getTitle());
         universalImageModel.setType(MODEL_TYPE_IOTD);
