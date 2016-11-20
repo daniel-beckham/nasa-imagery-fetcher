@@ -128,7 +128,7 @@ public class ApodQueryUtils {
         }
     }
 
-    public static void queryMorphIoApi(final Activity activity, final int type) {
+    private static void queryMorphIoApi(final Activity activity, final int type) {
         ((MainApplication) activity.getApplication()).setApodLoadingData(true);
 
         String query = String.format(Locale.US, "SELECT * FROM data WHERE date <= date('%d-%02d-%02d') ORDER BY date DESC LIMIT 30", ((MainApplication) activity.getApplication()).getApodCalendar().get(Calendar.YEAR), (((MainApplication) activity.getApplication()).getApodCalendar().get(Calendar.MONTH) + 1), ((MainApplication) activity.getApplication()).getApodCalendar().get(Calendar.DAY_OF_MONTH));
@@ -213,7 +213,7 @@ public class ApodQueryUtils {
         });
     }
 
-    public static void queryNasaGovApi(final Activity activity, final int type) {
+    private static void queryNasaGovApi(final Activity activity, final int type) {
         ((MainApplication) activity.getApplication()).setApodLoadingData(true);
 
         String date = String.format(Locale.US, "%d-%02d-%02d", ((MainApplication) activity.getApplication()).getApodCalendar().get(Calendar.YEAR), ((MainApplication) activity.getApplication()).getApodCalendar().get(Calendar.MONTH) + 1, ((MainApplication) activity.getApplication()).getApodCalendar().get(Calendar.DAY_OF_MONTH));
@@ -303,7 +303,7 @@ public class ApodQueryUtils {
         });
     }
 
-    public static void getLatestImage(final Activity activity) {
+    private static void getLatestImage(final Activity activity) {
         final ApodFragment apodFragment = (ApodFragment) ((AppCompatActivity) activity).getSupportFragmentManager().findFragmentByTag(PreferenceUtils.FRAGMENT_APOD);
 
         if (apodFragment == null) {

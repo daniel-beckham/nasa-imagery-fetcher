@@ -73,9 +73,13 @@ public class ApodFragment extends Fragment {
         endlessRecyclerOnScrollListener = new EndlessRecyclerOnScrollListener() {
             @Override
             public void onLoadMore(int currentPage) {
-                footerAdapter.clear();
-                footerAdapter.add(new ProgressItem());
-                ApodQueryUtils.beginQuery(getActivity(), ApodQueryUtils.TYPE_RECYCLERVIEW, false);
+                recyclerView.post(new Runnable() {
+                    public void run() {
+                        footerAdapter.clear();
+                        footerAdapter.add(new ProgressItem());
+                        ApodQueryUtils.beginQuery(getActivity(), ApodQueryUtils.TYPE_RECYCLERVIEW, false);
+                    }
+                });
             }
         };
 

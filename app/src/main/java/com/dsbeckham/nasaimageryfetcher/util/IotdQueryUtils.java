@@ -97,7 +97,7 @@ public class IotdQueryUtils {
         }
     }
 
-    public static void fetchRssFeed(final Activity activity, final int type) {
+    private static void fetchRssFeed(final Activity activity, final int type) {
         ((MainApplication) activity.getApplication()).setIotdLoadingData(true);
 
         Call<IotdRssModel> call = ((MainApplication) activity.getApplication()).getIotdRssService().get();
