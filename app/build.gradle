@@ -30,6 +30,7 @@ dependencies {
     compile "com.davemorrissey.labs:subsampling-scale-image-view:3.6.0"
     compile 'com.jakewharton:butterknife:8.4.0'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
+    compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
     compile('com.mikepenz:fastadapter:2.1.0@aar') { transitive = true }
     compile('com.mikepenz:fastadapter-commons:2.1.0@aar')
     compile('com.mikepenz:fastadapter-extensions:2.1.0@aar')

@@ -27,6 +27,7 @@ import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 import com.dsbeckham.nasaimageryfetcher.util.DateUtils;
 import com.dsbeckham.nasaimageryfetcher.util.TextUtils;
 import com.dsbeckham.nasaimageryfetcher.util.UiUtils;
+import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -112,8 +113,11 @@ public class InformationFragment extends Fragment {
                 TextUtils.stripUnderlines(credit);
             }
 
-            Picasso.with(getContext())
-                    .load(universalImageModel.getImageThumbnailUrl())
+            Picasso picasso = new Picasso.Builder(getContext())
+                    .downloader(new OkHttp3Downloader(getContext()))
+                    .build();
+
+            picasso.load(universalImageModel.getImageThumbnailUrl())
                     .config(Bitmap.Config.RGB_565)
                     .fit()
                     .centerCrop()

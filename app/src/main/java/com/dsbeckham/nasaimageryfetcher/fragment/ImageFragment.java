@@ -15,6 +15,7 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.activity.ImageActivity;
 import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
+import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -71,8 +72,11 @@ public class ImageFragment extends Fragment {
         UniversalImageModel universalImageModel = ((ImageActivity) getActivity()).getModel(position);
 
         if (universalImageModel != null) {
-            Picasso.with(getContext())
-                    .load(universalImageModel.getImageThumbnailUrl())
+            Picasso picasso = new Picasso.Builder(getContext())
+                    .downloader(new OkHttp3Downloader(getContext()))
+                    .build();
+
+            picasso.load(universalImageModel.getImageThumbnailUrl())
                     .resize(2048, 2048)
                     .centerInside()
                     .config(Bitmap.Config.RGB_565)
