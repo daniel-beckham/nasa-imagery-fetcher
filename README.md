@@ -15,4 +15,4 @@ Possible planned features include searching for images and selecting favorite im
 
 ## Download
 
-The latest version can be found on [Google Play](https://play.google.com/store/apps/details?id=com.dsbeckham.nasaimageryfetcher) as well as the [releases page](https://github.com/dsbeckham/nasa-imagery-fetcher/releases).
+The latest version can be found on [Google Play](https://play.google.com/store/apps/details?id=com.dsbeckham.nasaimageryfetcher).
