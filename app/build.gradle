@@ -2,26 +2,23 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    compileSdkVersion 25
+    buildToolsVersion "25"
 
     defaultConfig {
         applicationId "com.dsbeckham.nasaimageryfetcher"
         buildConfigField("String", "NASA_GOV_API_KEY", "\"" + APOD_NASA_API_KEY + "\"")
         buildConfigField("String", "MORPH_IO_API_KEY", "\"" + APOD_MORPH_IO_API_KEY + "\"")
         minSdkVersion 16
-        targetSdkVersion 24
+        targetSdkVersion 25
         vectorDrawables.useSupportLibrary = true
         versionCode 3
         versionName "1.1"
     }
-    lintOptions {
-        disable 'InvalidPackage'
-    }
 }
 
 ext {
-    supportLibVersion = '24.2.0'
+    supportLibVersion = '25.0.1'
 }
 
 dependencies {
@@ -30,11 +27,12 @@ dependencies {
     compile "com.android.support:design:${supportLibVersion}"
     compile "com.android.support:recyclerview-v7:${supportLibVersion}"
     compile "com.android.support:support-vector-drawable:${supportLibVersion}"
-    compile "com.davemorrissey.labs:subsampling-scale-image-view:3.5.0"
+    compile "com.davemorrissey.labs:subsampling-scale-image-view:3.6.0"
     compile 'com.jakewharton:butterknife:8.4.0'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
-    compile('com.mikepenz:fastadapter:1.8.0@aar') { transitive = true }
-    compile('com.mikepenz:fastadapter-extensions:1.8.0@aar')
+    compile('com.mikepenz:fastadapter:2.1.0@aar') { transitive = true }
+    compile('com.mikepenz:fastadapter-commons:2.1.0@aar')
+    compile('com.mikepenz:fastadapter-extensions:2.1.0@aar')
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'

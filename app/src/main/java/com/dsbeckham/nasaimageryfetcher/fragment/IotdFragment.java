@@ -20,8 +20,8 @@ import com.dsbeckham.nasaimageryfetcher.adapter.RecyclerViewAdapter;
 import com.dsbeckham.nasaimageryfetcher.util.IotdQueryUtils;
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.IAdapter;
-import com.mikepenz.fastadapter.adapters.FastItemAdapter;
 import com.mikepenz.fastadapter.adapters.FooterAdapter;
+import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 import com.mikepenz.fastadapter_extensions.items.ProgressItem;
 
 import butterknife.BindView;

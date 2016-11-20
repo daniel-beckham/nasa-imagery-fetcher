@@ -27,7 +27,7 @@ public class RecyclerViewAdapter extends AbstractItem<RecyclerViewAdapter, Recyc
     }
 
     @Override
-    public void bindView(final ViewHolder viewHolder, List payloads) {
+    public void bindView(final ViewHolder viewHolder, List<Object> payloads) {
         super.bindView(viewHolder, payloads);
 
         viewHolder.progressBar.setVisibility(View.VISIBLE);
@@ -51,6 +51,11 @@ public class RecyclerViewAdapter extends AbstractItem<RecyclerViewAdapter, Recyc
                         viewHolder.progressBar.setVisibility(View.GONE);
                     }
                 });
+    }
+
+    @Override
+    public void unbindView(ViewHolder holder) {
+        super.unbindView(holder);
     }
 
     @Override
