@@ -33,6 +33,9 @@ import com.squareup.picasso.Picasso;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.text.Html.FROM_HTML_MODE_LEGACY;
+
+@SuppressWarnings("WeakerAccess")
 public class InformationFragment extends Fragment {
     @BindView(R.id.fragment_information_credit_textview)
     TextView credit;
@@ -72,6 +75,7 @@ public class InformationFragment extends Fragment {
         position = getArguments().getInt("position", 0);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_information, container, false);
@@ -87,12 +91,22 @@ public class InformationFragment extends Fragment {
                 ViewCompat.setElevation(subHeaderLayout, 4.0f / getResources().getDisplayMetrics().density);
             }
 
-            description.setText(Html.fromHtml(universalImageModel.getDescription()));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                description.setText(Html.fromHtml(universalImageModel.getDescription(), FROM_HTML_MODE_LEGACY));
+            } else {
+                description.setText(Html.fromHtml(universalImageModel.getDescription()));
+            }
+
             description.setMovementMethod(LinkMovementMethod.getInstance());
             TextUtils.stripUnderlines(description);
 
             if (universalImageModel.getCredit() != null) {
-                credit.setText(Html.fromHtml(universalImageModel.getCredit()));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    credit.setText(Html.fromHtml(universalImageModel.getCredit(), FROM_HTML_MODE_LEGACY));
+                } else {
+                    credit.setText(Html.fromHtml(universalImageModel.getCredit()));
+                }
+
                 credit.setMovementMethod(LinkMovementMethod.getInstance());
                 credit.setVisibility(View.VISIBLE);
                 TextUtils.stripUnderlines(credit);

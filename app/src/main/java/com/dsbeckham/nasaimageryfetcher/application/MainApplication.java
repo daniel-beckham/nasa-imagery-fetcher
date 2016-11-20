@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+@SuppressWarnings("ALL")
 public class MainApplication extends Application {
     private List<UniversalImageModel> apodModels = new ArrayList<>();
     private List<UniversalImageModel> iotdModels = new ArrayList<>();
@@ -28,16 +29,8 @@ public class MainApplication extends Application {
         return apodModels;
     }
 
-    public void setApodModels(List<UniversalImageModel> apodModels) {
-        this.apodModels = apodModels;
-    }
-
     public List<UniversalImageModel> getIotdModels() {
         return iotdModels;
-    }
-
-    public void setIotdModels(List<UniversalImageModel> iotdModels) {
-        this.iotdModels = iotdModels;
     }
 
     public ApodQueryUtils.MorphIoService getApodMorphIoService() {

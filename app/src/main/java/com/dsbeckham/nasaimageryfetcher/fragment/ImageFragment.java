@@ -21,6 +21,7 @@ import com.squareup.picasso.Target;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+@SuppressWarnings("WeakerAccess")
 public class ImageFragment extends Fragment {
     @BindView(R.id.fragment_image_subsamplingscaleimageview)
     SubsamplingScaleImageView subsamplingScaleImageView;
@@ -29,7 +30,7 @@ public class ImageFragment extends Fragment {
 
     private int position;
 
-    private Target target = new Target() {
+    private final Target target = new Target() {
         @Override
         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom loadedFrom) {
             subsamplingScaleImageView.setImage(ImageSource.bitmap(bitmap).tilingDisabled());

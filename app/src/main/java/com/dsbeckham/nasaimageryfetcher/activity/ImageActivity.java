@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+@SuppressWarnings("WeakerAccess")
 public class ImageActivity extends AppCompatActivity {
     @BindView(R.id.activity_image_toolbar)
     public Toolbar toolbar;
@@ -46,9 +47,9 @@ public class ImageActivity extends AppCompatActivity {
     public ArrayList<UniversalImageModel> models = new ArrayList<>();
     public int type;
 
-    public static final String EXTRA_MODELS = "com.dsbeckham.nasaimageryfetcher.extra.MODELS";
-    public static final String EXTRA_POSITION = "com.dsbeckham.nasaimageryfetcher.extra.POSITION";
-    public static final String EXTRA_TYPE = "com.dsbeckham.nasaimageryfetcher.extra.TYPE";
+    private static final String EXTRA_MODELS = "com.dsbeckham.nasaimageryfetcher.extra.MODELS";
+    private static final String EXTRA_POSITION = "com.dsbeckham.nasaimageryfetcher.extra.POSITION";
+    private static final String EXTRA_TYPE = "com.dsbeckham.nasaimageryfetcher.extra.TYPE";
 
     public static final int EXTRA_TYPE_IOTD = 0;
     public static final int EXTRA_TYPE_APOD = 1;

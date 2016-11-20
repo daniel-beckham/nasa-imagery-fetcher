@@ -2,6 +2,7 @@ package com.dsbeckham.nasaimageryfetcher.model;
 
 import com.google.gson.annotations.SerializedName;
 
+@SuppressWarnings("ALL")
 public class ApodMorphIoModel {
     private String url;
     private String date;

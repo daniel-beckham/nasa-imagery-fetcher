@@ -21,9 +21,9 @@ public class DownloadUtils {
     private static final int VALIDATE_URI_ALTERNATE = 2;
 
     private static class MessageHandler extends Handler {
-        private Context context;
-        private UniversalImageModel universalImageModel;
-        private boolean hidden;
+        private final Context context;
+        private final UniversalImageModel universalImageModel;
+        private final boolean hidden;
 
         private MessageHandler(Context context, UniversalImageModel universalImageModel, boolean hidden) {
             this.context = context;

@@ -8,13 +8,11 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 public class WallpaperUtils {
-    public static Context context;
+    private static WallpaperManager wallpaperManager;
 
-    private static Target target = new Target() {
+    private static final Target target = new Target() {
         @Override
         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom loadedFrom) {
-            WallpaperManager wallpaperManager = WallpaperManager.getInstance(context);
-
             try {
                 wallpaperManager.setBitmap(bitmap);
             } catch (Throwable t) {
@@ -30,7 +28,8 @@ public class WallpaperUtils {
     };
 
     public static void setWallpaper(Context context, String uri) {
-        WallpaperUtils.context = context;
+        wallpaperManager = WallpaperManager.getInstance(context);
+
         Picasso.with(context)
                 .load(uri)
                 .into(target);

@@ -11,10 +11,14 @@ import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
 public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PreferenceUtils.PREF_NOTIFICATIONS, false)
-                || PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PreferenceUtils.PREF_SAVE_TO_EXTERNAL_STORAGE, false)
-                || PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PreferenceUtils.PREF_SET_AS_WALLPAPER, false)) {
-            AlarmUtils.scheduleAlarm(context);
+        if (intent != null && intent.getAction() != null) {
+            if (intent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)) {
+                if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PreferenceUtils.PREF_NOTIFICATIONS, false)
+                        || PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PreferenceUtils.PREF_SAVE_TO_EXTERNAL_STORAGE, false)
+                        || PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PreferenceUtils.PREF_SET_AS_WALLPAPER, false)) {
+                    AlarmUtils.scheduleAlarm(context);
+                }
+            }
         }
     }
 }

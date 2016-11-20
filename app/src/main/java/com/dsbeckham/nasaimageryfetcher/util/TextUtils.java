@@ -1,11 +1,13 @@
 package com.dsbeckham.nasaimageryfetcher.util;
 
+import android.annotation.SuppressLint;
 import android.text.Spannable;
 import android.text.TextPaint;
 import android.text.style.URLSpan;
 import android.widget.TextView;
 
 public class TextUtils {
+    @SuppressLint("ParcelCreator")
     private static class URLSpanNoUnderline extends URLSpan {
         public URLSpanNoUnderline(String url) {
             super(url);

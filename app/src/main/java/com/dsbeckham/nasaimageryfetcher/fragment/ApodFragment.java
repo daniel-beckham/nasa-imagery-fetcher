@@ -28,6 +28,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+@SuppressWarnings("WeakerAccess")
 public class ApodFragment extends Fragment {
     @BindView(R.id.fragment_apod_progressbar_layout)
     public FrameLayout progressBarLayout;
@@ -38,8 +39,8 @@ public class ApodFragment extends Fragment {
     private Unbinder unbinder;
 
     public EndlessRecyclerOnScrollListener endlessRecyclerOnScrollListener;
-    public FastItemAdapter<RecyclerViewAdapter> fastItemAdapter = new FastItemAdapter<>();
-    public FooterAdapter<ProgressItem> footerAdapter = new FooterAdapter<>();
+    public final FastItemAdapter<RecyclerViewAdapter> fastItemAdapter = new FastItemAdapter<>();
+    public final FooterAdapter<ProgressItem> footerAdapter = new FooterAdapter<>();
     public LinearLayoutManager linearLayoutManager;
 
     @Override

@@ -10,7 +10,7 @@ import com.dsbeckham.nasaimageryfetcher.fragment.ImageFragment;
 import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
 
 public class ImageFragmentStatePagerAdapter extends SmartFragmentStatePagerAdapter {
-    private Activity activity;
+    private final Activity activity;
 
     public ImageFragmentStatePagerAdapter(final Activity activity, FragmentManager fragmentManager) {
         super(fragmentManager);

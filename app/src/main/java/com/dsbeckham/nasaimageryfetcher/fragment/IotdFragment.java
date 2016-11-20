@@ -28,6 +28,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+@SuppressWarnings("WeakerAccess")
 public class IotdFragment extends Fragment {
     @BindView(R.id.fragment_iotd_progressbar_layout)
     public FrameLayout progressBarLayout;
@@ -37,8 +38,8 @@ public class IotdFragment extends Fragment {
     public SwipeRefreshLayout swipeRefreshLayout;
     private Unbinder unbinder;
 
-    public FastItemAdapter<RecyclerViewAdapter> fastItemAdapter = new FastItemAdapter<>();
-    public FooterAdapter<ProgressItem> footerAdapter = new FooterAdapter<>();
+    public final FastItemAdapter<RecyclerViewAdapter> fastItemAdapter = new FastItemAdapter<>();
+    public final FooterAdapter<ProgressItem> footerAdapter = new FooterAdapter<>();
     public LinearLayoutManager linearLayoutManager;
 
     @Override

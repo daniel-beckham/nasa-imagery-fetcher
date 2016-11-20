@@ -22,10 +22,11 @@ public class PreferenceUtils {
     public static final String PREF_WALLPAPER_CATEGORY = "pref_wallpaper_category";
     public static final String PREF_WIFI_DOWNLOADS_ONLY = "pref_wifi_downloads_only";
 
-    public static final String PREF_CLEAR_CACHED_IMAGES = "pref_clear_cached_images";
-    public static final String PREF_CLEAR_SAVED_IMAGES = "pref_clear_saved_images";
+    private static final String PREF_CLEAR_CACHED_IMAGES = "pref_clear_cached_images";
+    private static final String PREF_CLEAR_SAVED_IMAGES = "pref_clear_saved_images";
 
     public static final String PREF_CURRENT_FRAGMENT = "pref_current_fragment";
+
     public static final String PREF_LAST_IOTD_DATE = "pref_last_iotd_date";
     public static final String PREF_LAST_APOD_DATE = "pref_last_apod_date";
 
@@ -107,7 +108,7 @@ public class PreferenceUtils {
         }
     }
 
-    public static void togglePreferencesBasedOnCurrentKeyValue(Activity activity, SharedPreferences sharedPreferences, String key) {
+    private static void togglePreferencesBasedOnCurrentKeyValue(Activity activity, SharedPreferences sharedPreferences, String key) {
         final SettingsFragment settingsFragment = (SettingsFragment) activity.getFragmentManager().findFragmentByTag(FRAGMENT_SETTINGS);
 
         if (settingsFragment == null) {

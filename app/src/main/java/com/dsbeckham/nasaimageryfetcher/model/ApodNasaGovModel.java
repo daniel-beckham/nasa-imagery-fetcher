@@ -2,6 +2,7 @@ package com.dsbeckham.nasaimageryfetcher.model;
 
 import com.google.gson.annotations.SerializedName;
 
+@SuppressWarnings("ALL")
 public class ApodNasaGovModel {
     private String copyright;
     private String date;

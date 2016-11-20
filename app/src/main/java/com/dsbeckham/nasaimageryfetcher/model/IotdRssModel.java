@@ -7,6 +7,7 @@ import org.simpleframework.xml.Root;
 
 import java.util.List;
 
+@SuppressWarnings("ALL")
 @Root(name = "rss")
 public class IotdRssModel
 {

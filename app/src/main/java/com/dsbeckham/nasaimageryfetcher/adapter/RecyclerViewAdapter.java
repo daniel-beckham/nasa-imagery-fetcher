@@ -20,7 +20,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class RecyclerViewAdapter extends AbstractItem<RecyclerViewAdapter, RecyclerViewAdapter.ViewHolder> {
-    public UniversalImageModel universalImageModel;
+    private final UniversalImageModel universalImageModel;
 
     public RecyclerViewAdapter(UniversalImageModel universalImageModel) {
         this.universalImageModel = universalImageModel;
@@ -68,7 +68,7 @@ public class RecyclerViewAdapter extends AbstractItem<RecyclerViewAdapter, Recyc
         return R.layout.item_recylerview;
     }
 
-    protected static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.item_recyclerview_date_textview)
         TextView date;
         @BindView(R.id.item_recyclerview_imageview)

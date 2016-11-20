@@ -113,7 +113,7 @@ public class UniversalImageModel implements Parcelable {
 
     public UniversalImageModel() {}
 
-    protected UniversalImageModel(Parcel in) {
+    private UniversalImageModel(Parcel in) {
         this.credit = in.readString();
         this.date = in.readString();
         this.description = in.readString();

@@ -45,6 +45,7 @@ public class ApodQueryUtils {
     public static final int TYPE_VIEWPAGER_INFORMATION = 2;
 
     public interface MorphIoService {
+        @SuppressWarnings("SameParameterValue")
         @GET("dsbeckham/apod-scraper/data.json")
         Call<List<ApodMorphIoModel>> get(
                 @Query("key") String key,
@@ -52,6 +53,7 @@ public class ApodQueryUtils {
     }
 
     public interface NasaGovService {
+        @SuppressWarnings("SameParameterValue")
         @GET("planetary/apod")
         Call<ApodNasaGovModel> get(
                 @Query("api_key") String apiKey,

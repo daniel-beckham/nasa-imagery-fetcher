@@ -69,7 +69,7 @@ public class UiUtils {
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    public static void resetStatusBarTransparency(Activity activity, boolean translucent) {
+    public static void resetStatusBarTransparency(Activity activity, @SuppressWarnings("SameParameterValue") boolean translucent) {
         if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) && translucent) {
             activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

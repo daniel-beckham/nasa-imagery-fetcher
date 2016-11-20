@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class DateUtils {
-    public static Calendar convertDateToCalendar(String input, String inputFormat) {
+    public static Calendar convertDateToCalendar(String input, @SuppressWarnings("SameParameterValue") String inputFormat) {
         Date date = null;
 
         try {
@@ -52,7 +52,7 @@ public class DateUtils {
         return output;
     }
 
-    public static String convertDateToLongDateFormat(Context context, String input, String inputFormat) {
+    public static String convertDateToLongDateFormat(Context context, String input, @SuppressWarnings("SameParameterValue") String inputFormat) {
         Date date = null;
 
         try {

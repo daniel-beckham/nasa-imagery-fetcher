@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -26,8 +27,10 @@ import com.dsbeckham.nasaimageryfetcher.util.WallpaperUtils;
 
 import java.util.ArrayList;
 
+import static android.text.Html.FROM_HTML_MODE_LEGACY;
+
 public class BackgroundService extends IntentService {
-    private ArrayList<UniversalImageModel> models = new ArrayList<>();
+    private final ArrayList<UniversalImageModel> models = new ArrayList<>();
 
     public BackgroundService() {
         super("BackgroundService");
@@ -56,6 +59,7 @@ public class BackgroundService extends IntentService {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public void processLatestImage(UniversalImageModel universalImageModel) {
         if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PreferenceUtils.PREF_NOTIFICATIONS, false)) {
             models.add(universalImageModel);
@@ -101,7 +105,12 @@ public class BackgroundService extends IntentService {
 
                 String bigText = stringBuilder.toString()
                         .replaceAll("(<br/>)+$", "");
-                bigTextStyle.bigText(Html.fromHtml(bigText));
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    bigTextStyle.bigText(Html.fromHtml(bigText, FROM_HTML_MODE_LEGACY));
+                } else {
+                    bigTextStyle.bigText(Html.fromHtml(bigText));
+                }
 
                 builder.setContentText(getString(R.string.app_name))
                         .setContentTitle(getString(R.string.notification_title, models.size()))
