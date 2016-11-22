@@ -88,4 +88,12 @@ public class MainApplication extends Application {
     public void setApodNasaGovApiQueries(int apodNasaGovApiQueries) {
         this.apodNasaGovApiQueries = apodNasaGovApiQueries;
     }
+
+    public void setApodModels(List<UniversalImageModel> apodModels) {
+        this.apodModels = apodModels;
+    }
+
+    public void setIotdModels(List<UniversalImageModel> iotdModels) {
+        this.iotdModels = iotdModels;
+    }
 }

@@ -61,13 +61,15 @@ public class ApodQueryUtils {
     }
 
     public static void setUpIoServices(Context context) {
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(MORPH_IO_BASE_URL)
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(MORPH_IO_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         ((MainApplication) context.getApplicationContext()).setApodMorphIoService(retrofit.create(MorphIoService.class));
 
-        retrofit = new Retrofit.Builder().baseUrl(NASA_GOV_BASE_URL)
+        retrofit = new Retrofit.Builder()
+                .baseUrl(NASA_GOV_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
