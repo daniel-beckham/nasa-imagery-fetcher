@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.dsbeckham.nasaimageryfetcher.R;
 import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 import com.dsbeckham.nasaimageryfetcher.util.DateUtils;
-import com.jakewharton.picasso.OkHttp3Downloader;
 import com.mikepenz.fastadapter.items.AbstractItem;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -36,11 +35,8 @@ public class RecyclerViewAdapter extends AbstractItem<RecyclerViewAdapter, Recyc
         viewHolder.date.setText(DateUtils.convertDateToLongDateFormat(viewHolder.date.getContext(), universalImageModel.getDate(), "yyyy-MM-dd"));
         viewHolder.title.setText(universalImageModel.getTitle());
 
-        Picasso picasso = new Picasso.Builder(viewHolder.imageView.getContext())
-                .downloader(new OkHttp3Downloader(viewHolder.imageView.getContext()))
-                .build();
-
-        picasso.load(universalImageModel.getImageThumbnailUrl())
+        Picasso.with(viewHolder.imageView.getContext())
+                .load(universalImageModel.getImageThumbnailUrl())
                 .config(Bitmap.Config.RGB_565)
                 .fit()
                 .centerCrop()
