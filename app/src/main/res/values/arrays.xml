@@ -2,25 +2,25 @@
 <resources>
 
     <string-array name="fetch_categories_options">
-        <item>Image of the Day</item>
-        <item>Astronomy Picture of the Day</item>
-        <item>Image of the Day, Astronomy Picture of the Day</item>
+        <item>@string/category_iotd_option</item>
+        <item>@string/category_apod_option</item>
+        <item>@string/category_both_option</item>
     </string-array>
 
     <string-array name="fetch_categories_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
+        <item>@string/category_iotd_value</item>
+        <item>@string/category_apod_value</item>
+        <item>@string/category_both_value</item>
     </string-array>
 
     <string-array name="wallpaper_category_options">
-        <item>Image of the Day</item>
-        <item>Astronomy Picture of the Day</item>
+        <item>@string/category_iotd_option</item>
+        <item>@string/category_apod_option</item>
     </string-array>
 
     <string-array name="wallpaper_category_values">
-        <item>0</item>
-        <item>1</item>
+        <item>@string/category_iotd_value</item>
+        <item>@string/category_apod_value</item>
     </string-array>
 
 </resources>

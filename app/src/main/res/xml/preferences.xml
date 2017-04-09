@@ -8,7 +8,7 @@
             android:summary="@string/pref_notifications_summary"
             android:title="@string/pref_notifications_title" />
         <com.dsbeckham.nasaimageryfetcher.util.ListPreferenceHelper
-            android:defaultValue="2"
+            android:defaultValue="@string/category_both_value"
             android:entries="@array/fetch_categories_options"
             android:entryValues="@array/fetch_categories_values"
             android:key="pref_fetch_categories"
@@ -24,7 +24,7 @@
             android:summary="@string/pref_set_as_wallpaper_summary"
             android:title="@string/pref_set_as_wallpaper_title" />
         <com.dsbeckham.nasaimageryfetcher.util.ListPreferenceHelper
-            android:defaultValue="1"
+            android:defaultValue="@string/category_apod_value"
             android:entries="@array/wallpaper_category_options"
             android:entryValues="@array/wallpaper_category_values"
             android:key="pref_wallpaper_category"

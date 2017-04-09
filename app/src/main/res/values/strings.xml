@@ -39,4 +39,12 @@
     <string name="notification_title" tools:ignore="PluralsCandidate">%1$d new images</string>
     <string name="notification_content"><![CDATA[<b>%1$s</b> %2$s<br/>]]></string>
 
+    <string name="category_iotd_option">Image of the Day</string>
+    <string name="category_apod_option">Astronomy Picture of the Day</string>
+    <string name="category_both_option">Image of the Day, Astronomy Picture of the Day</string>
+
+    <string name="category_iotd_value">category_iotd</string>
+    <string name="category_apod_value">category_apod</string>
+    <string name="category_both_value">category_both</string>
+
 </resources>
