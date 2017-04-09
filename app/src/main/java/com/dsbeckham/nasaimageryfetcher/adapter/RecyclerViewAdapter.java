@@ -59,6 +59,11 @@ public class RecyclerViewAdapter extends AbstractItem<RecyclerViewAdapter, Recyc
     }
 
     @Override
+    public ViewHolder getViewHolder(View v) {
+        return new ViewHolder(v);
+    }
+
+    @Override
     public int getType() {
         return R.id.item_recyclerview;
     }
@@ -68,7 +73,7 @@ public class RecyclerViewAdapter extends AbstractItem<RecyclerViewAdapter, Recyc
         return R.layout.item_recylerview;
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.item_recyclerview_date_textview)
         TextView date;
         @BindView(R.id.item_recyclerview_imageview)

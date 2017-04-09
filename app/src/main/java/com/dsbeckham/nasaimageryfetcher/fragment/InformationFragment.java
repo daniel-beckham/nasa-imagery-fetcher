@@ -33,8 +33,6 @@ import com.squareup.picasso.Picasso;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static android.text.Html.FROM_HTML_MODE_LEGACY;
-
 @SuppressWarnings("WeakerAccess")
 public class InformationFragment extends Fragment {
     @BindView(R.id.fragment_information_credit_textview)
@@ -92,7 +90,7 @@ public class InformationFragment extends Fragment {
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                description.setText(Html.fromHtml(universalImageModel.getDescription(), FROM_HTML_MODE_LEGACY));
+                description.setText(Html.fromHtml(universalImageModel.getDescription(), Html.FROM_HTML_MODE_LEGACY));
             } else {
                 description.setText(Html.fromHtml(universalImageModel.getDescription()));
             }
@@ -102,7 +100,7 @@ public class InformationFragment extends Fragment {
 
             if (universalImageModel.getCredit() != null) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    credit.setText(Html.fromHtml(universalImageModel.getCredit(), FROM_HTML_MODE_LEGACY));
+                    credit.setText(Html.fromHtml(universalImageModel.getCredit(), Html.FROM_HTML_MODE_LEGACY));
                 } else {
                     credit.setText(Html.fromHtml(universalImageModel.getCredit()));
                 }

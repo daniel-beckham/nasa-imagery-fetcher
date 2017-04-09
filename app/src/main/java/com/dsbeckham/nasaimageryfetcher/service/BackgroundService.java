@@ -27,8 +27,6 @@ import com.dsbeckham.nasaimageryfetcher.util.WallpaperUtils;
 
 import java.util.ArrayList;
 
-import static android.text.Html.FROM_HTML_MODE_LEGACY;
-
 public class BackgroundService extends IntentService {
     private final ArrayList<UniversalImageModel> models = new ArrayList<>();
 
@@ -107,7 +105,7 @@ public class BackgroundService extends IntentService {
                         .replaceAll("(<br/>)+$", "");
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    bigTextStyle.bigText(Html.fromHtml(bigText, FROM_HTML_MODE_LEGACY));
+                    bigTextStyle.bigText(Html.fromHtml(bigText, Html.FROM_HTML_MODE_LEGACY));
                 } else {
                     bigTextStyle.bigText(Html.fromHtml(bigText));
                 }
