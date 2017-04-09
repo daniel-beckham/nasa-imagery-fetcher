@@ -20,8 +20,6 @@ import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
 import com.dsbeckham.nasaimageryfetcher.util.IotdQueryUtils;
 import com.dsbeckham.nasaimageryfetcher.util.PreferenceUtils;
 import com.dsbeckham.nasaimageryfetcher.util.UiUtils;
-import com.jakewharton.picasso.OkHttp3Downloader;
-import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,12 +50,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         ApodQueryUtils.setUpIoServices(this);
         IotdQueryUtils.setUpIoService(this);
-
-        Picasso picasso = new Picasso.Builder(this)
-                .downloader(new OkHttp3Downloader(this))
-                .build();
-
-        Picasso.setSingletonInstance(picasso);
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 

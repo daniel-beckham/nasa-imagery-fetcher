@@ -5,6 +5,8 @@ import android.app.Application;
 import com.dsbeckham.nasaimageryfetcher.model.UniversalImageModel;
 import com.dsbeckham.nasaimageryfetcher.util.ApodQueryUtils;
 import com.dsbeckham.nasaimageryfetcher.util.IotdQueryUtils;
+import com.jakewharton.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,6 +26,21 @@ public class MainApplication extends Application {
 
     private Calendar apodCalendar = Calendar.getInstance();
     private int apodNasaGovApiQueries = ApodQueryUtils.NASA_GOV_API_QUERIES;
+
+    private Picasso picasso;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        picasso = new Picasso.Builder(this)
+                .downloader(new OkHttp3Downloader(this))
+                .build();
+
+        try {
+            Picasso.setSingletonInstance(picasso);
+        } catch (IllegalStateException e) {}
+    }
 
     public List<UniversalImageModel> getApodModels() {
         return apodModels;
