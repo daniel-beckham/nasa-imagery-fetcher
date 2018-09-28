@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <string name="app_name">Imagery Fetcher</string>
+    <string name="app_name">NASA Imagery Fetcher</string>
 
     <string name="app_iotd">Image of the Day</string>
     <string name="app_apod">Astronomy Picture of the Day</string>
