@@ -337,12 +337,13 @@ public class ApodQueryUtils {
         });
     }
 
+    // Get the latest image within the last 2 days
     static void getLatestImage(final Context context, final boolean fallback) {
         Calendar calendar = Calendar.getInstance();
 
         if (!fallback) {
             Calendar apodStartCalendar = (Calendar) calendar.clone();
-            apodStartCalendar.add(Calendar.DAY_OF_YEAR, -NUMBER_OF_RESULTS);
+            apodStartCalendar.add(Calendar.DAY_OF_YEAR, -1);
 
             Calendar apodEndCalendar = (Calendar) calendar.clone();
 
@@ -365,6 +366,9 @@ public class ApodQueryUtils {
                     UniversalImageModel universalImageModel = null;
 
                     if (response.body() != null && !response.body().isEmpty()) {
+                        // Reverse the list since the results are returned backwards
+                        Collections.reverse(response.body());
+
                         universalImageModel = ModelUtils.convertApodNasaGovModel(response.body().get(0));
                     }
 
