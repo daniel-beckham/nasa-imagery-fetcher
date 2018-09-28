@@ -101,7 +101,7 @@ public class ImageFragment extends Fragment {
                         }
                     });
 
-            subsamplingScaleImageView.setMinimumDpi(100);
+            subsamplingScaleImageView.setMinimumDpi(60);
             subsamplingScaleImageView.setOnTouchListener(new OnTouchListener() {
                 @Override
                 public boolean onTouch(View view, MotionEvent motionEvent) {
