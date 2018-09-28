@@ -36,8 +36,8 @@
     <string name="cached_images_cleared">Cached images cleared</string>
     <string name="saved_images_cleared">Saved images cleared</string>
 
-    <string name="notification_title" tools:ignore="PluralsCandidate">%1$d new images</string>
-    <string name="notification_content"><![CDATA[<b>%1$s</b> %2$s<br/>]]></string>
+    <string name="notification_channel">Latest images</string>
+    <string name="notification_summary" tools:ignore="PluralsCandidate">%1$d new images</string>
 
     <string name="category_iotd_option">Image of the Day</string>
     <string name="category_apod_option">Astronomy Picture of the Day</string>
