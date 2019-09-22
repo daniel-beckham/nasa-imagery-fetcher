@@ -6,8 +6,8 @@ android {
 
     defaultConfig {
         applicationId "com.beckhamd.nasaimageryfetcher"
-        buildConfigField("String", "NASA_GOV_API_KEY", "\"" + APOD_NASA_API_KEY + "\"")
-        buildConfigField("String", "MORPH_IO_API_KEY", "\"" + APOD_MORPH_IO_API_KEY + "\"")
+        buildConfigField("String", "NASA_GOV_API_KEY", "\"T2l3R20wM0pCQU5jbmllYVlXUjcxNnVRWmxaamN3ZWhxM3FIMGJhaQ==\"")
+        buildConfigField("String", "MORPH_IO_API_KEY", "\"bUFOekkySFdVYlFCRnZJdmI3ME0=\"")
         minSdkVersion 16
         targetSdkVersion 28
         vectorDrawables.useSupportLibrary = true

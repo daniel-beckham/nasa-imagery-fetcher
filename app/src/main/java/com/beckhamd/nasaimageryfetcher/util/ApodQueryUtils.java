@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -20,6 +21,7 @@ import com.beckhamd.nasaimageryfetcher.model.UniversalImageModel;
 import com.mikepenz.fastadapter_extensions.items.ProgressItem;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
@@ -35,10 +37,10 @@ import retrofit2.http.Query;
 
 public class ApodQueryUtils {
     private static final String NASA_GOV_BASE_URL = "https://api.nasa.gov/";
-    private static final String NASA_GOV_API_KEY = BuildConfig.NASA_GOV_API_KEY;
+    private static final String NASA_GOV_API_KEY = decodeBase64(BuildConfig.NASA_GOV_API_KEY);
 
     private static final String MORPH_IO_BASE_URL = "https://api.morph.io/";
-    private static final String MORPH_IO_API_KEY = BuildConfig.MORPH_IO_API_KEY;
+    private static final String MORPH_IO_API_KEY = decodeBase64(BuildConfig.MORPH_IO_API_KEY);
 
     private static final int NUMBER_OF_RESULTS = 30;
     private static final int MAX_RESULTS = 90;
@@ -62,6 +64,18 @@ public class ApodQueryUtils {
         Call<List<ApodMorphIoModel>> get(
                 @Query("key") String key,
                 @Query("query") String query);
+    }
+
+    public static String decodeBase64(String string) {
+        byte[] data = Base64.decode(string, Base64.DEFAULT);
+
+        try {
+            return new String(data, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public static void setUpIoServices(Context context) {
