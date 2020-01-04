@@ -1,0 +1,4 @@
+NASA Imagery Fetcher gets the latest images from NASA's Image of the Day (IOTD) and Astronomy Picture of the Day (APOD) services.
+
+• Scroll through images vertically, tap images to obtain detailed descriptions, swipe between images, and tap any image again to enable panning and zooming functionality
+• Automatically receive daily notifications of new images, download images to external storage, and set any image as the current wallpaper
