@@ -2,8 +2,7 @@
 
 This is an Android app that fetches images from NASA's Image of the Day and Astronomy Picture of the Day services.
 
-#### Features
-- Browse the latest images from the Image of the Day and Astronomy Picture of the Day
+### Features
 - Scroll through images vertically, tap images to obtain detailed descriptions, swipe between images, and tap any image again to enable panning and zooming functionality
 - Automatically receive daily notifications of new images, download images to external storage, and set any image as the current wallpaper
 
