@@ -1,5 +1,7 @@
 # NASA Imagery Fetcher
 
+[<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/en/packages/com.beckhamd.nasaimageryfetcher/)
+
 This is an Android app that fetches images from NASA's Image of the Day and Astronomy Picture of the Day services.
 
 ### Features
@@ -9,7 +11,3 @@ This is an Android app that fetches images from NASA's Image of the Day and Astr
 ## Screenshots
 
 ![](screenshots/screenshots.png?raw=true)
-
-## Download
-
-The latest version can be found on the [releases page](https://github.com/beckhamd/nasa-imagery-fetcher/releases) as well as [XDA Labs](https://labs.xda-developers.com/store/app/com.beckhamd.nasaimageryfetcher).
